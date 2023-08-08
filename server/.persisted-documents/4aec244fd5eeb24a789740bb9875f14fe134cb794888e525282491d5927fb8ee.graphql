@@ -1,0 +1,1 @@
+query Locations { locations { __typename nodes { __typename description geo { __typename x y } id name slug } } }

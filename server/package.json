@@ -1,0 +1,57 @@
+{
+  "name": "server",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20.5.0"
+  },
+  "scripts": {
+    "gm": "dotenv -e .env.localhost graphile-migrate",
+    "gm:watch": "pnpm gm watch --once",
+    "gm:commit": "pnpm gm commit",
+    "schema:documents": "node --loader ts-node/esm --experimental-specifier-resolution=node -r dotenv/config ./scripts/persisted-documents.ts",
+    "dev": "pnpm schema:documents && nodemon --exec 'NODE_ENV=development node --no-warnings=ExperimentalWarning --loader ts-node/esm --import=./log-error.js' src/app.ts",
+    "start": "node --experimental-modules ./dist/app.js",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --fix --max-warnings 10",
+    "schema:export": "node --loader ts-node/esm --experimental-specifier-resolution=node -r dotenv/config ./scripts/export-schema.ts"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^4.0.1",
+    "@types/cookie": "^0.5.1",
+    "@types/graphql-upload": "^16.0.0",
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/node": "^20.4.2",
+    "@types/pg": "^8.10.2",
+    "dotenv-cli": "^7.2.1",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "type-fest": "^3.13.1"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.370.0",
+    "@aws-sdk/s3-request-presigner": "^3.370.0",
+    "@fastify/cookie": "^8.3.0",
+    "@fastify/cors": "^8.3.0",
+    "@fastify/rate-limit": "^8.0.3",
+    "@graphile-contrib/pg-omit-archived": "^3.2.1",
+    "@graphile-contrib/pg-simplify-inflector": "^6.1.0",
+    "@graphile/persisted-operations": "^0.1.1",
+    "cookie": "^0.5.0",
+    "dotenv": "^16.3.1",
+    "envalid": "^7.3.1",
+    "fastify": "^4.20.0",
+    "google-auth-library": "^8.9.0",
+    "graphile-build": "^4.13.0",
+    "graphile-migrate": "^1.4.1",
+    "graphile-utils": "^4.13.0",
+    "graphql": "^15.8.0",
+    "ioredis": "^5.3.2",
+    "jsonwebtoken": "^9.0.1",
+    "pg": "^8.11.1",
+    "postgraphile": "^4.13.0",
+    "postgres-bytea": "^3.0.0",
+    "sitemap": "^7.1.1",
+    "@app/config": "workspace:*"
+  }
+}

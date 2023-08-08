@@ -1,0 +1,1 @@
+mutation LogoutMutation { logout(input: {fromCookie: true}) }

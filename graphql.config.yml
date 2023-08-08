@@ -1,0 +1,9 @@
+schema: ./*.graphql
+
+projects:
+  client:
+    schema: server/schema.graphql
+    documents: client/**/*.{graphql,js,ts,tsx}
+  server:
+    schema: server/schema.graphql
+    documents: server/**/*.graphql

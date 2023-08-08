@@ -1,0 +1,1 @@
+mutation DeleteUserMutation($input: DeleteUserInput!) { deleteUser(input: $input) { __typename user { __typename id } } }

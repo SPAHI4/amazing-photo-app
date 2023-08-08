@@ -1,0 +1,15 @@
+{
+  "trailingComma": "all",
+  "singleQuote": true,
+  "printWidth": 100,
+  "plugins": ["prettier-plugin-sql"],
+  "overrides": [
+    {
+      "files": "*.sql",
+      "options": {
+        "parser": "sql",
+        "database": "postgresql"
+      }
+    }
+  ]
+}

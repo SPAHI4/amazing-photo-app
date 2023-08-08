@@ -1,0 +1,11 @@
+
+dist
+node_modules
+**/*.d.ts
+.swc
+__generated__
+
+worker/log-error.js
+
+server/.persisted-documents
+server/schema.graphql

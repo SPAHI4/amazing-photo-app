@@ -1,0 +1,1 @@
+mutation GetAccessToken { getAccessToken(input: {fromCookie: true}) { accessToken } }

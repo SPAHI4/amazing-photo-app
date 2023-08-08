@@ -1,0 +1,1 @@
+query LocationsByDistance($lat: Float!, $lng: Float!) { locationsByDistance(lat: $lat, lng: $lng) { __typename nodes { __typename id name } } }

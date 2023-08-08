@@ -1,0 +1,1 @@
+query LocationsByDistance($lat: Float!, $lng: Float!) { locationsByDistance(lat: $lat, lng: $lng) { nodes { id name } } }

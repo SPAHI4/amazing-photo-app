@@ -1,0 +1,1 @@
+mutation createLocation($input: CreateLocationInput!) { createLocation(input: $input) { __typename location { __typename description id isArchived name photos { __typename totalCount } slug } } }

@@ -1,0 +1,1 @@
+mutation updateImage($input: UpdateImageInput!) { updateImage(input: $input) { __typename image { __typename id isUploaded } } }

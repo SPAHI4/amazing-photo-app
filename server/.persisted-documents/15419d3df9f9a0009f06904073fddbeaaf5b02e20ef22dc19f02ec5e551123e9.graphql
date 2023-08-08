@@ -1,0 +1,1 @@
+mutation CreateComment($comment: CommentInput!) { createComment(input: {comment: $comment}) { __typename comment { __typename body createdAt id isArchived user { __typename displayName id pictureUrl } } } }

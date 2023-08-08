@@ -1,0 +1,1 @@
+query PhotoComments($after: Cursor, $first: Int!, $id: Int!) { comments( condition: {photoId: $id} orderBy: CREATED_AT_DESC after: $after first: $first ) { __typename edges { __typename cursor node { __typename body createdAt id isArchived user { __typename displayName id pictureUrl } } } pageInfo { __typename endCursor hasNextPage } totalCount } }

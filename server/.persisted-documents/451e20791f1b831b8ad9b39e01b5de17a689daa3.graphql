@@ -1,0 +1,1 @@
+mutation UpdateUserMutation($input: UpdateUserInput!) { updateUser(input: $input) { __typename user { __typename authoredPhotos { __typename totalCount } comments { __typename totalCount } createdAt displayName id isArchived photosLikes { __typename totalCount } pictureUrl } } }

@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  db:
+    image: ghcr.io/baosystems/postgis:15-3.3
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: photo-app
+    ports:
+      - 5500:5432
+    volumes:
+      - /opt/homebrew/var/postgresql@15:/var/lib/postgresql/data

@@ -1,0 +1,4 @@
+.eslintrc.cjs
+dist
+types
+.persisted-documents
