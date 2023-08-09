@@ -54,3 +54,5 @@ export class TempFile implements AsyncDisposable {
     }
   }
 }
+
+export default TempFile;
