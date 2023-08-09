@@ -380,7 +380,7 @@ export function RouteAdminLocations() {
   const hasNew = data.locations?.edges.some((edge) => isLocationNew(edge.node)) ?? false;
 
   useEffect(() => {
-    if (hasNew === true) {
+    if (hasNew) {
       setRowModesModel((oldModel) => ({
         ...oldModel,
         [-1]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
