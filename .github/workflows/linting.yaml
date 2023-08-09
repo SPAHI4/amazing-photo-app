@@ -11,6 +11,8 @@ jobs:
     if: github.event.after
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v2
         name: pnpm setup
         with:
@@ -25,4 +27,4 @@ jobs:
           pnpm install
       - name: Run lint-staged
         run: |
-          pnpm exec lint-staged
+          pnpm exec lint-staged --diff="origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF}"
