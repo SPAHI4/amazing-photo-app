@@ -7,13 +7,19 @@
     "dev": "pnpm dev:compose && pnpm --stream -r run dev",
     "dev:compose": "docker-compose up",
     "lint": "tsc --build && pnpm eslint . --fix",
-    "eslint": "eslint --ext .mjc,.cjs,.js,.jsx,.ts,.tsx,.graphql",
+    "eslint": "eslint --ext .mjc,.cjs,.js,.jsx,.ts,.tsx",
     "prepare": "husky install"
   },
   "lint-staged": {
-    "*.{mjs,cjs,js,jsx,ts,tsx,json,graphql}": [
+    "*.{tsx,ts,mts}": [
       "eslint --fix",
-      "tsc --noEmit"
+      "bash -c 'pnpm exec tsc --noEmit'"
+    ],
+    "*.{mjs,cjs,js,jsx}": [
+      "eslint --fix"
+    ],
+    "*.json": [
+      "prettier --write"
     ]
   },
   "keywords": [],
