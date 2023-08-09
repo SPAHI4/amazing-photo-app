@@ -17,7 +17,7 @@ const app = fastify({
 
 app.register(fastifyRateLimit, {
   max: 3000,
-  timeWindow: '1 minute',
+  timeWindow: '1 minute'   
 });
 
 // CORS
