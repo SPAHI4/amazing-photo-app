@@ -24,10 +24,8 @@ dist-ssr
 *.sln
 *.sw?
 
-.pnpm
 *.tsbuildinfo
 .swc
-.pnpm
 .pnpm-debug.log*
 
 # certs

@@ -10,18 +10,7 @@
     "eslint": "eslint --ext .mjc,.cjs,.js,.jsx,.ts,.tsx",
     "prepare": "husky install"
   },
-  "lint-staged": {
-    "*.{tsx,ts,mts}": [
-      "eslint --fix",
-      "bash -c 'pnpm exec tsc --noEmit'"
-    ],
-    "*.{mjs,cjs,js,jsx}": [
-      "eslint --fix"
-    ],
-    "*.json": [
-      "prettier --write"
-    ]
-  },
+  "type": "module",
   "keywords": [],
   "author": "spahi43@gmail.com",
   "license": "MIT",

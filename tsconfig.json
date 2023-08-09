@@ -31,13 +31,13 @@
 
     "baseUrl": ".",
     "paths": {
-//      "server/*": ["./server/*"],
-//      "client/*": ["./client/*"],
-//      "worker/*": ["./worker/*"]
-    },
+      //      "server/*": ["./server/*"],
+      //      "client/*": ["./client/*"],
+      //      "worker/*": ["./worker/*"]
+    }
   },
   "exclude": ["node_modules"],
-  "include": [".eslintrc.cjs"],
+  "include": [".eslintrc.cjs", "lint-staged.config.js"],
   "references": [
     {
       "path": "./config"
@@ -50,6 +50,6 @@
     },
     {
       "path": "./client"
-    },
+    }
   ]
 }

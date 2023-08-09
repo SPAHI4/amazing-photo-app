@@ -6,10 +6,12 @@ module.exports = {
     'prettier',
   ],
   overrides: [
+    // allow console and default export only outside of src/ (scripts, config, etc.)
     {
       files: ['**/src/**'],
       rules: {
         'no-console': 'warn',
+        'import/no-default-export': 'error',
       },
     },
   ],
@@ -18,7 +20,6 @@ module.exports = {
     'no-console': 'off',
     'prettier/prettier': 'error',
     'import/prefer-default-export': 'off',
-    'import/no-default-export': 'error',
     'no-unused-vars': 'off',
     '@typescript-eslint/strict-boolean-expressions': 'error',
     'import/order': 'warn',
