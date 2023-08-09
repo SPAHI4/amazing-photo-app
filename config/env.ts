@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import envalid from 'envalid';
 import fs from 'node:fs';
 import path from 'node:path';
-import * as process from 'process';
 
 const __filename = new URL(import.meta.url).pathname;
 const __dirname = path.dirname(__filename);
@@ -47,50 +46,74 @@ const cleaned = envalid.cleanEnv(process.env, {
   GOOGLE_REFRESH_TOKEN: envalid.str(),
 });
 
-const jwts =
-  process.env.NODE_ENV === 'production'
-    ? envalid.cleanEnv(process.env, {
-        JWT_PUBLIC_KEY: envalid.str(),
-        JWT_SECRET_KEY: envalid.str(),
-      })
-    : envalid.cleanEnv(process.env, {
-        JWT_PUBLIC_KEY: envalid.str({
-          default: fs.readFileSync('../cert-local/public.pem', 'ascii'),
-        }),
-        JWT_SECRET_KEY: envalid.str({
-          default: fs.readFileSync('../cert-local/private.pem', 'ascii'),
-        }),
-      });
+let jwts;
+let ssls;
+let google;
 
-const ssls =
-  process.env.NODE_ENV === 'production'
-    ? envalid.cleanEnv(process.env, {
-        SSL_CERT: envalid.str(),
-        SSL_KEY: envalid.str(),
-      })
-    : envalid.cleanEnv(process.env, {
-        SSL_CERT: envalid.str({ default: fs.readFileSync('../cert-local/localhost.crt', 'ascii') }),
-        SSL_KEY: envalid.str({
-          default: fs.readFileSync('../cert-local/localhost.decrypted.key', 'ascii'),
-        }),
-      });
+// load certs, keys, and google configs based on environment for production
+// or from local files for development (these files are not checked into git)
+if (cleanedBase.NODE_ENV === 'production') {
+  jwts = envalid.cleanEnv(process.env, {
+    JWT_PUBLIC_KEY: envalid.str(),
+    JWT_SECRET_KEY: envalid.str(),
+  });
 
-const google =
-  process.env.NODE_ENV === 'production'
-    ? envalid.cleanEnv(process.env, {
-        GOOGLE_CLIENT_ID: envalid.str(),
-        GOOGLE_CLIENT_SECRET: envalid.str(),
-        GOOGLE_REDIRECT_URI: envalid.str(),
-      })
-    : (() => {
-        const clientJson = fs.readFileSync('../cert-local/client_secret.json', 'ascii');
-        const client = JSON.parse(clientJson);
-        return envalid.cleanEnv(process.env, {
-          GOOGLE_CLIENT_ID: envalid.str({ default: client.installed.client_id }),
-          GOOGLE_CLIENT_SECRET: envalid.str({ default: client.installed.client_secret }),
-          GOOGLE_REDIRECT_URI: envalid.str({ default: client.installed.redirect_uris[0] }),
-        });
-      })();
+  ssls = envalid.cleanEnv(process.env, {
+    SSL_CERT: envalid.str(),
+    SSL_KEY: envalid.str(),
+  });
+
+  google = envalid.cleanEnv(process.env, {
+    INSTALLED_GOOGLE_CLIENT_ID: envalid.str(),
+    INSTALLED_GOOGLE_CLIENT_SECRET: envalid.str(),
+    INSTALLED_GOOGLE_REDIRECT_URI: envalid.str(),
+
+    WEB_GOOGLE_CLIENT_ID: envalid.str(),
+    WEB_GOOGLE_CLIENT_SECRET: envalid.str(),
+    WEB_GOOGLE_REDIRECT_URI: envalid.str(),
+  });
+} else {
+  jwts = envalid.cleanEnv(process.env, {
+    JWT_PUBLIC_KEY: envalid.str({
+      default: fs.readFileSync(path.resolve(__dirname, '../cert-local/public.pem'), 'ascii'),
+    }),
+    JWT_SECRET_KEY: envalid.str({
+      default: fs.readFileSync(path.resolve(__dirname, '../cert-local/private.pem'), 'ascii'),
+    }),
+  });
+
+  ssls = envalid.cleanEnv(process.env, {
+    SSL_CERT: envalid.str({
+      default: fs.readFileSync(path.resolve(__dirname, '../cert-local/localhost.crt'), 'ascii'),
+    }),
+    SSL_KEY: envalid.str({
+      default: fs.readFileSync(
+        path.resolve(__dirname, '../cert-local/localhost.decrypted.key'),
+        'ascii',
+      ),
+    }),
+  });
+
+  const loadJson = (filepath: string) => JSON.parse(fs.readFileSync(filepath, 'ascii'));
+  const webGoogleConfig = loadJson(path.resolve(__dirname, '../cert-local/web.client_secret.json'));
+  const installedGoogleConfig = loadJson(
+    path.resolve(__dirname, '../cert-local/installed.client_secret.json'),
+  );
+
+  google = envalid.cleanEnv(process.env, {
+    INSTALLED_GOOGLE_CLIENT_ID: envalid.str({ default: installedGoogleConfig.installed.client_id }),
+    INSTALLED_GOOGLE_CLIENT_SECRET: envalid.str({
+      default: installedGoogleConfig.installed.client_secret,
+    }),
+    INSTALLED_GOOGLE_REDIRECT_URI: envalid.str({
+      default: installedGoogleConfig.installed.redirect_uris[0],
+    }),
+
+    WEB_GOOGLE_CLIENT_ID: envalid.str({ default: webGoogleConfig.web.client_id }),
+    WEB_GOOGLE_CLIENT_SECRET: envalid.str({ default: webGoogleConfig.web.client_secret }),
+    WEB_GOOGLE_REDIRECT_URI: envalid.str({ default: webGoogleConfig.web.redirect_uris[0] }),
+  });
+}
 
 export const env = {
   ...cleanedBase,

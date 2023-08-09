@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken';
 import { GraphQLError } from 'graphql';
 import crypto from 'crypto';
 import { env } from '@app/config/env.ts';
-import keys from '../client_secret.json' assert { type: 'json' };
 import { GraphqlContext } from './graphql-context.ts';
 
 export enum TOKEN_ERRORS {
@@ -265,8 +264,8 @@ export const loginWithGoogleMutation = makeExtendSchemaPlugin(() => ({
         const { pgClient } = context;
 
         const oAuth2Client = new OAuth2Client(
-          keys.web.client_id,
-          keys.web.client_secret,
+          env.WEB_GOOGLE_CLIENT_ID,
+          env.WEB_GOOGLE_CLIENT_SECRET,
           'postmessage',
         );
 

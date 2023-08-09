@@ -3,9 +3,9 @@ import * as readline from 'node:readline';
 import { env } from '@app/config/env.ts';
 
 const oAuth2Client = new auth.OAuth2(
-  env.GOOGLE_CLIENT_ID,
-  env.GOOGLE_CLIENT_SECRET,
-  env.GOOGLE_REDIRECT_URI,
+  env.INSTALLED_GOOGLE_CLIENT_ID,
+  env.INSTALLED_GOOGLE_CLIENT_SECRET,
+  env.INSTALLED_GOOGLE_REDIRECT_URI,
 );
 
 const scopes = ['https://www.googleapis.com/auth/gmail.send', 'https://mail.google.com'];

@@ -20,7 +20,7 @@ export const createImageUploadMutation = makeExtendSchemaPlugin(() => ({
   typeDefs: gql`
     input CreateImageUploadInput {
       contentType: String!
-    
+    }
 
     type CreateImageUploadPayload {
       signedUrl: String!

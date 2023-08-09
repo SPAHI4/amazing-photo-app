@@ -30,9 +30,9 @@ const previewEmail = async (message: Mail.Options) => {
 };
 
 const oAuth2Client = new auth.OAuth2(
-  env.GOOGLE_CLIENT_ID,
-  env.GOOGLE_CLIENT_SECRET,
-  env.GOOGLE_REDIRECT_URI,
+  env.INSTALLED_GOOGLE_CLIENT_ID,
+  env.INSTALLED_GOOGLE_CLIENT_SECRET,
+  env.INSTALLED_GOOGLE_REDIRECT_URI,
 );
 
 oAuth2Client.setCredentials({
@@ -68,8 +68,8 @@ export class UserEmailSender {
         auth: {
           type: 'OAuth2',
           user: env.ROBOT_EMAIL,
-          clientId: env.GOOGLE_CLIENT_ID,
-          clientSecret: env.GOOGLE_CLIENT_SECRET,
+          clientId: env.INSTALLED_GOOGLE_CLIENT_ID,
+          clientSecret: env.INSTALLED_GOOGLE_CLIENT_SECRET,
           refreshToken: credentials.refresh_token,
           accessToken: credentials.access_token,
         },
