@@ -116,9 +116,7 @@ function LocationEditToolbar(props: LocationEditToolbarProps) {
   );
 }
 
-interface RouteAdminLocationsProps {}
-
-export function RouteAdminLocations(_props: RouteAdminLocationsProps) {
+export function RouteAdminLocations() {
   const { data } = useSuspenseQuery(ROUTE_ADMIN_LOCATIONS_QUERY);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const [error, setError] = useState<string | null>(null);

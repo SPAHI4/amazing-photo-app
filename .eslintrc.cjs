@@ -43,7 +43,6 @@ module.exports = {
     'sql/no-unsafe-query': 'off',
   },
   parser: '@typescript-eslint/parser',
-  // processor: '@graphql-eslint/graphql',
   plugins: ['prettier', '@typescript-eslint', 'sql'],
   parserOptions: {
     root: true,

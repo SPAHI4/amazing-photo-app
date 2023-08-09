@@ -35,6 +35,6 @@ dist-ssr
 *.crt
 *.csr
 *.key
-client_secret.json
+*.client_secret.json
 .env.override
 docker-compose.yml.override
