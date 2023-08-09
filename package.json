@@ -12,11 +12,11 @@
   },
   "lint-staged": {
     "*.{tsx,ts,mts}": [
-      "eslint --fix",
-      "bash -c 'pnpm exec tsc --noEmit'"
+      "bash -c 'pnpm exec tsc --noEmit'",
+      "eslint"
     ],
     "*.{mjs,cjs,js,jsx}": [
-      "eslint --fix"
+      "eslint"
     ],
     "*.json": [
       "prettier --write"
