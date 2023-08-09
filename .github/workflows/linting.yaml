@@ -3,6 +3,7 @@ name: Lint & TS
 on:
   push:
     branches: [ '*' ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -15,11 +16,11 @@ jobs:
         with:
           node-version: '20.5'
           cache: 'pnpm'
-      - run: pnpm install
-      - name: Checkout latest commit
-        run: |
-          git fetch origin
-          git checkout ${GITHUB_SHA}
+      - uses: pnpm/action-setup@v2
+        name: pnpm & install
+        with:
+          version: 7
+          run_install: true
       - name: Run lint-staged
         run: |
           pnpm exec lint-staged
