@@ -1,6 +1,6 @@
 import { Task } from 'graphile-worker';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
-import { s3 } from '../s3.ts';
+import { s3 } from '../s3.js';
 
 // delete image from s3, called by on delete trigger in app_public.images
 

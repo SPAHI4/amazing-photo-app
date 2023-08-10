@@ -2,9 +2,17 @@ import dotenv from 'dotenv';
 import envalid from 'envalid';
 import fs from 'node:fs';
 import path from 'node:path';
+import * as process from 'process';
 
-const __filename = new URL(import.meta.url).pathname;
-const __dirname = path.dirname(__filename);
+const resolvePath = (relativePath: string) => {
+  const filename = new URL(import.meta.url).pathname;
+  const dirname = path.dirname(filename);
+  if (dirname.endsWith('/dist')) {
+    return path.resolve(dirname, '../', relativePath);
+  }
+
+  return path.resolve(dirname, relativePath);
+};
 
 if (process.env.NODE_ENV === 'production' && process.env.DEPLOYMENT == null) {
   throw new Error('DEPLOYMENT must be set in production');
@@ -18,16 +26,16 @@ const cleanedBase = envalid.cleanEnv(process.env, {
   }),
 });
 
-const overrideEnv = `.env.override`;
-if (fs.existsSync(path.resolve(__dirname, overrideEnv))) {
-  dotenv.config({ path: path.resolve(__dirname, overrideEnv) });
+const overrideEnv = resolvePath('.env.override');
+if (fs.existsSync(overrideEnv)) {
+  dotenv.config({ path: overrideEnv });
 }
 
-const deploymentEnv = `.env.${cleanedBase.DEPLOYMENT}`;
-dotenv.config({ path: path.resolve(__dirname, deploymentEnv) });
+const deploymentEnv = resolvePath(`.env.${cleanedBase.DEPLOYMENT}`);
+dotenv.config({ path: deploymentEnv });
 
-const baseEnv = '.env.base';
-dotenv.config({ path: path.resolve(__dirname, baseEnv) });
+const baseEnv = resolvePath('.env.base');
+dotenv.config({ path: baseEnv });
 
 const cleaned = envalid.cleanEnv(process.env, {
   DATABASE_URL: envalid.str(),
@@ -75,30 +83,25 @@ if (cleanedBase.NODE_ENV === 'production') {
 } else {
   jwts = envalid.cleanEnv(process.env, {
     JWT_PUBLIC_KEY: envalid.str({
-      default: fs.readFileSync(path.resolve(__dirname, '../cert-local/public.pem'), 'ascii'),
+      default: fs.readFileSync(resolvePath('../cert-local/public.pem'), 'ascii'),
     }),
     JWT_SECRET_KEY: envalid.str({
-      default: fs.readFileSync(path.resolve(__dirname, '../cert-local/private.pem'), 'ascii'),
+      default: fs.readFileSync(resolvePath('../cert-local/private.pem'), 'ascii'),
     }),
   });
 
   ssls = envalid.cleanEnv(process.env, {
     SSL_CERT: envalid.str({
-      default: fs.readFileSync(path.resolve(__dirname, '../cert-local/localhost.crt'), 'ascii'),
+      default: fs.readFileSync(resolvePath('../cert-local/localhost.crt'), 'ascii'),
     }),
     SSL_KEY: envalid.str({
-      default: fs.readFileSync(
-        path.resolve(__dirname, '../cert-local/localhost.decrypted.key'),
-        'ascii',
-      ),
+      default: fs.readFileSync(resolvePath('../cert-local/localhost.decrypted.key'), 'ascii'),
     }),
   });
 
   const loadJson = (filepath: string) => JSON.parse(fs.readFileSync(filepath, 'ascii'));
-  const webGoogleConfig = loadJson(path.resolve(__dirname, '../cert-local/web.client_secret.json'));
-  const installedGoogleConfig = loadJson(
-    path.resolve(__dirname, '../cert-local/installed.client_secret.json'),
-  );
+  const webGoogleConfig = loadJson(resolvePath('../cert-local/web.client_secret.json'));
+  const installedGoogleConfig = loadJson(resolvePath('../cert-local/installed.client_secret.json'));
 
   google = envalid.cleanEnv(process.env, {
     INSTALLED_GOOGLE_CLIENT_ID: envalid.str({ default: installedGoogleConfig.installed.client_id }),

@@ -3,10 +3,10 @@ import { gql, makeExtendSchemaPlugin } from 'graphile-utils';
 import jwt from 'jsonwebtoken';
 import { GraphQLError } from 'graphql';
 import crypto from 'crypto';
-import { env } from '@app/config/env.ts';
-import { GraphqlContext } from './graphql-context.ts';
+import { env } from '@app/config/env.js';
+import { GraphqlContext } from './graphql-context.js';
 
-export enum TOKEN_ERRORS {
+export enum TokenErrors {
   TOKEN_EXPIRED = 'TOKEN_EXPIRED',
   TOKEN_INVALID = 'TOKEN_INVALID',
   TOKEN_NOT_ACTIVE = 'TOKEN_NOT_ACTIVE',
@@ -62,7 +62,7 @@ const verifyAndUpdateTokenSession = async (
 
   if (existingToken == null) {
     throw new GraphQLError('Token is revoked or invalid', null, null, null, null, null, {
-      code: TOKEN_ERRORS.TOKEN_INVALID,
+      code: TokenErrors.TOKEN_INVALID,
     });
   }
 
@@ -194,7 +194,7 @@ export const loginWithGoogleMutation = makeExtendSchemaPlugin(() => ({
 
           if (refreshToken == null) {
             throw new GraphQLError('No refresh token provided', null, null, null, null, null, {
-              code: TOKEN_ERRORS.REFRESH_TOKEN_EMPTY,
+              code: TokenErrors.REFRESH_TOKEN_EMPTY,
             });
           }
 
@@ -220,7 +220,7 @@ export const loginWithGoogleMutation = makeExtendSchemaPlugin(() => ({
 
         if (refreshToken == null) {
           throw new GraphQLError('No refresh token provided', null, null, null, null, null, {
-            code: TOKEN_ERRORS.REFRESH_TOKEN_EMPTY,
+            code: TokenErrors.REFRESH_TOKEN_EMPTY,
           });
         }
 

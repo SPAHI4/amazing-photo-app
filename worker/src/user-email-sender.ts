@@ -7,13 +7,13 @@ import * as fs from 'node:fs/promises';
 import { JobHelpers, Logger } from 'graphile-worker';
 import { v4 as uuidv4 } from 'uuid';
 import type Mail from 'nodemailer/lib/mailer';
-import { env } from '@app/config/env.ts';
+import { env } from '@app/config/env.js';
 import {
   EmailTemplateBaseProps,
   EmailTemplateStaticProps,
   EmailUser,
   renderTemplate,
-} from './emails/email.tsx';
+} from './emails/email.js';
 
 const previewEmail = async (message: Mail.Options) => {
   const filePath = `${os.tmpdir()}/${uuidv4()}.html`;

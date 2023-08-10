@@ -136,7 +136,6 @@ export const makeTheme = ({ rootElement }: { rootElement: HTMLDivElement }) =>
       subtitle2: {
         fontFamily: `Montserrat, sans-serif, ${baseFontFamily}`,
       },
-      // @ts-expect-error
       quote: {
         fontFamily: `Literata, serif, ${baseFontFamily}`,
         fontWeight: 400,

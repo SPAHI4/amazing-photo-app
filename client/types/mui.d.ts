@@ -1,10 +1,18 @@
-// mui.d.ts
-
 export {};
 
-// Declare a module augmentation for '@mui/material/Typography'
+declare module '@mui/material/styles' {
+  interface TypographyVariants {
+    quote: React.CSSProperties;
+  }
+
+  // allow configuration using `createTheme`
+  interface TypographyVariantsOptions {
+    quote?: React.CSSProperties;
+  }
+}
+
+// Update the Typography's variant prop options
 declare module '@mui/material/Typography' {
-  // declare the additional property for the `variant` prop
   interface TypographyPropsVariantOverrides {
     quote: true;
   }

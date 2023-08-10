@@ -1,7 +1,7 @@
 import cookie from 'cookie';
 import { PoolClient } from 'pg';
 import { IncomingMessage, ServerResponse } from 'node:http';
-import { REFRESH_TOKEN_EXPIRATION_DAYS } from './oauth.ts';
+import { REFRESH_TOKEN_EXPIRATION_DAYS } from './oauth.js';
 
 type UserRole = 'app_user' | 'app_admin';
 

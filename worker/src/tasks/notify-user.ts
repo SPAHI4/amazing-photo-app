@@ -1,7 +1,7 @@
 import { Task } from 'graphile-worker';
-import { UserEmailSender } from '../user-email-sender.ts';
-import { ImageSource } from './convert-image.ts';
-import { EmailNotifyUser } from '../emails/notify-user/email-notify-user.tsx';
+import { UserEmailSender } from '../user-email-sender.js';
+import { ImageSource } from './convert-image.js';
+import { EmailNotifyUser } from '../emails/notify-user/email-notify-user.js';
 
 interface NotifyUserPayload {
   user_id: number;

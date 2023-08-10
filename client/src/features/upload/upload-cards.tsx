@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { StickPointerButton } from '../../ui-components/cursor.tsx';
 import { CreatePhotoMutation } from '../../__generated__/graphql.ts';
 import { Transition } from '../../ui-components/transition.tsx';
-import { type RouteUploadFormValues, UploadStep } from '../../routes/route-upload.tsx';
 import { IconArrowBack, IconArrowForward } from '../../icons.tsx';
+import { RouteUploadFormValues, UploadStep } from './upload-types.ts';
 
 type CardMoreProps = {
   form: ReturnType<typeof useForm<RouteUploadFormValues>>;

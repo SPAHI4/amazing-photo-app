@@ -7,7 +7,7 @@ import { Box, Button, CircularProgress, Skeleton, SvgIcon, Typography } from '@m
 import { css } from '@emotion/react';
 import { graphql } from '../../__generated__/gql.ts';
 import { ImageInput } from '../../ui-components/image-input.tsx';
-import { RouteUploadFormValues, UploadStep } from '../../routes/route-upload.tsx';
+import type { RouteUploadFormValues, UploadStep } from '../../routes/route-upload.tsx';
 import { Transition } from '../../ui-components/transition.tsx';
 import { useFetch } from '../../hooks/use-fetch.ts';
 import { StickPointerButton } from '../../ui-components/cursor.tsx';

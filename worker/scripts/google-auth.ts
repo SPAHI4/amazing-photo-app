@@ -1,6 +1,6 @@
 import { auth } from '@googleapis/gmail';
 import * as readline from 'node:readline';
-import { env } from '@app/config/env.ts';
+import { env } from '@app/config/env.js';
 
 const oAuth2Client = new auth.OAuth2(
   env.INSTALLED_GOOGLE_CLIENT_ID,
