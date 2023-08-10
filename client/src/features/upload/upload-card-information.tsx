@@ -14,12 +14,12 @@ import { css } from '@emotion/react';
 import { useSuspenseQuery } from '@apollo/client';
 import { Suspense, useEffect } from 'react';
 import { LoadingButton } from '@mui/lab';
-import type { RouteUploadFormValues } from '../../routes/route-upload.tsx';
 import { graphql } from '../../__generated__/gql.ts';
 import { Transition } from '../../ui-components/transition.tsx';
 import { convertShutterSpeed } from '../../utils/number.ts';
 import { StickPointerButton } from '../../ui-components/cursor.tsx';
 import { IconArrowForward } from '../../icons.tsx';
+import { RouteUploadFormValues } from './upload-types.ts';
 
 type UploadCardInformationProps = {
   form: ReturnType<typeof useForm<RouteUploadFormValues>>;
