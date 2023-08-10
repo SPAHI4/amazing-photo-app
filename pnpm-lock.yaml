@@ -313,9 +313,6 @@ importers:
       graphile-build:
         specifier: ^4.13.0
         version: 4.13.0(graphql@15.8.0)
-      graphile-migrate:
-        specifier: ^1.4.1
-        version: 1.4.1
       graphile-utils:
         specifier: ^4.13.0
         version: 4.13.0(graphile-build-pg@4.13.0)(graphile-build@4.13.0)
