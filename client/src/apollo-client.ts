@@ -17,7 +17,7 @@ import decode from 'jwt-decode';
 import { OperationQueuing } from 'apollo-link-token-refresh';
 import { TypePolicies } from '@apollo/client/cache/inmemory/policies';
 import { mergeDeep } from '@apollo/client/utilities/common/mergeDeep';
-import { graphql } from './__generated__/gql.ts';
+import { graphql } from './__generated__';
 import { scalarTypePolicies } from './__generated__/graphql-types.ts';
 
 if (import.meta.env.DEV === true) {
@@ -141,10 +141,8 @@ class TokenLink extends ApolloLink {
   }
 }
 
-// @ts-ignore
 const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
   if (graphQLErrors != null) {
-    // eslint-disable-next-line no-restricted-syntax
     for (const error of graphQLErrors) {
       if ('extensions' in error) {
         if (error.extensions.code === 'TOKEN_INVALID') {
@@ -152,7 +150,7 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
         }
 
         if (error.extensions.code === 'TOKEN_EXPIRED') {
-          const observable = new Observable((observer) => {
+          return new Observable((observer) => {
             (async () => {
               await fetchAccessToken();
 
@@ -165,8 +163,6 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
               forward(operation).subscribe(subscriber);
             })().catch((err) => observer.error(err));
           });
-
-          return observable;
         }
       }
     }

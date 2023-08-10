@@ -9,15 +9,9 @@
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "declarationDir": "dist",
+    "composite": true,
     "jsx": "react-jsx"
   },
   "exclude": ["node_modules"],
-  "include": [
-    "types/**/*.d.ts",
-    "src/**/*",
-    "scripts/**/*",
-    "*.json",
-    ".eslintrc.cjs",
-    "log-error.js"
-  ]
+  "include": ["types/**/*.d.ts", "src/**/*", "scripts/**/*", ".eslintrc.cjs", "log-error.js"]
 }

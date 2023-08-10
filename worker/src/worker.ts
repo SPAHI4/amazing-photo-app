@@ -1,10 +1,10 @@
 import { makeWorkerUtils, run } from 'graphile-worker';
-import { env } from '@app/config/env.ts';
-import { convertImageTask } from './tasks/convert-image.ts';
-import { deleteImageTask } from './tasks/delete-image.ts';
-import { notifyUserTask } from './tasks/notify-user.ts';
-import type {} from '../types/node.d.ts';
-import type {} from '../types/global.d.ts';
+import { env } from '@app/config/env.js';
+import { convertImageTask } from './tasks/convert-image.js';
+import { deleteImageTask } from './tasks/delete-image.js';
+import { notifyUserTask } from './tasks/notify-user.js';
+import type {} from '../types/node.d.js';
+import type {} from '../types/global.d.js';
 
 const taskList = {
   convert_image: convertImageTask,

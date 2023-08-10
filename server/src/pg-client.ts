@@ -1,6 +1,6 @@
 import pg, { QueryResult, QueryConfig, QueryResultRow } from 'pg';
 import { FastifyBaseLogger } from 'fastify';
-import { env } from '@app/config/env.ts';
+import { env } from '@app/config/env.js';
 
 const pool = new pg.Pool({
   connectionString: env.DATABASE_URL,
@@ -78,7 +78,7 @@ export class PgClient implements AsyncDisposable {
     this.#logger.debug('Executing query', queryText, values);
 
     try {
-      return this.#connection!.query<T>(queryText, values);
+      return await this.#connection!.query<T>(queryText, values);
     } catch (error) {
       this.#logger.error('Error executing query', error);
       throw error;

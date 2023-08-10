@@ -142,10 +142,11 @@ function ShareButton() {
           open={shareOpen}
           onClose={() => setShareOpen(false)}
           TransitionComponent={Slide}
-          TransitionProps={{
-            // @ts-expect-error
-            direction: 'up',
-          }}
+          TransitionProps={
+            {
+              direction: 'up',
+            } as never
+          }
         >
           <DialogTitle>Share</DialogTitle>
           <Box p={{ md: 0, lg: 2 }}>

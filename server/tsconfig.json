@@ -7,6 +7,7 @@
     "target": "es2022",
     "moduleResolution": "NodeNext",
     "outDir": "dist",
+    "composite": true,
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "declarationDir": "dist"
   },
@@ -18,5 +19,5 @@
     "*.json",
     ".eslintrc.cjs",
     "log-error.js"
-  ],
+  ]
 }

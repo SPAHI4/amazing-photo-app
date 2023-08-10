@@ -1,19 +1,21 @@
 {
   "name": "photo-site",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "A fullstack example of a pnpm workspace.",
   "scripts": {
     "dev": "pnpm dev:compose && pnpm --stream -r run dev",
     "dev:compose": "docker-compose up",
-    "lint": "tsc --build && pnpm eslint . --fix",
-    "eslint": "eslint --ext .mjc,.cjs,.js,.jsx,.ts,.tsx",
-    "prepare": "husky install"
+    "lint": "tsc --noEmit && pnpm eslint . --fix",
+    "eslint": "eslint --ext .mjs,.cjs,.js,.jsx,.ts,.tsx,.mts",
+    "prepare": "husky install",
+    "build": "tsc --build"
   },
   "type": "module",
-  "keywords": [],
   "author": "spahi43@gmail.com",
-  "license": "MIT",
+  "dependencies": {
+    "husky": "^8.0.3"
+  },
   "devDependencies": {
     "@graphql-eslint/eslint-plugin": "^3.20.1",
     "@types/stylelint": "^14.0.0",
@@ -21,11 +23,11 @@
     "@typescript-eslint/parser": "^7.0.0-alpha.0",
     "eslint": "^8.46.0",
     "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.1.0",
     "eslint-config-prettier": "8.10.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "5.0.0",
     "eslint-plugin-sql": "^2.4.4",
-    "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
     "prettier": "^3.0.1",
     "prettier-plugin-sql": "^0.15.1",
@@ -36,9 +38,7 @@
       "@remix-run/router@1.7.2": "patches/@remix-run__router@1.7.2.patch"
     },
     "overrides": {
-      "@apollo/client": "^3.8.0-rc.2",
-      "@swc/core": "^1.3.74"
-    },
-    "allowNonAppliedPatches": true
+      "@apollo/client": "^3.8.0-rc.2"
+    }
   }
 }

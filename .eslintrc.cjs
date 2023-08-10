@@ -1,8 +1,9 @@
 module.exports = {
   extends: [
     'eslint:recommended',
+    'airbnb',
+    'airbnb-typescript',
     'plugin:@typescript-eslint/recommended',
-    'airbnb-base',
     'prettier',
   ],
   overrides: [
@@ -24,14 +25,9 @@ module.exports = {
     '@typescript-eslint/strict-boolean-expressions': 'error',
     'import/order': 'warn',
     'no-underscore-dangle': ['warn', { allow: ['_id', '__typename', '__filename', '__dirname'] }],
-    '@typescript-eslint/ban-ts-comment': 'off',
-    'no-use-before-define': ['error', 'nofunc'],
-    '@typescript-eslint/no-unused-vars': 'off', // handled by typescript
-    'no-undef': 'off', // handled by typescript
-    'no-shadow': 'off',
     '@typescript-eslint/no-shadow': ['error'],
     '@typescript-eslint/no-unnecessary-condition': 'error',
-
+    'no-restricted-syntax': 'off', // since we target modern browsers, we can use for-of
     'sql/format': [
       'error',
       {

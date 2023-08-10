@@ -1,11 +1,11 @@
-import { env } from '@app/config/env.ts';
+import { env } from '@app/config/env.js';
 import fastify from 'fastify';
 import fastifyCors from '@fastify/cors';
 import fastifyRateLimit from '@fastify/rate-limit';
-import type {} from '../types/node.d.ts';
-import type {} from '../types/global.d.ts';
-import { postgraphileServer } from './postgraphile-server.ts';
-import { appSitemap } from './sitemap.ts';
+import type {} from '../types/node.d.js';
+import type {} from '../types/global.d.js';
+import { postgraphileServer } from './postgraphile-server.js';
+import { appSitemap } from './sitemap.js';
 
 const app = fastify({
   https: {
@@ -50,4 +50,3 @@ try {
   app.log.error(err);
   process.exit(1);
 }
-// import('../scripts/export-schema.ts').then(({ main }) => main());

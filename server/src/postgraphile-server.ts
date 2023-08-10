@@ -1,7 +1,7 @@
 import { postgraphile, PostGraphileResponseFastify3, PostGraphileResponse } from 'postgraphile';
 import type { FastifyInstance, FastifyRequest, FastifyReply, FastifyPluginAsync } from 'fastify';
-import { env } from '@app/config/env.ts';
-import { postgraphileConfiig } from './postgraphile-config.ts';
+import { env } from '@app/config/env.js';
+import { postgraphileConfiig } from './postgraphile-config.js';
 
 export const postgraphileServer: FastifyPluginAsync = async (app: FastifyInstance) => {
   const postgraphileMiddleware = postgraphile(env.DATABASE_URL, 'app_public', postgraphileConfiig);

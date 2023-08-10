@@ -3,15 +3,13 @@ import PgSimplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector';
 import PersistedOperationsPlugin from '@graphile/persisted-operations';
 import { GraphQLError } from 'graphql';
 import PgOmitArchivedImp from '@graphile-contrib/pg-omit-archived';
-import * as path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { IncomingMessage } from 'node:http';
-import { env } from '@app/config/env.ts';
-import { locationBySlugQuery } from './queries.ts';
-import { BinaryTypePlugin } from './graphql-types.ts';
-import { loginWithGoogleMutation, TOKEN_ERRORS } from './oauth.ts';
-import { createImageUploadMutation } from './mutations.ts';
-import { getGraphqlContext } from './graphql-context.ts';
+import { env } from '@app/config/env.js';
+import { locationBySlugQuery } from './queries.js';
+import { BinaryTypePlugin } from './graphql-types.js';
+import { loginWithGoogleMutation, TokenErrors } from './oauth.js';
+import { createImageUploadMutation } from './mutations.js';
+import { getGraphqlContext } from './graphql-context.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 const PgOmitArchivedPlugin = PgOmitArchivedImp.default ?? PgOmitArchivedImp;
@@ -21,9 +19,6 @@ const queriesPlugins = [locationBySlugQuery];
 
 const pluginHook = makePluginHook([PersistedOperationsPlugin]);
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const errorsHandler = (errors: ReadonlyArray<GraphQLError>) => {
   const newErrors = [];
 
@@ -32,21 +27,21 @@ const errorsHandler = (errors: ReadonlyArray<GraphQLError>) => {
       case 'TokenExpiredError':
         newErrors.push(
           new GraphQLError(err.message, err.nodes, err.source, err.positions, err.path, err, {
-            code: TOKEN_ERRORS.TOKEN_EXPIRED,
+            code: TokenErrors.TOKEN_EXPIRED,
           }),
         );
         break;
       case 'JsonWebTokenError':
         newErrors.push(
           new GraphQLError(err.message, err.nodes, err.source, err.positions, err.path, err, {
-            code: TOKEN_ERRORS.TOKEN_INVALID,
+            code: TokenErrors.TOKEN_INVALID,
           }),
         );
         break;
       case 'NotBeforeError':
         newErrors.push(
           new GraphQLError(err.message, err.nodes, err.source, err.positions, err.path, err, {
-            code: TOKEN_ERRORS.TOKEN_NOT_ACTIVE,
+            code: TokenErrors.TOKEN_NOT_ACTIVE,
           }),
         );
         break;
@@ -95,7 +90,7 @@ export const postgraphileConfiig: PostGraphileOptions = {
   },
   pluginHook,
 
-  persistedOperationsDirectory: `${__dirname}/../.persisted-documents/`,
+  persistedOperationsDirectory: `./.persisted-documents/`,
   allowUnpersistedOperation(req: IncomingMessage) {
     return env.NODE_ENV === 'development' && req.headers.referer?.endsWith('/graphiql') === true;
   },

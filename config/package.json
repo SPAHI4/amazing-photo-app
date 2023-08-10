@@ -3,11 +3,22 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "exports": {
+    "./*": {
+      "production": {
+        "import": "./dist/*"
+      },
+      "development": {
+        "import": "./*"
+      },
+      "import": "./*"
+    }
+  },
   "dependencies": {
     "dotenv": "^16.3.1",
     "envalid": "^7.3.1"
   },
   "devDependencies": {
-    "@types/node": "^20.4.8"
+    "@types/node": "^20.4.9"
   }
 }

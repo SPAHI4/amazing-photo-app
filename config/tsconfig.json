@@ -9,11 +9,8 @@
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "composite": true,
-    "declarationDir": "dist",
+    "declarationDir": "dist"
   },
   "exclude": ["node_modules"],
-  "include": [
-    "*.ts",
-    ".eslintrc.cjs"
-  ]
+  "include": ["*.ts", ".eslintrc.cjs"]
 }

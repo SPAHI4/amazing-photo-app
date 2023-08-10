@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyPluginAsync } from 'fastify';
 import { SitemapStream, streamToPromise } from 'sitemap';
-import { env } from '@app/config/env.ts';
-import { PgClient } from './pg-client.ts';
+import { env } from '@app/config/env.js';
+import { PgClient } from './pg-client.js';
 
 const staticUrls = [{ url: '/legal', changefreq: 'monthly', priority: 0.9 }];
 

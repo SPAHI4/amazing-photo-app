@@ -6,37 +6,11 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { useMutation } from '@apollo/client';
 import useTheme from '@mui/material/styles/useTheme';
 import { UploadCardInformation } from '../features/upload/upload-card-information.tsx';
-import { UploadCardImage } from '../features/upload/upload-card-image.tsx';
 import { Transition } from '../ui-components/transition.tsx';
 import { graphql } from '../__generated__/gql.ts';
+import { UploadCardImage } from '../features/upload/upload-card-image.tsx';
 import { UploadCardMore, UploadCardViewImage } from '../features/upload/upload-cards.tsx';
-
-export enum UploadStep {
-  Image = 'image',
-  Info = 'info',
-  Done = 'done',
-}
-
-export type RouteUploadFormValues = {
-  uploadStep: UploadStep;
-  imageId: number | null;
-  url: string | null;
-  thumbnail: string | null;
-  locationId: string;
-  shotAt: Date | null;
-  width: number | null;
-  height: number | null;
-  lat: number | null;
-  lng: number | null;
-  camera: string | null;
-  lens: string | null;
-  focalLength: number | null;
-  iso: number | null;
-  aperture: number | null;
-  shutterSpeed: number | null;
-  blurhash: string;
-  // tags: string[] | null;
-};
+import { RouteUploadFormValues, UploadStep } from '../features/upload/upload-types.ts';
 
 const CREATE_PHOTO_MUTATION = graphql(`
   mutation CreatePhoto($input: CreatePhotoInput!) {

@@ -9,9 +9,9 @@ import { Section } from '@react-email/section';
 import { Column } from '@react-email/column';
 import { Img } from '@react-email/img';
 import { Link } from '@react-email/link';
-import { env } from '@app/config/env.ts';
-import type { EmailTemplateBaseProps, EmailTemplateComponent, EmailUser } from '../email.tsx';
-import type { DbPhotosComments, DbPhotosLikes } from '../../tasks/notify-user.ts';
+import { env } from '@app/config/env.js';
+import type { EmailTemplateBaseProps, EmailTemplateComponent, EmailUser } from '../email.jsx';
+import type { DbPhotosComments, DbPhotosLikes } from '../../tasks/notify-user.js';
 
 interface EmailNotifyUserProps extends EmailTemplateBaseProps {
   user: EmailUser;

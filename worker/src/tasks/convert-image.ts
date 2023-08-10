@@ -8,9 +8,9 @@ import { pipeline } from 'node:stream/promises';
 import * as path from 'node:path';
 import { spawn } from 'node:child_process';
 import * as os from 'os';
-import { env } from '@app/config/env.ts';
-import { s3 } from '../s3.ts';
-import { TempFile } from '../fs.ts';
+import { env } from '@app/config/env.js';
+import { s3 } from '../s3.js';
+import { TempFile } from '../fs.js';
 
 const convertTypes = ['image/avif', 'image/webp', 'image/jpeg'] as const;
 const convertSizes = [3840, 480, 2560, 960, 1440] as const; 
@@ -158,7 +158,7 @@ type DbImage = {
   s3_key: string;
   s3_bucket: string;
   exif_data: ExifData;
-}
+};
 
 // @see https://github.com/MikeKovarik/exifr/issues/115
 const detectHdr = (contentType: string, exifData: ExifData) =>
@@ -186,7 +186,7 @@ export const convertImageTask: Task = async (inPayload, { logger, query }) => {
         where
             id = $1
         `,
-      [imageId],
+    [imageId],
     );
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
