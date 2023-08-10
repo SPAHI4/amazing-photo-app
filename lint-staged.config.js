@@ -11,7 +11,11 @@ const removeIgnoredFiles = async (files) => {
 const fixableConfig = {
   '*.{tsx,ts,mts}': async (files) => {
     const filteredFiles = await removeIgnoredFiles(files);
-    return ['tsc --noEmit', `eslint --fix ${filteredFiles}`];
+    return [
+      'tsc --noEmit',
+      'tsc --project ./client/tsconfig.json --noEmit',
+      `eslint --fix ${filteredFiles}`,
+    ];
   },
   '*.{mjs,cjs,js,jsx}': async (files) => {
     const filteredFiles = await removeIgnoredFiles(files);
@@ -23,7 +27,11 @@ const fixableConfig = {
 const ciConfig = {
   '*.{tsx,ts,mts}': async (files) => {
     const filteredFiles = await removeIgnoredFiles(files);
-    return ['tsc --noEmit', `eslint ${filteredFiles}`];
+    return [
+      'tsc --noEmit',
+      'tsc --project ./client/tsconfig.json --noEmit',
+      `eslint ${filteredFiles}`,
+    ];
   },
   '*.{mjs,cjs,js,jsx}': async (files) => {
     const filteredFiles = await removeIgnoredFiles(files);
