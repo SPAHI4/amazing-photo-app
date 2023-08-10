@@ -10,7 +10,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.event.after
     steps:
       - uses: actions/checkout@v3
         with:
