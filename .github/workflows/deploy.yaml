@@ -72,7 +72,7 @@ jobs:
 
       - name: Worker image
         uses: docker/build-push-action@v4
-        if: steps.check_server_image.outputs.WORKER_IMAGE_EXISTS != '0'
+        if: steps.check_worker_image.outputs.WORKER_IMAGE_EXISTS != '0'
         with:
           context: .
           push: true
@@ -88,7 +88,7 @@ jobs:
 
       - name: Migrate image
         uses: docker/build-push-action@v4
-        if: steps.check_server_image.outputs.MIGRATE_IMAGE_EXISTS != '0'
+        if: steps.check_migrate_image.outputs.MIGRATE_IMAGE_EXISTS != '0'
         with:
           context: .
           push: true
