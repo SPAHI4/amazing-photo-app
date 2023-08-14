@@ -61,17 +61,10 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_DB
 
       - name: Deploy with terraform
-
-      - uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v2
         working-directory: ./terraform
-
-      - run: terraform init
 
       - id: plan
         run: terraform plan -no-color
-
-      - run: echo ${{ steps.plan.outputs.stdout }}
-      - run: echo ${{ steps.plan.outputs.stderr }}
-      - run: echo ${{ steps.plan.outputs.exitcode }}
 
       - run: terraform apply -auto-approve -no-color
