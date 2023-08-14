@@ -1,4 +1,5 @@
-FROM arm64v8/node:20.5.0-alpine as node
+FROM node:20.5.0-alpine as node
+
 RUN apk update && apk add curl
 
 ENV PNPM_HOME="/pnpm"
