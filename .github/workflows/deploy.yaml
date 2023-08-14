@@ -62,7 +62,11 @@ jobs:
 
       - name: Deploy with terraform
         uses: hashicorp/setup-terraform@v2
-        working-directory: ./terraform
+
+      - working-directory: ./terraform
+        name: Terraform init
+        id: init
+        run: terraform init -no-color
 
       - id: plan
         run: terraform plan -no-color
