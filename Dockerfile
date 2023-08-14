@@ -12,6 +12,7 @@ COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build
+RUN pnpm --filter server run schema:documents
 
 FROM build AS server-prune
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm --filter=server --prod deploy server-prune

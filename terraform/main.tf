@@ -99,11 +99,11 @@ data "template_file" "environment" {
     s3_bucket_region = var.aws_region
     s3_bucket_name   = aws_s3_bucket.storage.bucket
 
-    jwt_public_key  = var.jwt_public_key
-    jwt_private_key = var.jwt_private_key
+    jwt_public_key  = chomp(var.jwt_public_key)
+    jwt_private_key = chomp(var.jwt_private_key)
 
-    ssl_cert = var.ssl_cert
-    ssl_key  = var.ssl_key
+    ssl_cert = chomp(var.ssl_cert)
+    ssl_key  = chomp(var.ssl_key)
 
     google_refresh_token = var.google_refresh_token
 

@@ -13,3 +13,7 @@ output "api_origin" {
 output "web_origin" {
   value = "https://${local.web_domain}"
 }
+
+output "client_bucket" {
+  value = aws_s3_bucket.client.bucket
+}
