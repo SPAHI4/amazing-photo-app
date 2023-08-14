@@ -54,7 +54,7 @@ jobs:
         run: |
           docker build . --target server --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SERVER
           docker build . --target worker --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_WORKER
-          docket build . --target db --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_DB
+          docker build . --target db --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_DB
           
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SERVER
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_WORKER
