@@ -76,13 +76,13 @@ jobs:
         uses: hashicorp/setup-terraform@v2
 
       - name: Terraform init
-        working-directory: ./terraform˚
+        working-directory: terraform
         id: init
         run: terraform init -no-color
 
       - id: plan
-        working-directory: ./terraform
+        working-directory: terraform
         run: terraform plan -no-color
 
       - run: terraform apply -auto-approve -no-color
-        working-directory: ./terraform
+        working-directory: terraform
