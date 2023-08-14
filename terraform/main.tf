@@ -215,7 +215,9 @@ resource "aws_s3_bucket" "storage" {
 resource "aws_s3_bucket_versioning" "storage" {
   bucket = aws_s3_bucket.storage.id
 
-  enabled = true
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 resource "aws_s3_bucket_cors_configuration" "storage" {
