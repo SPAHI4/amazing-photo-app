@@ -79,41 +79,16 @@ variable "google_credentials_web_json" {
   default     = "{}"
 }
 
+variable "google_credentials_web" {
+  default = jsondecode(var.google_credentials_web_json)
+}
+
 variable "google_credentials_installed_json" {
   description = "JSON string of the google_credentials_web"
   type        = string
   default     = "{}"
 }
 
-locals {
-  google_credentials_web_parsed       = jsondecode(var.google_credentials_web_json)
-  google_credentials_installed_parsed = jsondecode(var.google_credentials_installed_json)
-}
-
-variable "google_credentials_web" {
-  description = "The google_credentials_web parsed from JSON."
-  type = object({
-    client_id     = string
-    client_secret = string
-    redirect_uri  = string
-  })
-  default = {
-    client_id     = local.google_credentials_web_parsed.web.client_id
-    client_secret = local.google_credentials_web_parsed.web.client_secret
-    redirect_uri  = local.google_credentials_web_parsed.web.redirect_uris[0]
-  }
-}
-
 variable "google_credentials_installed" {
-  description = "The google_credentials_installed parsed from JSON."
-  type = object({
-    client_id     = string
-    client_secret = string
-    redirect_uri  = string
-  })
-  default = {
-    client_id     = local.google_credentials_installed_parsed.installed.client_id
-    client_secret = local.google_credentials_installed_parsed.installed.client_secret
-    redirect_uri  = local.google_credentials_installed_parsed.installed.redirect_uris[0]
-  }
+  default = jsondecode(var.google_credentials_installed_json)
 }
