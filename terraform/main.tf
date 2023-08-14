@@ -46,7 +46,7 @@ data "aws_ecr_repository" "ecr_repository" {
 }
 
 resource "aws_security_group" "allow_ec2" {
-  name        = "allow_web"
+  name        = "allow_ec2"
   description = "Allow web inbound traffic"
 
   ingress {
@@ -129,7 +129,7 @@ resource "aws_instance" "app" {
 }
 
 resource "aws_security_group" "allow_rds" {
-  name        = "allow_db"
+  name        = "allow_rds"
   description = "Allow inbound traffic from EC2 instances"
 
   ingress {

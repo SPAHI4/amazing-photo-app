@@ -12,7 +12,7 @@ variable "db_app_username" {}
 variable "db_app_password" {}
 
 variable "db_instance_name" {
-    default = "photo-app"
+    default = "photo-app-pg"
 }
 
 variable "db_app_name" {
