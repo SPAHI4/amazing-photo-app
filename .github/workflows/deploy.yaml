@@ -73,14 +73,17 @@ jobs:
           target: migrate
 
       - name: Terraform
+        working-directory: ./terraform
         uses: hashicorp/setup-terraform@v2
 
-      - working-directory: ./terraform
-        name: Terraform init
+      - name: Terraform init
+        working-directory: ./terraform˚
         id: init
         run: terraform init -no-color
 
       - id: plan
+        working-directory: ./terraform
         run: terraform plan -no-color
 
       - run: terraform apply -auto-approve -no-color
+        working-directory: ./terraform
