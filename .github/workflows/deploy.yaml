@@ -50,15 +50,15 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG_SERVER: server-${{ github.sha }}
           IMAGE_TAG_WORKER: worker-${{ github.sha }}
-          IMAGE_TAG_DB: db-${{ github.sha }}
+          IMAGE_TAG_MIGRATE: migrate-${{ github.sha }}
         run: |
           docker build . --target server --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SERVER
           docker build . --target worker --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_WORKER
-          docker build . --target db --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_DB
+          docker build . --target migrate --tag $ECR_REGISTRY/$ECR_REPOSITORY:IMAGE_TAG_MIGRATE
           
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SERVER
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_WORKER
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_DB
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:IMAGE_TAG_MIGRATE
 
       - name: Deploy with terraform
         uses: hashicorp/setup-terraform@v2

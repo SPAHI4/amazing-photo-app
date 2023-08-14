@@ -9,7 +9,7 @@ echo "${env}" > /home/ubuntu/environment.env
 
 docker pull ${repository_url}:server-${var.git_sha}
 docker pull ${repository_url}:worker-${git_sha}
-docker pull ${repository_url}:db-${git_sha}
+docker pull ${repository_url}:migrate-${git_sha}
 
 docker run -d -p 443:443 --restart=always \
   --env-file /home/ubuntu/environment.env \
@@ -21,4 +21,4 @@ docker run -d --restart=always \
 
 docker run -d --rm \
     --env-file /home/ubuntu/environment.env \
-  ${repository_url}:db-${git_sha}
+  ${repository_url}:migrate-${git_sha}
