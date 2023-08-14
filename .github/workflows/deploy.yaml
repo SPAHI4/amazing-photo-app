@@ -107,6 +107,8 @@ jobs:
           echo "bucket=$(terraform output -json | jq -r '.client_bucket.value')" >> $GITHUB_ENV
         working-directory: terraform
 
+      - run: echo ${{ steps.get-bucket.outputs.bucket }};
+
       - name: Deploy Client
         uses: jakejarvis/s3-sync-action@master
         with:
