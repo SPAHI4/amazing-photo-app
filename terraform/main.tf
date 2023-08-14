@@ -179,7 +179,6 @@ resource "aws_db_instance" "default" {
 
 resource "aws_s3_bucket" "client" {
   bucket = local.s3_bucket_client
-  region = var.aws_region
 
   tags = {
     Name = "photo-app"
@@ -208,7 +207,6 @@ resource "cloudflare_record" "s3_website" {
 
 resource "aws_s3_bucket" "storage" {
   bucket = local.s3_bucket_storage
-  region = var.aws_region
 
   tags = {
     Name = "photo-app"
