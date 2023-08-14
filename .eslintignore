@@ -9,3 +9,5 @@ worker/log-error.js
 
 server/.persisted-documents
 server/schema.graphql
+
+db/tests

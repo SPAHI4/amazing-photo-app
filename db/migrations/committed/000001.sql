@@ -1,5 +1,5 @@
 --! Previous: -
---! Hash: sha1:a8fa8348bc31422b141c9f5bfcd6ac6ec9fbae27
+--! Hash: sha1:ddf5d5abe885a02bd870efbac509508ad86d7c5d
 
 -- common
 
@@ -16,9 +16,9 @@ create schema app_public;
 create schema app_hidden;
 create schema app_private;
 
-grant all on schema app_private to :ROLE_OWNER;
-grant all on schema app_hidden to :ROLE_OWNER;
-grant all on schema app_public to :ROLE_OWNER;
+grant all on schema app_private to :DATABASE_OWNER;
+grant all on schema app_hidden to :DATABASE_OWNER;
+grant all on schema app_public to :DATABASE_OWNER;
 
 grant usage on schema public, app_public, app_hidden to :ROLE_VIEWER;
 

@@ -1,4 +1,4 @@
-FROM node:20.5.0-alpine as node
+FROM arm64v8/node:20.5.0-alpine as node
 RUN apk update && apk add curl
 
 ENV PNPM_HOME="/pnpm"
@@ -18,7 +18,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm --filter=server --prod de
 FROM node AS server
 COPY --from=server-prune /usr/src/app/server-prune /usr/src/app/server
 WORKDIR /usr/src/app/server
-EXPOSE 8000
+EXPOSE 443
 CMD ["pnpm", "start"]
 
 FROM build AS worker-prune
@@ -29,3 +29,11 @@ RUN apk add python3 make g++ ffmpeg bash
 COPY --from=worker-prune /usr/src/app/worker-prune /usr/src/app/worker
 WORKDIR /usr/src/app/worker
 CMD ["pnpm", "start"]
+
+FROM build AS migrate-prune
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm --filter=db --prod deploy migrate-prune
+
+FROM node AS migrate
+COPY --from=migrate-prune /usr/src/app/migrate-prune /usr/src/app/migrate
+WORKDIR /usr/src/app/migrate
+CMD ["pnpm", "migrate"]

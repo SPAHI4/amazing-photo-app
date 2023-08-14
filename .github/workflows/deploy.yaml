@@ -2,13 +2,30 @@ name: Deploy
 
 on:
   push:
-    branches: ['main']
+    branches: ['main', 'develop']
   workflow_dispatch:
 
 jobs:
   build:
     name: Build images
     runs-on: ubuntu-latest
+    env:
+      DB_SHA: $(git log -n 1 --format=format:%H -- ./db)
+      TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
+      TF_VAR_db_app_username: ${{ secrets.DB_APP_USERNAME }}
+      TF_VAR_db_app_password: ${{ secrets.DB_APP_PASSWORD }}
+      TF_VAR_deployer_public_key: ${{ secrets.DEPLOYER_PUBLIC_KEY }}
+      TF_VAR_s3_bucket_terraform: ${{ secrets.S3_BUCKET_TERRAFORM }}
+      TF_VAR_git_sha: ${{ github.sha }}
+      TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TF_VAR_jwt_public_key: ${{ secrets.JWT_PUBLIC_KEY }}
+      TF_VAR_jwt_private_key: ${{ secrets.JWT_PRIVATE_KEY }}
+      TF_VAR_ssl_cert: ${{ secrets.SSL_CERT }}
+      TF_VAR_ssl_key: ${{ secrets.SSL_KEY }}
+      TF_VAR_google_refresh_token: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+      TF_VAR_google_credentials_web: ${{ secrets.GOOGLE_CREDENTIALS_WEB }}
+      TF_VAR_google_credentials_installed: ${{ secrets.GOOGLE_CREDENTIALS_INSTALLED }}
 
     steps:
       - name: Checkout
@@ -33,8 +50,19 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG_SERVER: server-${{ github.sha }}
           IMAGE_TAG_WORKER: worker-${{ github.sha }}
+          IMAGE_TAG_DB: db-${{ github.sha }}
         run: |
           docker build . --target server --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SERVER
           docker build . --target worker --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_WORKER
+          docket build . --target db --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_DB
+          
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SERVER
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_WORKER
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_DB
+
+      - name: Deploy with terraform
+        uses: hashicorp/setup-terraform@v2
+        working-directory: ./terraform
+        run: |
+          terraform init
+          terraform apply -auto-approve

@@ -39,6 +39,6 @@ dist-ssr
 .env.override
 docker-compose.yml.override
 
-.terraform/
+terraform/.terraform/
 *.tfstate
 *.tfstate.backup

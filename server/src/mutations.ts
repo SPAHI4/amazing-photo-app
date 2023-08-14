@@ -1,20 +1,11 @@
 import { gql, makeExtendSchemaPlugin } from 'graphile-utils';
 import crypto from 'crypto';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { env } from '@app/config/env.js';
+import { s3 } from './s3.js';
 
-const CONTENT_TYPES: {
-  [key: string]: string | never;
-} = { 'image/jpeg': 'jpeg', 'image/avif': 'avif' };
-
-const s3 = new S3Client({
-  region: env.S3_BUCKET_REGION,
-  credentials: {
-    accessKeyId: env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
-  },
-});
+const CONTENT_TYPES = { 'image/jpeg': 'jpeg', 'image/avif': 'avif' } as const;
 
 export const createImageUploadMutation = makeExtendSchemaPlugin(() => ({
   typeDefs: gql`
@@ -39,8 +30,9 @@ export const createImageUploadMutation = makeExtendSchemaPlugin(() => ({
         if (!Object.keys(CONTENT_TYPES).includes(contentType)) {
           throw new Error(`Content type "${contentType}" is not allowed`);
         }
-
-        const key = `${crypto.randomUUID()}.${CONTENT_TYPES[contentType as string]}`;
+        const key = `${crypto.randomUUID()}.${
+          CONTENT_TYPES[contentType as keyof typeof CONTENT_TYPES]
+        }`;
 
         await pgClient.query('set role to app_postgraphile');
         const {

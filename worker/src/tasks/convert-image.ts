@@ -13,26 +13,7 @@ import { s3 } from '../s3.js';
 import { TempFile } from '../fs.js';
 
 const convertTypes = ['image/avif', 'image/webp', 'image/jpeg'] as const;
-const convertSizes = [3840, 480, 2560, 960, 1440] as const; 
-
-/*
-
-  well, what we're doing here is:
-
-  1. the task is triggered whenever an image is uploaded to s3 and a record is inserted into the images table
-  2. we download the image from s3 to a local temp file
-  3. we use ffmpeg resize the image to different sizes. ffmpeg is a must because it's the only tool that properly handle hdr for the time being
-    3.1 if the image is hdr avif, we set conversionto hdr and create webp fallback
-    3.2 if the image is not hdr avif, we just set conversion to webp
-    3.3 batch the conversion process to 3 at a time, wait for the exec() to finish
-    3.4 whenever an exec() fails, we abort all the exec() processes
-  4. we upload the resized images to s3
-  5. delete all the temp files
-  6. we update the image record with the resized images
-  7. ???
-  8. PROFIT
-
- */
+const convertSizes = [3840, 480, 2560, 960, 1440] as const;
 
 const flatten = <T>(arr: T[][]): T[] => ([] as T[]).concat(...arr);
 

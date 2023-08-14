@@ -21,8 +21,8 @@ if (process.env.NODE_ENV === 'production' && process.env.DEPLOYMENT == null) {
 const cleanedBase = envalid.cleanEnv(process.env, {
   NODE_ENV: envalid.str({ choices: ['development', 'production'], default: 'development' }),
   DEPLOYMENT: envalid.str({
-    choices: ['production', 'stage', 'development'],
-    default: 'development',
+    choices: ['production', 'development', 'localhost'],
+    default: 'localhost',
   }),
 });
 
@@ -40,8 +40,6 @@ dotenv.config({ path: baseEnv });
 const cleaned = envalid.cleanEnv(process.env, {
   DATABASE_URL: envalid.str(),
   ROOT_DATABASE_URL: envalid.str(),
-  AWS_ACCESS_KEY_ID: envalid.str(),
-  AWS_SECRET_ACCESS_KEY: envalid.str(),
   S3_BUCKET_NAME: envalid.str(),
   S3_BUCKET_REGION: envalid.str(),
   DEBUG: envalid.str(),
@@ -118,10 +116,27 @@ if (cleanedBase.NODE_ENV === 'production') {
   });
 }
 
+let aws = {
+  AWS_ACCESS_KEY_ID: null,
+  AWS_SECRET_ACCESS_KEY: null,
+} as {
+  AWS_ACCESS_KEY_ID: string | null;
+  AWS_SECRET_ACCESS_KEY: string | null;
+};
+
+// load aws configs based on environment for production
+if (cleanedBase.NODE_ENV !== 'production') {
+  aws = envalid.cleanEnv(process.env, {
+    AWS_ACCESS_KEY_ID: envalid.str(),
+    AWS_SECRET_ACCESS_KEY: envalid.str(),
+  });
+}
+
 export const env = {
   ...cleanedBase,
   ...cleaned,
   ...jwts,
   ...ssls,
   ...google,
+  ...aws,
 };
