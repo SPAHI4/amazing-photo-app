@@ -79,16 +79,8 @@ variable "google_credentials_web_json" {
   default     = "{}"
 }
 
-variable "google_credentials_web" {
-  default = jsondecode(var.google_credentials_web_json)
-}
-
 variable "google_credentials_installed_json" {
   description = "JSON string of the google_credentials_web"
   type        = string
   default     = "{}"
-}
-
-variable "google_credentials_installed" {
-  default = jsondecode(var.google_credentials_installed_json)
 }

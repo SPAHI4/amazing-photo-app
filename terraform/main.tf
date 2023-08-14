@@ -29,14 +29,14 @@ locals {
   web_domain        = var.web_domain[terraform.workspace]
   db_app_name       = var.db_app_name[terraform.workspace]
   google_credentials_web = {
-    client_id     = var.google_credentials_web.client_id
-    client_secret = var.google_credentials_web.client_secret
-    redirect_uri  = var.google_credentials_web.redirect_uris[0]
+    client_id     = local.google_credentials_web_parsed.client_id
+    client_secret = local.google_credentials_web_parsed.client_secret
+    redirect_uri  = local.google_credentials_web_parsed.redirect_uris[0]
   }
   google_credentials_installed = {
-    client_id     = var.google_credentials_installed.client_id
-    client_secret = var.google_credentials_installed.client_secret
-    redirect_uri  = var.google_credentials_installed.redirect_uris[0]
+    client_id     = local.google_credentials_installed_parsed.client_id
+    client_secret = local.google_credentials_installed_parsed.client_secret
+    redirect_uri  = local.google_credentials_installed_parsed.redirect_uris[0]
   }
 }
 
