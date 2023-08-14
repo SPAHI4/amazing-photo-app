@@ -107,12 +107,12 @@ data "template_file" "environment" {
 
     google_refresh_token = var.google_refresh_token
 
-    installed_google_client_id     = local.google_credentials_installed_parsed.client_id
-    installed_google_client_secret = local.google_credentials_installed_parsed.client_secret
-    installed_google_redirect_uri  = local.google_credentials_installed_parsed.redirect_uris[0]
-    web_google_client_id           = local.google_credentials_web_parsed.client_id
-    web_google_client_secret       = local.google_credentials_web_parsed.client_secret
-    web_google_redirect_uri        = local.google_credentials_web_parsed.redirect_uris[0]
+    installed_google_client_id     = local.google_credentials_installed_parsed.installed.client_id
+    installed_google_client_secret = local.google_credentials_installed_parsed.installed.client_secret
+    installed_google_redirect_uri  = local.google_credentials_installed_parsed.installed.redirect_uris[0]
+    web_google_client_id           = local.google_credentials_web_parsed.web.client_id
+    web_google_client_secret       = local.google_credentials_web_parsed.web.client_secret
+    web_google_redirect_uri        = local.google_credentials_web_parsed.web.redirect_uris[0]
   }
 }
 
