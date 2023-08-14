@@ -90,6 +90,8 @@ jobs:
 
       - name: Terraform
         uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
 
       - name: Terraform init
         working-directory: terraform
@@ -99,18 +101,18 @@ jobs:
       - run: terraform apply -auto-approve -no-color
         working-directory: terraform
 
-      - name: Get terraform outputs
-        uses: dflook/terraform-output@v1
-        id: tf-outputs
-        with:
-          path: terraform
+      - name: Get S3 bucket
+        id: get-bucket
+        run: |
+          echo "bucket=$(terraform output -json | jq -r '.client_bucket.value')" >> $GITHUB_ENV
+        working-directory: terraform
 
       - name: Deploy Client
         uses: jakejarvis/s3-sync-action@master
         with:
           args: --acl public-read --follow-symlinks --delete
         env:
-          AWS_S3_BUCKET: ${{ steps.tf-outputs.outputs.client_bucket }}
+          AWS_S3_BUCKET: ${{ steps.get-bucket.outputs.bucket }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: eu-north-1
