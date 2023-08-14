@@ -16,28 +16,15 @@ terraform {
   }
 }
 
-
-locals {
-  google_credentials_web_parsed       = jsondecode(var.google_credentials_web_json)
-  google_credentials_installed_parsed = jsondecode(var.google_credentials_installed_json)
-}
-
 locals {
   s3_bucket_client  = var.s3_bucket_client[terraform.workspace]
   s3_bucket_storage = var.s3_bucket_storage[terraform.workspace]
   api_domain        = var.api_domain[terraform.workspace]
   web_domain        = var.web_domain[terraform.workspace]
   db_app_name       = var.db_app_name[terraform.workspace]
-  google_credentials_web = {
-    client_id     = local.google_credentials_web_parsed.client_id
-    client_secret = local.google_credentials_web_parsed.client_secret
-    redirect_uri  = local.google_credentials_web_parsed.redirect_uris[0]
-  }
-  google_credentials_installed = {
-    client_id     = local.google_credentials_installed_parsed.client_id
-    client_secret = local.google_credentials_installed_parsed.client_secret
-    redirect_uri  = local.google_credentials_installed_parsed.redirect_uris[0]
-  }
+
+  google_credentials_web_parsed       = jsondecode(var.google_credentials_web_json)
+  google_credentials_installed_parsed = jsondecode(var.google_credentials_installed_json)
 }
 
 provider "aws" {
@@ -120,8 +107,12 @@ data "template_file" "environment" {
 
     google_refresh_token = var.google_refresh_token
 
-    google_credentials_installed = local.google_credentials_installed
-    google_credentials_web       = local.google_credentials_web
+    installed_google_client_id     = local.google_credentials_installed_parsed.client_id
+    installed_google_client_secret = local.google_credentials_installed_parsed.client_secret
+    installed_google_redirect_uri  = local.google_credentials_installed_parsed.redirect_uris[0]
+    web_google_client_id           = local.google_credentials_web_parsed.client_id
+    web_google_client_secret       = local.google_credentials_web_parsed.client_secret
+    web_google_redirect_uri        = local.google_credentials_web_parsed.redirect_uris[0]
   }
 }
 
