@@ -99,22 +99,15 @@ jobs:
         run: terraform init -no-color
 
       - run: terraform apply -auto-approve -no-color
+        id: apply
         working-directory: terraform
-
-      - name: Get S3 bucket
-        id: get-bucket
-        run: |
-          echo "bucket=$(terraform output -json | jq -r '.client_bucket.value')" >> $GITHUB_ENV
-        working-directory: terraform
-
-      - run: echo ${{ steps.get-bucket.outputs.bucket }};
 
       - name: Deploy Client
         uses: jakejarvis/s3-sync-action@master
         with:
           args: --acl public-read --follow-symlinks --delete
         env:
-          AWS_S3_BUCKET: ${{ steps.get-bucket.outputs.bucket }}
+          AWS_S3_BUCKET: ${{ steps.apply.outputs.client_bucket }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: eu-north-1
