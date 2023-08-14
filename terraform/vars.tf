@@ -10,7 +10,6 @@ variable "db_password" {}
 
 variable "db_app_username" {}
 variable "db_app_password" {}
-variable "PUBLIC" {}
 
 variable "db_instance_name" {
     default = "photo-app"
