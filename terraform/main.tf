@@ -21,6 +21,7 @@ locals {
   s3_bucket_storage = var.s3_bucket_storage[terraform.workspace]
   api_domain        = var.api_domain[terraform.workspace]
   web_domain        = var.web_domain[terraform.workspace]
+  db_app_name       = var.db_app_name[terraform.workspace]
 }
 
 provider "aws" {
@@ -89,8 +90,8 @@ data "template_file" "environment" {
   template = file("${path.module}/server.tpl.env")
 
   vars = {
-    root_database_url = "postgres://${aws_db_instance.default.username}:${aws_db_instance.default.password}@${aws_db_instance.default.address}:${aws_db_instance.default.port}/${aws_db_instance.default.name}",
-    database_url = "postgres://${var.db_app_username}:${var.db_app_password}@${aws_db_instance.default.address}:${aws_db_instance.default.port}/${var.db_app_name}",
+    root_database_url = "postgres://${aws_db_instance.default.username}:${aws_db_instance.default.password}@${aws_db_instance.default.address}:${aws_db_instance.default.port}/postgres",
+    database_url = "postgres://${var.db_app_username}:${var.db_app_password}@${aws_db_instance.default.address}:${aws_db_instance.default.port}/${local.db_app_name}",
 
     aws_region     = var.aws_region
     s3_bucket_name = aws_s3_bucket.storage.bucket

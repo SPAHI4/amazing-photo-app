@@ -15,6 +15,13 @@ variable "db_instance_name" {
     default = "photo-app"
 }
 
+variable "db_app_name" {
+  default = {
+    development = "photo_app_dev"
+    production  = "photo_app_prod"
+  }
+}
+
 variable "deployer_public_key" {}
 
 variable "s3_bucket_terraform" {}
