@@ -24,8 +24,8 @@ jobs:
       TF_VAR_ssl_cert: ${{ secrets.SSL_CERT }}
       TF_VAR_ssl_key: ${{ secrets.SSL_KEY }}
       TF_VAR_google_refresh_token: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
-      TF_VAR_google_credentials_web: ${{ secrets.GOOGLE_CREDENTIALS_WEB }}
-      TF_VAR_google_credentials_installed: ${{ secrets.GOOGLE_CREDENTIALS_INSTALLED }}
+      TF_VAR_google_credentials_web_json: ${{ secrets.GOOGLE_CREDENTIALS_WEB_JSON }}
+      TF_VAR_google_credentials_installed_json: ${{ secrets.GOOGLE_CREDENTIALS_INSTALLED_JSON }}
 
     steps:
       - name: Checkout
@@ -47,48 +47,24 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Cache server build
-        id: check_server_image
-        run: |
-          docker pull ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:server-${{ github.sha }} && echo "Server image exists" 
-          echo "::set-output name=SERVER_IMAGE_EXISTS::$?"
-        continue-on-error: true
-
       - name: Server image
         uses: docker/build-push-action@v4
-        if: steps.check_server_image.outputs.SERVER_IMAGE_EXISTS != '0'
         with:
           context: .
           push: true
           tags: ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:server-${{ github.sha }}
           target: server
 
-      - name: Cache worker build
-        id: check_worker_image
-        run: |
-          docker pull ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:worker-${{ github.sha }} && echo "Worker image exists" 
-          echo "::set-output name=WORKER_IMAGE_EXISTS::$?"
-        continue-on-error: true
-
       - name: Worker image
         uses: docker/build-push-action@v4
-        if: steps.check_worker_image.outputs.WORKER_IMAGE_EXISTS != '0'
         with:
           context: .
           push: true
           tags: ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:worker-${{ github.sha }}
           target: worker
 
-      - name: Cache migrate build
-        id: check_migrate_image
-        run: |
-          docker pull ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:worker-${{ github.sha }} && echo "Migrate image exists" 
-          echo "::set-output name=MIGRATE_IMAGE_EXISTS::$?"
-        continue-on-error: true
-
       - name: Migrate image
         uses: docker/build-push-action@v4
-        if: steps.check_migrate_image.outputs.MIGRATE_IMAGE_EXISTS != '0'
         with:
           context: .
           push: true
