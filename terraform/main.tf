@@ -91,15 +91,21 @@ data "template_file" "environment" {
 
   vars = {
     root_database_url = "postgres://${aws_db_instance.default.username}:${aws_db_instance.default.password}@${aws_db_instance.default.address}:${aws_db_instance.default.port}/postgres",
-    database_url = "postgres://${var.db_app_username}:${var.db_app_password}@${aws_db_instance.default.address}:${aws_db_instance.default.port}/${local.db_app_name}",
+    database_url      = "postgres://${var.db_app_username}:${var.db_app_password}@${aws_db_instance.default.address}:${aws_db_instance.default.port}/${local.db_app_name}",
 
-    aws_region     = var.aws_region
-    s3_bucket_name = aws_s3_bucket.storage.bucket
+    s3_bucket_region = var.aws_region
+    s3_bucket_name   = aws_s3_bucket.storage.bucket
 
     jwt_public_key  = var.jwt_public_key
     jwt_private_key = var.jwt_private_key
-    ssl_cert       = var.ssl_cert
-    ssl_key        = var.ssl_key
+
+    ssl_cert = var.ssl_cert
+    ssl_key  = var.ssl_key
+
+    google_refresh_token = var.google_refresh_token
+
+    google_credentials_installed = var.google_credentials_installed
+    google_credentials_web       = var.google_credentials_web
   }
 }
 
@@ -107,9 +113,9 @@ data "template_file" "init" {
   template = file("${path.module}/init-servers.tpl.sh")
 
   vars = {
-    env = data.template_file.environment.rendered
+    env            = data.template_file.environment.rendered
     repository_url = data.aws_ecr_repository.ecr_repository.repository_url
-    git_sha = var.git_sha
+    git_sha        = var.git_sha
   }
 }
 
@@ -170,7 +176,7 @@ resource "aws_db_instance" "default" {
   password               = var.db_password
   publicly_accessible    = false
   vpc_security_group_ids = [aws_security_group.allow_rds.id]
-  tags                   = {
+  tags = {
     Name = "photo-app"
   }
   iam_database_authentication_enabled = true

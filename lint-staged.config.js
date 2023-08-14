@@ -22,6 +22,7 @@ const fixableConfig = {
     return [`eslint --fix ${filteredFiles}`];
   },
   '*.json': ['prettier --write'],
+  '*.tf': ['terraform fmt'],
 };
 
 const ciConfig = {

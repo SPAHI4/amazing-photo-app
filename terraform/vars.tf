@@ -12,7 +12,7 @@ variable "db_app_username" {}
 variable "db_app_password" {}
 
 variable "db_instance_name" {
-    default = "photo-app-pg"
+  default = "photo-app-pg"
 }
 
 variable "db_app_name" {
@@ -77,7 +77,7 @@ variable "google_credentials_web" {
   type = object({
     client_id     = string
     client_secret = string
-    redirect_uri = string
+    redirect_uri  = string
   })
 }
 
@@ -85,6 +85,6 @@ variable "google_credentials_installed" {
   type = object({
     client_id     = string
     client_secret = string
-    redirect_uri = string
+    redirect_uri  = string
   })
 }
