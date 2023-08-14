@@ -10,9 +10,9 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = var.s3_bucket_terraform
+    bucket = "spahi4-photo-app-terraform"
     key    = "terraform.tfstate"
-    region = var.aws_region
+    region = "eu-north-1"
   }
 }
 

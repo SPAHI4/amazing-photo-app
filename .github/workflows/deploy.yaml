@@ -10,6 +10,7 @@ jobs:
     name: Build images
     runs-on: ubuntu-latest
     env:
+      TF_WORKSPACE: ${{ github.ref == 'refs/heads/main' && 'production' || (github.ref == 'refs/heads/develop' && 'development') }}
       DB_SHA: $(git log -n 1 --format=format:%H -- ./db)
       TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
       TF_VAR_db_app_username: ${{ secrets.DB_APP_USERNAME }}
@@ -60,8 +61,11 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_WORKER
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:IMAGE_TAG_MIGRATE
 
-      - name: Deploy with terraform
+      - name: Terraform
         uses: hashicorp/setup-terraform@v2
+
+      - name: Set Terraform Workspace
+        run: terraform workspace select ${{ env.TF_WORKSPACE }}
 
       - working-directory: ./terraform
         name: Terraform init
