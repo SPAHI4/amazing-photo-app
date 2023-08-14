@@ -73,7 +73,6 @@ jobs:
           target: migrate
 
       - name: Terraform
-        working-directory: ./terraform
         uses: hashicorp/setup-terraform@v2
 
       - name: Terraform init
