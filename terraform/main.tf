@@ -45,7 +45,7 @@ data "aws_ecr_repository" "ecr_repository" {
   name = var.ecr_repository_name
 }
 
-resource "aws_security_group" "allow_web" {
+resource "aws_security_group" "allow_ec2" {
   name        = "allow_web"
   description = "Allow web inbound traffic"
 
@@ -119,7 +119,7 @@ resource "aws_instance" "app" {
 
   key_name = aws_key_pair.deployer.key_name
 
-  vpc_security_group_ids = [aws_security_group.allow_web.id, aws_security_group.allow_db.id]
+  vpc_security_group_ids = [aws_security_group.allow_ec2.id, aws_security_group.allow_rds.id]
 
   tags = {
     Name = "photo-app"
@@ -128,7 +128,7 @@ resource "aws_instance" "app" {
   user_data = data.template_file.init.rendered
 }
 
-resource "aws_security_group" "allow_db" {
+resource "aws_security_group" "allow_rds" {
   name        = "allow_db"
   description = "Allow inbound traffic from EC2 instances"
 
@@ -169,7 +169,7 @@ resource "aws_db_instance" "default" {
   username               = "postgres"
   password               = var.db_password
   publicly_accessible    = false
-  vpc_security_group_ids = [aws_security_group.allow_db.id]
+  vpc_security_group_ids = [aws_security_group.allow_rds.id]
   tags                   = {
     Name = "photo-app"
   }
@@ -179,6 +179,7 @@ resource "aws_db_instance" "default" {
 
 resource "aws_s3_bucket" "client" {
   bucket = local.s3_bucket_client
+  region = var.aws_region
 
   tags = {
     Name = "photo-app"
@@ -207,6 +208,7 @@ resource "cloudflare_record" "s3_website" {
 
 resource "aws_s3_bucket" "storage" {
   bucket = local.s3_bucket_storage
+  region = var.aws_region
 
   tags = {
     Name = "photo-app"
