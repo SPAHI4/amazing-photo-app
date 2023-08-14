@@ -10,8 +10,8 @@ jobs:
     name: Build images
     runs-on: ubuntu-latest
     env:
+      TF_LOG: DEBUG
       TF_WORKSPACE: ${{ github.ref == 'refs/heads/main' && 'production' || (github.ref == 'refs/heads/develop' && 'development') }}
-      DB_SHA: $(git log -n 1 --format=format:%H -- ./db)
       TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
       TF_VAR_db_app_username: ${{ secrets.DB_APP_USERNAME }}
       TF_VAR_db_app_password: ${{ secrets.DB_APP_PASSWORD }}
@@ -48,24 +48,48 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      - name: Cache server build
+        id: check_server_image
+        run: |
+          docker pull ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:server-${{ github.sha }} && echo "Server image exists" 
+          echo "::set-output name=SERVER_IMAGE_EXISTS::$?"
+        continue-on-error: true
+
       - name: Server image
         uses: docker/build-push-action@v4
+        if: steps.check_server_image.outputs.SERVER_IMAGE_EXISTS != '0'
         with:
           context: .
           push: true
           tags: ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:server-${{ github.sha }}
           target: server
 
+      - name: Cache worker build
+        id: check_worker_image
+        run: |
+          docker pull ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:worker-${{ github.sha }} && echo "Worker image exists" 
+          echo "::set-output name=WORKER_IMAGE_EXISTS::$?"
+        continue-on-error: true
+
       - name: Worker image
         uses: docker/build-push-action@v4
+        if: steps.check_server_image.outputs.WORKER_IMAGE_EXISTS != '0'
         with:
           context: .
           push: true
           tags: ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:worker-${{ github.sha }}
           target: worker
 
+      - name: Cache migrate build
+        id: check_migrate_image
+        run: |
+          docker pull ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:worker-${{ github.sha }} && echo "Migrate image exists" 
+          echo "::set-output name=MIGRATE_IMAGE_EXISTS::$?"
+        continue-on-error: true
+
       - name: Migrate image
         uses: docker/build-push-action@v4
+        if: steps.check_server_image.outputs.MIGRATE_IMAGE_EXISTS != '0'
         with:
           context: .
           push: true
