@@ -96,17 +96,17 @@ jobs:
         id: init
         run: terraform init -no-color
 
-      - id: plan
-        working-directory: terraform
-        run: terraform plan -no-color
-
       - run: terraform apply -auto-approve -no-color
+        working-directory: terraform
+
+      - name: Debug terraform output
+        run: terraform output -json
         working-directory: terraform
 
       - name: Get S3 bucket
         id: get-bucket
         run: |
-          echo "bucket=$(terraform output -json | jq -r '.client_bucket.value')" >> $GITHUB_ENV
+          echo "bucket=$(terraform output -json | jq -r '.client_bucket')" >> $GITHUB_ENV
         working-directory: terraform
 
       - name: Deploy Client
