@@ -7,7 +7,7 @@ systemctl start docker
 systemctl enable docker
 echo "${env}" > /home/ubuntu/environment.env
 
-docker pull ${repository_url}:server-${var.git_sha}
+docker pull ${repository_url}:server-${git_sha}
 docker pull ${repository_url}:worker-${git_sha}
 docker pull ${repository_url}:migrate-${git_sha}
 
