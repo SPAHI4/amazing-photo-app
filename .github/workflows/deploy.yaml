@@ -45,27 +45,35 @@ jobs:
         id: loginecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push images to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.loginecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-          IMAGE_TAG_SERVER: server-${{ github.sha }}
-          IMAGE_TAG_WORKER: worker-${{ github.sha }}
-          IMAGE_TAG_MIGRATE: migrate-${{ github.sha }}
-        run: |
-          docker build . --target server --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SERVER
-          docker build . --target worker --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_WORKER
-          docker build . --target migrate --tag $ECR_REGISTRY/$ECR_REPOSITORY:IMAGE_TAG_MIGRATE
-          
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SERVER
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_WORKER
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:IMAGE_TAG_MIGRATE
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Server image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:server-${{ github.sha }}
+          target: server
+
+      - name: Worker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:worker-${{ github.sha }}
+          target: worker
+
+      - name: Migrate image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:migrate-${{ github.sha }}
+          target: migrate
 
       - name: Terraform
         uses: hashicorp/setup-terraform@v2
-
-      - name: Set Terraform Workspace
-        run: terraform workspace select ${{ env.TF_WORKSPACE }}
 
       - working-directory: ./terraform
         name: Terraform init
