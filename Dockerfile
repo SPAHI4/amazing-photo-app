@@ -9,6 +9,7 @@ RUN pnpm add pnpm -g
 
 FROM node AS build
 COPY . /usr/src/app
+COPY ./client/src/__generated__/persisted-documents.json /usr/src/app/client/src/__generated__/persisted-documents.json
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build

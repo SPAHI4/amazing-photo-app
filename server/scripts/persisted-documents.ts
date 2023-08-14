@@ -1,8 +1,10 @@
 import * as fs from 'node:fs/promises';
+import path from 'path';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+const dirname = new URL('.', import.meta.url).pathname;
+
 const clientFile = await fs.readFile(
-  '../client/src/__generated__/persisted-documents.json',
+  path.resolve(dirname, '../../client/src/__generated__/persisted-documents.json'),
   'utf8',
 );
 const clientJson = JSON.parse(clientFile);

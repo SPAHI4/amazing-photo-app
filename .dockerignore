@@ -1,4 +1,5 @@
 client
+!client/src/__generated__/persisted-documents.json
 cert-local
 
 # .gitignore below
