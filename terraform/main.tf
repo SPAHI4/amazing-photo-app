@@ -132,7 +132,7 @@ resource "aws_instance" "app" {
 
   key_name = aws_key_pair.deployer.key_name
 
-  vpc_security_group_ids = [aws_security_group.allow_ec2.id, aws_security_group.allow_rds.id]
+  vpc_security_group_ids = [aws_security_group.allow_ec2.id]
 
   tags = {
     Name = "photo-app"
