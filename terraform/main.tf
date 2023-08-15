@@ -189,6 +189,7 @@ resource "aws_db_instance" "default" {
   iam_database_authentication_enabled = true
   auto_minor_version_upgrade          = true
   apply_immediately                   = true
+  skip_final_snapshot                 = true
 
   # init script
   publicly_accessible = true
