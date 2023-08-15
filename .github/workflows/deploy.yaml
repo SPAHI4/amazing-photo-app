@@ -101,6 +101,8 @@ jobs:
 
       - name: Terraform
         uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
 
       - name: Terraform init
         working-directory: terraform
