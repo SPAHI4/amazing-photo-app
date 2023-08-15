@@ -214,14 +214,8 @@ resource "null_resource" "db_init" {
     db_app_name = local.db_app_name
   }
 
-  provisioner "file" {
-    content     = data.template_file.db_init.rendered
-    destination = "/tmp/init-db.sql"
-  }
-
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
-    working_dir = "/tmp"
     command     = <<EOF
       aws rds-data execute-statement \
           --resource-arn ${aws_db_instance.default.arn} \
@@ -229,7 +223,7 @@ resource "null_resource" "db_init" {
           --database postges \
           --username ${aws_db_instance.default.username} \
           --password ${var.db_password} \
-          --sql < init-db.sql
+          --sql "${replace(data.template_file.db_init.rendered, "\"", "\\\"")}"
     EOF
   }
 
