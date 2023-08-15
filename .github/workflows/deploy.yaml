@@ -116,7 +116,7 @@ jobs:
         id: terraform-output
         working-directory: terraform
         run: |
-          CLIENT_BUCKET = (terraform output client_bucket -raw);
+          CLIENT_BUCKET=$(terraform output client_bucket -raw)
           echo "CLIENT_BUCKET = $CLIENT_BUCKET;"
           echo "{client_bucket}={$CLIENT_BUCKET}" >> $GITHUB_OUTPUT
 
