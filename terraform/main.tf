@@ -220,7 +220,9 @@ resource "null_resource" "db_init" {
       PGPORT     = aws_db_instance.default.port
     }
     command = <<EOF
-     psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT -c "$SQL"
+     psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT  --set=ON_ERROR_STOP=on -c '\
+     \set AUTOCOMMIT on \
+     $SQL'
     EOF
   }
 

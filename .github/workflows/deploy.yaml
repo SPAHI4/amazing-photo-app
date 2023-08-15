@@ -69,6 +69,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Set up Docker Buildx
+        if: 0
         uses: docker/setup-buildx-action@v2
 
       - name: Server image
