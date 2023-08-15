@@ -190,33 +190,8 @@ resource "aws_db_instance" "default" {
   auto_minor_version_upgrade          = true
   apply_immediately                   = true
   skip_final_snapshot                 = true
-
-  # init script
-  publicly_accessible = true
-  lifecycle {
-    ignore_changes = [
-      publicly_accessible,
-    ]
-  }
+  publicly_accessible                 = true
 }
-
-resource "aws_secretsmanager_secret" "db-pass" {
-  name = "db-pass-${var.db_instance_name}"
-}
-
-# secret to store the password
-resource "aws_secretsmanager_secret_version" "db-pass-val" {
-  secret_id = aws_secretsmanager_secret.db-pass.id
-  secret_string = jsonencode(
-    {
-      username = aws_db_instance.default.username
-      password = aws_db_instance.default.password
-      engine   = aws_db_instance.default.engine
-      host     = aws_db_instance.default.address
-    }
-  )
-}
-
 
 data "template_file" "db_init" {
   template = file("${path.module}/init-db.tpl.sql")
@@ -237,19 +212,15 @@ resource "null_resource" "db_init" {
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      SQL                   = data.template_file.db_init.rendered
-      RESOURCE_ARN          = aws_db_instance.default.arn
-      SECRET_ARN            = aws_secretsmanager_secret.db-pass.arn
-      AWS_ACCESS_KEY_ID     = var.aws_access_key_id
-      AWS_SECRET_ACCESS_KEY = var.aws_secret_access_key
+      SQL        = data.template_file.db_init.rendered
+      PGHOST     = aws_db_instance.default.address
+      PGUSER     = aws_db_instance.default.username
+      PGPASSWORD = aws_db_instance.default.password
+      PGDATABASE = "postgres"
+      PGPORT     = aws_db_instance.default.port
     }
     command = <<EOF
-      aws rds-data execute-statement \
-          --resource-arn "$RESOURCE_ARN" \
-          --secret-arn "$SECRET_ARN" \
-          --region "${var.aws_region}" \
-          --database "${aws_db_instance.default.db_name}" \
-          --sql "$SQL"
+     psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT -c "$SQL"
     EOF
   }
 
