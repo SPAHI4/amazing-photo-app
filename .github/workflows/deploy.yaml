@@ -97,10 +97,6 @@ jobs:
         working-directory: terraform
         run: terraform init -no-color
 
-      - name: Terraform refresh
-        working-directory: terraform
-        run: terraform refresh -no-color
-
       - name: Terraform Apply
         id: terraform-apply
         working-directory: terraform
