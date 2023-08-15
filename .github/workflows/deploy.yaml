@@ -26,6 +26,8 @@ jobs:
       TF_VAR_google_refresh_token: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
       TF_VAR_google_credentials_web_json: ${{ secrets.GOOGLE_CREDENTIALS_WEB_JSON }}
       TF_VAR_google_credentials_installed_json: ${{ secrets.GOOGLE_CREDENTIALS_INSTALLED_JSON }}
+      TF_VAR_aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      TF_VAR_aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     steps:
       - name: Checkout

@@ -2,6 +2,9 @@ variable "aws_region" {
   default = "eu-north-1"
 }
 
+variable "aws_access_key_id" {}
+variable "aws_secret_access_key" {}
+
 variable "ecr_repository_name" {
   default = "spahi4-photo-app"
 }

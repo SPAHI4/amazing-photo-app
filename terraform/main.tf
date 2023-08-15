@@ -237,9 +237,11 @@ resource "null_resource" "db_init" {
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      SQL          = data.template_file.db_init.rendered
-      RESOURCE_ARN = aws_db_instance.default.arn
-      SECRET_ARN   = aws_secretsmanager_secret.db-pass.arn
+      SQL                   = data.template_file.db_init.rendered
+      RESOURCE_ARN          = aws_db_instance.default.arn
+      SECRET_ARN            = aws_secretsmanager_secret.db-pass.arn
+      AWS_ACCESS_KEY_ID     = var.aws_access_key_id
+      AWS_SECRET_ACCESS_KEY = var.aws_secret_access_key
     }
     command = <<EOF
       aws rds-data execute-statement \
