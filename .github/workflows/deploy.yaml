@@ -95,19 +95,29 @@ jobs:
 
       - name: Terraform init
         working-directory: terraform
-        id: init
         run: terraform init -no-color
 
-      - run: terraform apply -auto-approve -no-color
-        id: apply
+      - name: Terraform Apply
+        id: terraform-apply
         working-directory: terraform
+        run: |
+          terraform apply -auto-approve
+          
+          # Export Terraform output as step output
+          $terraformOutput = (terraform output -json | ConvertFrom-Json -AsHashtable)     
+          foreach ($key in $terraformOutput.Keys) {
+            $outputVariableValue = $terraformOutput[$key].value
+            Write-Output "::set-output name=${key}::${outputVariableValue}"
+            Write-Output "TF_OUT_${key}=${outputVariableValue}" >> $env:GITHUB_ENV
+          }
+        shell: pwsh
 
       - name: Deploy Client
         uses: jakejarvis/s3-sync-action@master
         with:
           args: --acl public-read --follow-symlinks --delete
         env:
-          AWS_S3_BUCKET: ${{ steps.apply.outputs.client_bucket }}
+          AWS_S3_BUCKET: ${{ steps.terraform-apply.outputs.client_bucket }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: eu-north-1
