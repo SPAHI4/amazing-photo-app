@@ -200,7 +200,7 @@ resource "aws_db_instance" "default" {
 }
 
 resource "aws_secretsmanager_secret" "db-pass" {
-  name = "db-pass-${random_id.id.hex}"
+  name = "db-pass-${var.db_instance_name}"
 }
 
 # secret to store the password
