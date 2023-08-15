@@ -2,7 +2,7 @@ DO
 $$
   BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'app_postgraphile') THEN
-      CREATE ROLE app_postgraphile WITH LOGIN PASSWORD "${db_app_password}";
+      CREATE ROLE app_postgraphile WITH LOGIN PASSWORD '${db_app_password}';
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'app_user') THEN
       CREATE ROLE app_user;
@@ -17,7 +17,7 @@ $$
 $$;
 
 -- Create the database
-CREATE DATABASE "${db_app_name}";
+CREATE DATABASE "${db_app_name}" WITH OWNER = app_postgraphile;
 
 -- Grant privileges to the roles
 GRANT app_anonymous TO app_user;
