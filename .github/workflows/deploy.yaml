@@ -116,7 +116,7 @@ jobs:
         id: terraform-output
         working-directory: terraform
         run: |
-          echo "::set-output name=client_bucket::$(terraform output client_bucket -raw)"
+          echo "{client_bucket = \"$(terraform output client_bucket -raw)\"}" >> $GITHUB_ENV
 
       - name: Deploy Client
         uses: jakejarvis/s3-sync-action@master
