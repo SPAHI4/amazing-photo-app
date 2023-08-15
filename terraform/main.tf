@@ -141,25 +141,6 @@ resource "aws_instance" "app" {
   user_data = data.template_file.init.rendered
 }
 
-resource "aws_security_group" "allow_rds" {
-  name        = "allow_rds"
-  description = "Allow inbound traffic from EC2 instances"
-
-  ingress {
-    description = "PostgreSQL from VPC"
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
 resource "aws_eip" "app" {
   domain   = "vpc"
   instance = aws_instance.app.id
@@ -174,15 +155,14 @@ resource "cloudflare_record" "ecs_api" {
 }
 
 resource "aws_db_instance" "default" {
-  identifier             = var.db_instance_name
-  allocated_storage      = 20
-  engine                 = "postgres"
-  engine_version         = "15.3"
-  instance_class         = "db.t3.micro"
-  username               = "postgres"
-  db_name                = "postgres"
-  password               = var.db_password
-  vpc_security_group_ids = [aws_security_group.allow_rds.id]
+  identifier        = var.db_instance_name
+  allocated_storage = 20
+  engine            = "postgres"
+  engine_version    = "15.3"
+  instance_class    = "db.t3.micro"
+  username          = "postgres"
+  db_name           = "postgres"
+  password          = var.db_password
   tags = {
     Name = "photo-app"
   }
