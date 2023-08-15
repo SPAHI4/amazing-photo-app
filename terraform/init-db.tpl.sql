@@ -16,9 +16,6 @@ $$
   END
 $$;
 
--- Create the database
-CREATE DATABASE "${db_app_name}" WITH OWNER = app_postgraphile;
-
 -- Grant privileges to the roles
 GRANT app_anonymous TO app_user;
 GRANT app_user TO app_admin;

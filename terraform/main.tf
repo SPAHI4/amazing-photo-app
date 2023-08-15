@@ -182,7 +182,7 @@ resource "aws_db_instance" "default" {
   username               = "postgres"
   db_name                = "postgres"
   password               = var.db_password
-  vpc_security_group_ids = []
+  vpc_security_group_ids = [aws_security_group.allow_rds.id]
   tags = {
     Name = "photo-app"
   }
@@ -220,9 +220,8 @@ resource "null_resource" "db_init" {
       PGPORT     = aws_db_instance.default.port
     }
     command = <<EOF
-     psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT  --set=ON_ERROR_STOP=on -c '\
-     \set AUTOCOMMIT on \
-     $SQL'
+      createdb -h $PGHOST -U $PGUSER -p $PGPORT ${var.db_app_name} && \
+      psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT -c "$SQL";
     EOF
   }
 
