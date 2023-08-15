@@ -16,8 +16,7 @@ jobs:
       TF_VAR_db_app_password: ${{ secrets.DB_APP_PASSWORD }}
       TF_VAR_deployer_public_key: ${{ secrets.DEPLOYER_PUBLIC_KEY }}
       TF_VAR_s3_bucket_terraform: ${{ secrets.S3_BUCKET_TERRAFORM }}
-      #TF_VAR_git_sha: ${{ github.sha }}
-      TF_VAR_git_sha: d524106
+      TF_VAR_git_sha: ${{ github.sha }}
       TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       TF_VAR_jwt_public_key: ${{ secrets.JWT_PUBLIC_KEY }}
@@ -38,22 +37,20 @@ jobs:
 
       - uses: pnpm/action-setup@v2
         name: pnpm setup
-        if: 0
         with:
           version: 8
+
       - name: Use Node.js
         uses: actions/setup-node@v3
-        if: 0
         with:
           node-version: '20.5'
           cache: 'pnpm'
+
       - name: pnpm install
-        if: 0
         run: |
           pnpm --filter client install
 
       - name: Build client
-        if: 0
         run: |
           pnpm --filter client run build
 
@@ -69,12 +66,10 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Set up Docker Buildx
-        if: 0
         uses: docker/setup-buildx-action@v2
 
       - name: Server image
         uses: docker/build-push-action@v4
-        if: 0
         with:
           context: .
           push: true
@@ -83,7 +78,6 @@ jobs:
 
       - name: Worker image
         uses: docker/build-push-action@v4
-        if: 0
         with:
           context: .
           push: true
@@ -92,7 +86,6 @@ jobs:
 
       - name: Migrate image
         uses: docker/build-push-action@v4
-        if: 0
         with:
           context: .
           push: true
