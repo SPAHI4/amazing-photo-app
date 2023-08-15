@@ -7,13 +7,16 @@
 #}
 
 output "api_origin" {
-  value = "https://${local.api_domain}"
+  value     = "https://${local.api_domain}"
+  sensitive = false
 }
 
 output "web_origin" {
-  value = "https://${local.web_domain}"
+  value     = "https://${local.web_domain}"
+  sensitive = false
 }
 
 output "client_bucket" {
-  value = aws_s3_bucket.client.bucket
+  value     = aws_s3_bucket.client.bucket
+  sensitive = false
 }

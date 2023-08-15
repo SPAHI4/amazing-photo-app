@@ -12,7 +12,10 @@ terraform {
       source  = "hashicorp/template"
       version = "~> 2.2.0"
     }
-
+    null = {
+      source  = "hashicorp/null"
+      version = "~> v3.2.1"
+    }
   }
   backend "s3" {
     bucket = "spahi4-photo-app-terraform"
