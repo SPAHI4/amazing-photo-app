@@ -181,13 +181,59 @@ resource "aws_db_instance" "default" {
   instance_class         = "db.t3.micro"
   username               = "postgres"
   password               = var.db_password
-  publicly_accessible    = false
   vpc_security_group_ids = [aws_security_group.allow_rds.id]
   tags = {
     Name = "photo-app"
   }
   iam_database_authentication_enabled = true
   auto_minor_version_upgrade          = true
+  apply_immediately                   = true
+
+  # init script
+  publicly_accessible = true
+  lifecycle {
+    ignore_changes = [
+      publicly_accessible,
+    ]
+  }
+}
+
+data "template_file" "db_init" {
+  template = file("${path.module}/init-db.tpl.sql")
+
+  vars = {
+    db_app_name     = local.db_app_name
+    db_app_username = var.db_app_username
+    db_app_password = var.db_app_password
+  }
+}
+
+resource "null_resource" "db_init" {
+  triggers = {
+    instance_id = aws_db_instance.default.id
+    db_app_name = local.db_app_name
+  }
+
+  provisioner "file" {
+    content     = data.template_file.db_init.rendered
+    destination = "/tmp/init-db.sql"
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+      DB_INIT_CONTENT=$(< /tmp/init-db.sql)
+
+      aws rds-data execute-statement \
+          --resource-arn ${aws_db_instance.default.arn} \
+          --region ${var.aws_region} \
+          --database postges \
+          --username ${aws_db_instance.default.username} \
+          --password ${var.db_password} \
+          --sql "$DB_INIT_CONTENT"
+    EOF
+  }
+
+  depends_on = [aws_db_instance.default]
 }
 
 resource "aws_s3_bucket" "client" {
