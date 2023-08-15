@@ -180,6 +180,7 @@ resource "aws_db_instance" "default" {
   engine_version         = "15.3"
   instance_class         = "db.t3.micro"
   username               = "postgres"
+  db_name                = "postgres"
   password               = var.db_password
   vpc_security_group_ids = [aws_security_group.allow_rds.id]
   tags = {
@@ -197,6 +198,24 @@ resource "aws_db_instance" "default" {
     ]
   }
 }
+
+resource "aws_secretsmanager_secret" "db-pass" {
+  name = "db-pass-${random_id.id.hex}"
+}
+
+# secret to store the password
+resource "aws_secretsmanager_secret_version" "db-pass-val" {
+  secret_id = aws_secretsmanager_secret.db-pass.id
+  secret_string = jsonencode(
+    {
+      username = aws_db_instance.default.username
+      password = aws_db_instance.default.password
+      engine   = aws_db_instance.default.engine
+      host     = aws_db_instance.default.address
+    }
+  )
+}
+
 
 data "template_file" "db_init" {
   template = file("${path.module}/init-db.tpl.sql")
@@ -216,14 +235,18 @@ resource "null_resource" "db_init" {
 
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
-    command     = <<EOF
+    environment = {
+      SQL          = data.template_file.db_init.rendered
+      RESOURCE_ARN = aws_db_instance.default.arn
+      SECRET_ARN   = aws_secretsmanager_secret.db-pass.arn
+    }
+    command = <<EOF
       aws rds-data execute-statement \
-          --resource-arn ${aws_db_instance.default.arn} \
-          --region ${var.aws_region} \
-          --database postges \
-          --username ${aws_db_instance.default.username} \
-          --password ${var.db_password} \
-          --sql "${replace(data.template_file.db_init.rendered, "\"", "\\\"")}"
+          --resource-arn "$RESOURCE_ARN" \
+          --secret-arn "$SECRET_ARN" \
+          --region "${var.aws_region}" \
+          --database "${aws_db_instance.default.db_name}" \
+          --sql "$SQL"
     EOF
   }
 
