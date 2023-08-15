@@ -111,6 +111,7 @@ jobs:
         working-directory: terraform
         run: |
           terraform apply -auto-approve
+          echo "::set-output name=client_bucket::$(terraform output client_bucket)"
 
       - name: Deploy Client
         uses: jakejarvis/s3-sync-action@master
