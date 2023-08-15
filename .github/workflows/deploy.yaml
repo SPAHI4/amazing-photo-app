@@ -90,8 +90,6 @@ jobs:
 
       - name: Terraform
         uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_wrapper: false
 
       - name: Terraform init
         working-directory: terraform
@@ -102,15 +100,6 @@ jobs:
         working-directory: terraform
         run: |
           terraform apply -auto-approve
-          
-          # Export Terraform output as step output
-          $terraformOutput = (terraform output -json | ConvertFrom-Json -AsHashtable)     
-          foreach ($key in $terraformOutput.Keys) {
-            $outputVariableValue = $terraformOutput[$key].value
-            Write-Output "::set-output name=${key}::${outputVariableValue}"
-            Write-Output "TF_OUT_${key}=${outputVariableValue}" >> $env:GITHUB_ENV
-          }
-        shell: pwsh
 
       - name: Deploy Client
         uses: jakejarvis/s3-sync-action@master
