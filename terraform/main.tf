@@ -93,8 +93,8 @@ data "template_file" "environment" {
   template = file("${path.module}/server.tpl.env")
 
   vars = {
-    root_database_url = "postgres://${aws_db_instance.default.username}:${aws_db_instance.default.password}@${aws_db_instance.default.endpoint}:${aws_db_instance.default.port}/postgres",
-    database_url      = "postgres://${var.db_app_username}:${var.db_app_password}@${aws_db_instance.default.endpoint}:${aws_db_instance.default.port}/${local.db_app_name}",
+    root_database_url = "postgres://${aws_db_instance.default.username}:${aws_db_instance.default.password}@${aws_db_instance.default.endpoint}/postgres",
+    database_url      = "postgres://${var.db_app_username}:${var.db_app_password}@${aws_db_instance.default.endpoint}/${local.db_app_name}",
 
     s3_bucket_region = var.aws_region
     s3_bucket_name   = aws_s3_bucket.storage.bucket
@@ -186,7 +186,7 @@ resource "aws_db_instance" "default" {
   tags = {
     Name = "photo-app"
   }
-  iam_database_authentication_enabled = true
+  iam_database_authentication_enabled = false
   auto_minor_version_upgrade          = true
   apply_immediately                   = true
   skip_final_snapshot                 = true
@@ -213,7 +213,7 @@ resource "null_resource" "db_init" {
     interpreter = ["/bin/bash", "-c"]
     environment = {
       SQL        = data.template_file.db_init.rendered
-      PGHOST     = aws_db_instance.default.endpoint
+      PGHOST     = aws_db_instance.default.address
       PGUSER     = aws_db_instance.default.username
       PGPASSWORD = aws_db_instance.default.password
       PGDATABASE = "postgres"
