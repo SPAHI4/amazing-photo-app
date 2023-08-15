@@ -220,7 +220,7 @@ resource "null_resource" "db_init" {
       PGPORT     = aws_db_instance.default.port
     }
     command = <<EOF
-      createdb -h $PGHOST -U $PGUSER -p $PGPORT ${var.db_app_name} && \
+      createdb -h $PGHOST -U $PGUSER -p $PGPORT ${local.db_app_name} && \
       psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT -c "$SQL";
     EOF
   }
