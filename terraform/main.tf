@@ -190,6 +190,7 @@ resource "aws_db_instance" "default" {
   auto_minor_version_upgrade          = true
   apply_immediately                   = true
   skip_final_snapshot                 = true
+  final_snapshot_identifier           = "photo-app-final-snapshot"
 
   # init script
   publicly_accessible = true
