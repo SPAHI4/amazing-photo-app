@@ -146,10 +146,10 @@ resource "aws_security_group" "allow_rds" {
   description = "Allow inbound traffic from EC2 instances"
 
   ingress {
-    description = "PostgreSQL from VPC"
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
