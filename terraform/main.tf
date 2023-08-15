@@ -8,6 +8,11 @@ terraform {
       source  = "cloudflare/cloudflare"
       version = "~> 4.12.0"
     }
+    template = {
+      source  = "hashicorp/template"
+      version = "~> 2.2.0"
+    }
+
   }
   backend "s3" {
     bucket = "spahi4-photo-app-terraform"

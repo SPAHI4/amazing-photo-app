@@ -111,14 +111,19 @@ jobs:
         working-directory: terraform
         run: |
           terraform apply -auto-approve
-          echo "::set-output name=client_bucket::$(terraform output client_bucket)"
+
+      - name: Terraform Output
+        id: terraform-output
+        working-directory: terraform
+        run: |
+          echo "::set-output name=client_bucket::$(terraform output client_bucket -raw)"
 
       - name: Deploy Client
         uses: jakejarvis/s3-sync-action@master
         with:
           args: --acl public-read --follow-symlinks --delete
         env:
-          AWS_S3_BUCKET: ${{ steps.terraform-apply.outputs.client_bucket }}
+          AWS_S3_BUCKET: ${{ steps.terraform-output.outputs.client_bucket }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: eu-north-1
