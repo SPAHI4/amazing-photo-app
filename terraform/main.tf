@@ -220,16 +220,16 @@ resource "null_resource" "db_init" {
   }
 
   provisioner "local-exec" {
-    command = <<EOF
-      DB_INIT_CONTENT=$(< /tmp/init-db.sql)
-
+    interpreter = ["/bin/bash", "-c"]
+    working_dir = "/tmp"
+    command     = <<EOF
       aws rds-data execute-statement \
           --resource-arn ${aws_db_instance.default.arn} \
           --region ${var.aws_region} \
           --database postges \
           --username ${aws_db_instance.default.username} \
           --password ${var.db_password} \
-          --sql "$DB_INIT_CONTENT"
+          --sql < init-db.sql
     EOF
   }
 
