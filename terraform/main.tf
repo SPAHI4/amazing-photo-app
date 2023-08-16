@@ -25,7 +25,7 @@ terraform {
 }
 
 locals {
-  s3_bucket_client  = var.s3_bucket_client[terraform.workspace]
+  s3_bucket_client  = var.web_domain[terraform.workspace]
   s3_bucket_storage = var.s3_bucket_storage[terraform.workspace]
   api_domain        = var.api_domain[terraform.workspace]
   web_domain        = var.web_domain[terraform.workspace]
