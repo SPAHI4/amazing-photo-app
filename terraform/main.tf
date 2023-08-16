@@ -273,20 +273,42 @@ resource "aws_s3_bucket_website_configuration" "client" {
   }
 }
 
+data "cloudflare_ip_ranges" "cloudflare" {}
+
 data "aws_iam_policy_document" "s3_bucket_policy_public" {
   statement {
-    actions = [
-      "s3:GetObject",
-      "s3:GetObjectVersion",
-    ]
+    sid = "Allow CloudFlare IPv4"
 
-    resources = [
-      "${aws_s3_bucket.client.arn}/*",
-    ]
+    actions   = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.client.arn}/*"]
 
     principals {
       type        = "AWS"
       identifiers = ["*"]
+    }
+
+    condition {
+      test     = "IpAddress"
+      variable = "aws:SourceIp"
+      values   = data.cloudflare_ip_ranges.cloudflare.ipv4_cidr_blocks
+    }
+  }
+
+  statement {
+    sid = "Allow CloudFlare IPv6"
+
+    actions   = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.client.arn}/*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+
+    condition {
+      test     = "IpAddress"
+      variable = "aws:SourceIp"
+      values   = data.cloudflare_ip_ranges.cloudflare.ipv6_cidr_blocks
     }
   }
 }
