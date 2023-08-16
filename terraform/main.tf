@@ -57,7 +57,7 @@ data "aws_ecr_repository" "ecr_repository" {
 }
 
 resource "aws_security_group" "allow_ec2" {
-  name        = "allow_ec2"
+  name        = "allow_ec2__${terraform.workspace}"
   description = "Allow web inbound traffic"
 
   ingress {
@@ -77,7 +77,7 @@ resource "aws_security_group" "allow_ec2" {
 }
 
 resource "aws_security_group" "allow_ec2_ssh" {
-  name        = "allow_ec2_ssh"
+  name        = "allow_ec2_ssh__${terraform.workspace}"
   description = "Allow SSH inbound traffic"
 
   ingress {
@@ -167,7 +167,7 @@ resource "aws_instance" "app" {
 }
 
 resource "aws_security_group" "allow_rds" {
-  name        = "allow_rds"
+  name        = "allow_rds__${terraform.workspace}"
   description = "Allow inbound traffic from EC2 instances"
 
   ingress {
@@ -273,12 +273,35 @@ resource "aws_s3_bucket_website_configuration" "client" {
   }
 }
 
+data "aws_iam_policy_document" "s3_bucket_policy_public" {
+  statement {
+    actions = [
+      "s3:GetObject",
+      "s3:GetObjectVersion",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.client.arn}/*",
+    ]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "client_policy" {
+  bucket = aws_s3_bucket.client.id
+  policy = data.aws_iam_policy_document.s3_bucket_policy_public.json
+}
+
 resource "cloudflare_record" "s3_website" {
   name    = local.web_domain
   value   = aws_s3_bucket_website_configuration.client.website_endpoint
   type    = "CNAME"
   zone_id = data.cloudflare_zone.default.id
-  proxied = false
+  proxied = true
 }
 
 resource "aws_s3_bucket" "storage" {

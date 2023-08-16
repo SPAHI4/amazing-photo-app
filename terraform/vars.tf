@@ -29,14 +29,6 @@ variable "deployer_public_key" {}
 
 variable "s3_bucket_terraform" {}
 
-
-variable "s3_bucket_client" {
-  default = {
-    development = "spahi4-photo-client-dev"
-    production  = "spahi4-photo-client-prod"
-  }
-}
-
 variable "s3_bucket_storage" {
   default = {
     development = "spahi4-photo-storage-dev"
