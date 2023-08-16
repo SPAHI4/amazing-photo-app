@@ -76,6 +76,19 @@ resource "aws_security_group" "allow_ec2" {
   }
 }
 
+resource "aws_security_group" "allow_ec2_ssh" {
+  name        = "allow_ec2_ssh"
+  description = "Allow SSH inbound traffic"
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -140,7 +153,11 @@ resource "aws_instance" "app" {
 
   key_name = aws_key_pair.deployer.key_name
 
-  vpc_security_group_ids = [aws_security_group.allow_ec2.id, aws_security_group.allow_rds.id]
+  vpc_security_group_ids = [
+    aws_security_group.allow_ec2.id,
+    aws_security_group.allow_rds.id,
+    aws_security_group.allow_ec2_ssh.id
+  ]
 
   tags = {
     Name = "photo-app"
