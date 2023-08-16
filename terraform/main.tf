@@ -31,8 +31,8 @@ locals {
   web_domain        = var.web_domain[terraform.workspace]
   db_app_name       = var.db_app_name[terraform.workspace]
 
-  google_credentials_web_parsed       = jsondecode(var.google_credentials_web_json)
-  google_credentials_installed_parsed = jsondecode(var.google_credentials_installed_json)
+  google_credentials_web_parsed       = sensitive(jsondecode(var.google_credentials_web_json))
+  google_credentials_installed_parsed = sensitive(jsondecode(var.google_credentials_installed_json))
 }
 
 provider "aws" {
@@ -57,7 +57,7 @@ data "aws_ecr_repository" "ecr_repository" {
 }
 
 resource "aws_security_group" "allow_ec2" {
-  name        = "allow_ec2__${terraform.workspace}"
+  name        = "allow_ec2"
   description = "Allow web inbound traffic"
 
   ingress {
@@ -77,7 +77,7 @@ resource "aws_security_group" "allow_ec2" {
 }
 
 resource "aws_security_group" "allow_ec2_ssh" {
-  name        = "allow_ec2_ssh__${terraform.workspace}"
+  name        = "allow_ec2_ssh"
   description = "Allow SSH inbound traffic"
 
   ingress {
@@ -167,7 +167,7 @@ resource "aws_instance" "app" {
 }
 
 resource "aws_security_group" "allow_rds" {
-  name        = "allow_rds__${terraform.workspace}"
+  name        = "allow_rds"
   description = "Allow inbound traffic from EC2 instances"
 
   ingress {

@@ -2,17 +2,27 @@ variable "aws_region" {
   default = "eu-north-1"
 }
 
-variable "aws_access_key_id" {}
-variable "aws_secret_access_key" {}
+variable "aws_access_key_id" {
+  sensitive = true
+}
+variable "aws_secret_access_key" {
+  sensitive = true
+}
 
 variable "ecr_repository_name" {
   default = "spahi4-photo-app"
 }
 
-variable "db_password" {}
+variable "db_password" {
+  sensitive = true
+}
 
-variable "db_app_username" {}
-variable "db_app_password" {}
+variable "db_app_username" {
+  sensitive = true
+}
+variable "db_app_password" {
+  sensitive = true
+}
 
 variable "db_instance_name" {
   default = "photo-app-pg"
@@ -25,7 +35,9 @@ variable "db_app_name" {
   }
 }
 
-variable "deployer_public_key" {}
+variable "deployer_public_key" {
+  sensitive = true
+}
 
 variable "s3_bucket_terraform" {}
 
@@ -38,9 +50,13 @@ variable "s3_bucket_storage" {
 
 variable "git_sha" {}
 
-variable "cloudflare_account_id" {}
+variable "cloudflare_account_id" {
+  sensitive = true
+}
 
-variable "cloudflare_api_token" {}
+variable "cloudflare_api_token" {
+  sensitive = true
+}
 
 variable "root_domain" {
   default = "spahi4.me"
@@ -60,22 +76,35 @@ variable "api_domain" {
   }
 }
 
-variable "jwt_public_key" {}
-variable "jwt_private_key" {}
+variable "jwt_public_key" {
+  sensitive = true
+}
+variable "jwt_private_key" {
+  sensitive = true
+}
 
-variable "ssl_cert" {}
-variable "ssl_key" {}
+variable "ssl_cert" {
+  sensitive = true
+}
+variable "ssl_key" {
+  sensitive = true
+}
 
-variable "google_refresh_token" {}
+variable "google_refresh_token" {
+  sensitive = true
+}
 
 variable "google_credentials_web_json" {
   description = "JSON string of the google_credentials_web"
   type        = string
   default     = "{}"
+  sensitive   = true
+
 }
 
 variable "google_credentials_installed_json" {
   description = "JSON string of the google_credentials_web"
   type        = string
   default     = "{}"
+  sensitive   = true
 }
