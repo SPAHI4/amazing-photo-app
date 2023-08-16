@@ -291,9 +291,19 @@ data "aws_iam_policy_document" "s3_bucket_policy_public" {
   }
 }
 
-resource "aws_s3_bucket_policy" "client_policy" {
+resource "aws_s3_bucket_public_access_block" "client" {
   bucket = aws_s3_bucket.client.id
-  policy = data.aws_iam_policy_document.s3_bucket_policy_public.json
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_policy" "client_policy" {
+  bucket     = aws_s3_bucket.client.id
+  policy     = data.aws_iam_policy_document.s3_bucket_policy_public.json
+  depends_on = [aws_s3_bucket_public_access_block.client]
 }
 
 resource "cloudflare_record" "s3_website" {
