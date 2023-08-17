@@ -92,9 +92,10 @@ resource "aws_security_group" "allow_ec2_ssh" {
 data "aws_ami" "ubuntu" {
   most_recent = true
 
+  # amazon linux 2
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+    values = ["/aws/service/ami-amazon-linux-latest"]
   }
 
   filter {
@@ -139,6 +140,8 @@ data "template_file" "environment" {
     api_port   = "443"
     web_origin = "https://${local.web_domain}"
   }
+
+  depends_on = [aws_db_instance.default]
 }
 
 data "template_file" "init" {
@@ -149,6 +152,8 @@ data "template_file" "init" {
     repository_url = data.aws_ecr_repository.ecr_repository.repository_url
     git_sha        = var.git_sha
   }
+
+  depends_on = [data.template_file.environment]
 }
 
 resource "aws_instance" "app" {
