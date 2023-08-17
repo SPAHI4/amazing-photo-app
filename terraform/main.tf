@@ -115,6 +115,8 @@ data "template_file" "environment" {
   template = file("${path.module}/server.tpl.env")
 
   vars = {
+    deployment = terraform.workspace
+
     root_database_url = "postgres://${aws_db_instance.default.username}:${aws_db_instance.default.password}@${aws_db_instance.default.endpoint}/postgres",
     database_url      = "postgres://${var.db_app_username}:${var.db_app_password}@${aws_db_instance.default.endpoint}/${local.db_app_name}",
 
