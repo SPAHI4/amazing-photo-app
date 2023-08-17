@@ -1,7 +1,6 @@
 #!/bin/bash
 yum update -y
 amazon-linux-extras install -y docker
-amazon-linux-extras install -y epel
 service docker start
 usermod -a -G docker ec2-user
 chkconfig docker on
