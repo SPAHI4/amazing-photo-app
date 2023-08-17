@@ -89,13 +89,13 @@ resource "aws_security_group" "allow_ec2_ssh" {
   }
 }
 
-data "aws_ami" "ubuntu" {
+data "aws_ami" "amazon_linux" {
   most_recent = true
 
   # amazon linux 2
   filter {
     name   = "name"
-    values = ["*/ami-amazon-linux-latest*"]
+    values = ["amzn2-ami-hvm-*-gp2"]
   }
 
   filter {
@@ -103,7 +103,7 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 
-  owners = ["099720109477"] # Canonical
+  owners = ["amazon"]
 }
 
 resource "aws_key_pair" "deployer" {
