@@ -95,7 +95,7 @@ data "aws_ami" "ubuntu" {
   # amazon linux 2
   filter {
     name   = "name"
-    values = ["/aws/service/ami-amazon-linux-latest"]
+    values = ["*/ami-amazon-linux-latest*"]
   }
 
   filter {
