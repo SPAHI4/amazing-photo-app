@@ -160,21 +160,19 @@ data "template_file" "init" {
 resource "aws_iam_role" "ec2_instance" {
   name = "ec2_instance"
 
-  assume_role_policy = <<EOF
-  {
-    "Version": "2012-10-17",
-    "Statement": [
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
       {
-        "Action": "sts:AssumeRole",
-        "Principal": {
-          "Service": "ec2.amazonaws.com"
-        },
-        "Effect": "Allow",
-        "Sid": ""
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
       }
     ]
-  }
-  EOF
+  })
 }
 
 resource "aws_iam_instance_profile" "instance" {
@@ -182,15 +180,24 @@ resource "aws_iam_instance_profile" "instance" {
   role = aws_iam_role.ec2_instance.name
 }
 
-resource "aws_iam_role_policy" "ec2" {
-  name = "ec2"
+resource "aws_iam_role_policy" "ecr_policy" {
+  name = "ecr_policy"
   role = aws_iam_role.ec2_instance.id
 
   policy = jsonencode({
-    Version = "2012-10-17"
+    Version = "2012-10-17",
     Statement = [
       {
-        Action   = "s3:*"
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:GetRepositoryPolicy",
+          "ecr:DescribeRepositories",
+          "ecr:ListImages",
+          "ecr:DescribeImages",
+          "ecr:BatchGetImage"
+        ]
         Effect   = "Allow"
         Resource = "*"
       }
