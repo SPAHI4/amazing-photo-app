@@ -178,7 +178,7 @@ resource "aws_iam_role" "ec2_instance" {
 }
 
 resource "aws_iam_instance_profile" "instance" {
-  name = "ec2-instance-profile"
+  name = "${terraform.workspace}_instance_profile"
   role = aws_iam_role.ec2_instance.name
 }
 
@@ -201,7 +201,7 @@ resource "aws_iam_role_policy" "ec2" {
 resource "aws_instance" "app" {
   ami                  = data.aws_ami.amazon_linux.id
   instance_type        = "t3.micro"
-  iam_instance_profile = aws_iam_instance_profile.instance.arn
+  iam_instance_profile = aws_iam_instance_profile.instance.name
 
   key_name = aws_key_pair.deployer.key_name
 
