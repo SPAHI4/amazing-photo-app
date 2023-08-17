@@ -16,7 +16,7 @@ jobs:
       TF_VAR_db_app_password: ${{ secrets.DB_APP_PASSWORD }}
       TF_VAR_deployer_public_key: ${{ secrets.DEPLOYER_PUBLIC_KEY }}
       TF_VAR_s3_bucket_terraform: ${{ secrets.S3_BUCKET_TERRAFORM }}
-      TF_VAR_git_sha: ${{ github.sha }}
+      TF_VAR_git_sha: 500a692
       TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       TF_VAR_jwt_public_key: ${{ secrets.JWT_PUBLIC_KEY }}
@@ -36,21 +36,25 @@ jobs:
           fetch-depth: 0
 
       - uses: pnpm/action-setup@v2
+        if: 0
         name: pnpm setup
         with:
           version: 8
 
       - name: Use Node.js
+        if: 0
         uses: actions/setup-node@v3
         with:
           node-version: '20.5'
           cache: 'pnpm'
 
       - name: pnpm install
+        if: 0
         run: |
           pnpm --filter client install
 
       - name: Build client just for checks
+        if: 0
         run: |
           pnpm --filter client run build
 
@@ -66,9 +70,11 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Set up Docker Buildx
+        if: 0
         uses: docker/setup-buildx-action@v2
 
       - name: Server image
+        if: 0
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -77,6 +83,7 @@ jobs:
           target: server
 
       - name: Worker image
+        if: 0
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -85,6 +92,7 @@ jobs:
           target: worker
 
       - name: Migrate image
+        if: 0
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -115,6 +123,7 @@ jobs:
           echo "api_origin=$(terraform output -raw api_origin)" >> $GITHUB_OUTPUT
 
       - name: Build client
+        if: 0
         env:
           VITE_GRAPHQL_ENDPOINT: ${{ steps.terraform-output.outputs.api_origin }}/graphql
           GOOGLE_CREDENTIALS_WEB_JSON: ${{ secrets.GOOGLE_CREDENTIALS_WEB_JSON }}
@@ -123,6 +132,7 @@ jobs:
           pnpm --filter client run build
 
       - name: Deploy Client
+        if: 0
         uses: jakejarvis/s3-sync-action@master
         env:
           AWS_S3_BUCKET: ${{ steps.terraform-output.outputs.client_bucket }}
