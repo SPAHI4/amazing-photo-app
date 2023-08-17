@@ -20,6 +20,6 @@ sudo docker run -d --restart=always \
     --env-file /home/environment.env \
   ${repository_url}:worker-"${git_sha}"
 
-sudo docker run -d --rm \
+sudo docker run -d \
     --env-file /home/environment.env \
   ${repository_url}:migrate-"${git_sha}"
