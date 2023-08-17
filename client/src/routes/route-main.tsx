@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from '@apollo/client';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { css, Global } from '@emotion/react';
 import {
   Box,
@@ -168,22 +168,34 @@ function LocationsList() {
     fetchPolicy: 'cache-first',
   });
   const [geo, setGeo] = useState<{ lat: number; lng: number } | null>(null);
-  const locations = data.locations?.nodes.filter(notEmpty) ?? [];
+  const locations = useMemo(
+    () => data.locations?.nodes.filter(notEmpty) ?? [],
+    [data.locations?.nodes],
+  );
   const [resetGeo, cancelResetGeo] = useThrottle(() => {
     setGeo(null);
   }, 1500);
 
-  const locationsList = locations.map((location) => (
-    <LocationLink
-      key={location.id}
-      location={location}
-      onMouseEnter={() => {
-        cancelResetGeo();
-        setGeo({ lat: location.geo.x, lng: location.geo.y });
-      }}
-      onMouseLeave={resetGeo}
-    />
-  ));
+  const locationsList = useMemo(
+    () =>
+      locations.map((location) => (
+        <LocationLink
+          key={location.id}
+          location={location}
+          onMouseEnter={() => {
+            cancelResetGeo();
+            setGeo({ lat: location.geo.x, lng: location.geo.y });
+          }}
+          onMouseLeave={resetGeo}
+        />
+      )),
+    [cancelResetGeo, locations, resetGeo],
+  );
+
+  const globeLocations = useMemo(
+    () => locations.map((location) => ({ lat: location.geo.x, lng: location.geo.y })),
+    [locations],
+  );
 
   return isMobile ? (
     <Container
@@ -216,10 +228,7 @@ function LocationsList() {
           translate: 45% -50%;
         `}
       >
-        <Globe
-          currentLocation={geo}
-          locations={locations.map((location) => ({ lat: location.geo.x, lng: location.geo.y }))}
-        />
+        <Globe currentLocation={geo} locations={globeLocations} />
       </div>
       <Container>
         <div
