@@ -349,11 +349,16 @@ resource "aws_s3_bucket" "storage" {
 }
 
 # redirect sitemap.xml from client to api
-resource "aws_s3_object" "sitemap_redirect" {
-  bucket = aws_s3_bucket.client.id
-  key    = "sitemap.xml"
+resource "cloudflare_page_rule" "sitemap_redirect" {
+  zone_id = data.cloudflare_zone.default.id
+  target  = "${local.web_domain}/sitemap.xml"
 
-  website_redirect_location = "https://${local.api_domain}/sitemap.xml"
+  actions {
+    forwarding_url {
+      status_code = 301
+      url         = "${local.api_domain}/sitemap.xml"
+    }
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "storage" {
