@@ -50,7 +50,7 @@ jobs:
         run: |
           pnpm --filter client install
 
-      - name: Build client
+      - name: Build client just for checks
         run: |
           pnpm --filter client run build
 
@@ -111,8 +111,15 @@ jobs:
         id: terraform-output
         working-directory: terraform
         run: |
-          CLIENT_BUCKET=$(terraform output -raw client_bucket)
-          echo "client_bucket=${CLIENT_BUCKET}" >> $GITHUB_OUTPUT
+          echo "client_bucket=$(terraform output -raw client_bucket)" >> $GITHUB_OUTPUT
+          echo "api_origin=$(terraform output -raw api_origin)" >> $GITHUB_OUTPUT
+
+      - name: Build client
+        env:
+          VITE_GRAPHQL_ENDPOINT: ${{ steps.terraform-output.outputs.api_origin }}/graphql
+          VITE_VITE_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CREDENTIALS_WEB_JSON | jq -r '.web.client_id' }}
+        run: |
+          pnpm --filter client run build
 
       - name: Deploy Client
         uses: jakejarvis/s3-sync-action@master

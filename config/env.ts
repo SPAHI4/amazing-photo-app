@@ -64,10 +64,20 @@ if (cleanedBase.NODE_ENV === 'production') {
     JWT_SECRET_KEY: envalid.str(),
   });
 
+  jwts = {
+    JWT_PUBLIC_KEY: Buffer.from(jwts.JWT_PUBLIC_KEY, 'base64').toString(),
+    JWT_SECRET_KEY: Buffer.from(jwts.JWT_SECRET_KEY, 'base64').toString(),
+  };
+
   ssls = envalid.cleanEnv(process.env, {
     SSL_CERT: envalid.str(),
     SSL_KEY: envalid.str(),
   });
+
+  ssls = {
+    SSL_CERT: Buffer.from(ssls.SSL_CERT, 'base64').toString(),
+    SSL_KEY: Buffer.from(ssls.SSL_KEY, 'base64').toString(),
+  };
 
   google = envalid.cleanEnv(process.env, {
     INSTALLED_GOOGLE_CLIENT_ID: envalid.str(),

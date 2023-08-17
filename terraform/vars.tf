@@ -2,6 +2,13 @@ variable "aws_region" {
   default = "eu-north-1"
 }
 
+variable "deployment" {
+  default = {
+    development = "development"
+    production  = "production"
+  }
+}
+
 variable "aws_access_key_id" {
   sensitive = true
 }

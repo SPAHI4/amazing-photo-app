@@ -20,7 +20,6 @@ app.register(fastifyRateLimit, {
   timeWindow: '1 minute',
 });
 
-// CORS
 app.register(fastifyCors, {
   credentials: true,
   origin: (origin, cb) => {
@@ -31,11 +30,15 @@ app.register(fastifyCors, {
 
     const { hostname } = new URL(origin);
     if (hostname === 'localhost') {
-      //  Request from localhost will pass
       cb(null, true);
       return;
     }
-    // Generate an error on other origins, disabling access
+
+    if (origin === env.WEB_ORIGIN) {
+      cb(null, true);
+      return;
+    }
+
     cb(new Error('Not allowed'), false);
   },
 });

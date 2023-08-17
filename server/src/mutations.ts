@@ -1,11 +1,11 @@
 import { gql, makeExtendSchemaPlugin } from 'graphile-utils';
 import crypto from 'crypto';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { createPresignedPost } from '@aws-sdk/s3-presigned-post';
 import { env } from '@app/config/env.js';
 import { s3 } from './s3.js';
 
 const CONTENT_TYPES = { 'image/jpeg': 'jpeg', 'image/avif': 'avif' } as const;
+const MAX_UPLOAD_SIZE = 1024 * 1024 * 20; // 20 MB
 
 export const createImageUploadMutation = makeExtendSchemaPlugin(() => ({
   typeDefs: gql`
@@ -14,7 +14,8 @@ export const createImageUploadMutation = makeExtendSchemaPlugin(() => ({
     }
 
     type CreateImageUploadPayload {
-      signedUrl: String!
+      url: String!
+      fields: JSON!
       image: Image!
     }
 
@@ -47,19 +48,22 @@ export const createImageUploadMutation = makeExtendSchemaPlugin(() => ({
         );
         await pgClient.query('set role to app_user');
 
-        const command = new PutObjectCommand({
+        const { url, fields } = await createPresignedPost(s3, {
           Bucket: env.S3_BUCKET_NAME,
           Key: key,
-          ContentType: contentType,
-          ACL: 'public-read',
-        });
-
-        const presignedPutUrl = await getSignedUrl(s3, command, {
-          expiresIn: 60,
+          Expires: 60,
+          Fields: {
+            'Content-Type': contentType,
+          },
+          Conditions: [
+            ['content-length-range', 1, MAX_UPLOAD_SIZE],
+            ['eq', '$Content-Type', contentType],
+          ],
         });
 
         return {
-          signedUrl: presignedPutUrl,
+          url,
+          fields,
           image,
         };
       },

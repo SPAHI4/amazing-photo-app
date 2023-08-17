@@ -3,6 +3,7 @@ import {
   Chip,
   FormControl,
   InputLabel,
+  Link as MuiLink,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -14,7 +15,8 @@ import { css } from '@emotion/react';
 import { useSuspenseQuery } from '@apollo/client';
 import { Suspense, useEffect } from 'react';
 import { LoadingButton } from '@mui/lab';
-import { graphql } from '../../__generated__/gql.ts';
+import { Link } from 'react-router-dom';
+import { graphql } from '../../__generated__';
 import { Transition } from '../../ui-components/transition.tsx';
 import { convertShutterSpeed } from '../../utils/number.ts';
 import { StickPointerButton } from '../../ui-components/cursor.tsx';
@@ -145,23 +147,39 @@ export function UploadCardInformation({ form, onSubmit, loading }: UploadCardInf
             </Typography>
           </Box>
         </Box>
-        <Box display="flex" justifyContent="flex-end" p={3} mb={2}>
-          <StickPointerButton>
-            <LoadingButton
-              type="submit"
-              color="primary"
-              size="large"
-              endIcon={
-                <SvgIcon>
-                  <IconArrowForward />
-                </SvgIcon>
-              }
-              loading={loading}
-              disabled={values.imageId == null}
-            >
-              Finish
-            </LoadingButton>
-          </StickPointerButton>
+        <Box display="flex" justifyContent="flex-end" p={4}>
+          <div>
+            <StickPointerButton>
+              <LoadingButton
+                type="submit"
+                color="primary"
+                size="large"
+                variant="contained"
+                endIcon={
+                  <SvgIcon>
+                    <IconArrowForward />
+                  </SvgIcon>
+                }
+                loading={loading}
+                disabled={values.imageId == null}
+              >
+                Finish
+              </LoadingButton>
+            </StickPointerButton>
+          </div>
+        </Box>
+
+        <Box px={3} py={2}>
+          <Typography variant="caption" color="textSecondary">
+            Continuing, you agree to the{' '}
+            <MuiLink component={Link} to="/terms-of-service">
+              terms of service
+            </MuiLink>{' '}
+            and the{' '}
+            <MuiLink component={Link} to="/privacy-policy">
+              privacy policy
+            </MuiLink>
+          </Typography>
         </Box>
       </Transition>
     </form>

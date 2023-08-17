@@ -110,10 +110,11 @@ function LayoutDesktop() {
         css={css`
           display: grid;
           grid-template-rows: 1fr auto;
-          min-height: 100dvh;
+          min-height: calc(100dvh - ${headerHeight}px);
         `}
       >
         <Outlet />
+
         <Box py={3} mt={8}>
           <Container
             css={css`
@@ -160,11 +161,16 @@ function LayoutDesktop() {
                 </Button>
               </StickPointerButton>
             </Box>
-            <Box>
+            <Box
+              gap={1}
+              css={css`
+                display: flex;
+              `}
+            >
               <StickPointerButton>
                 <Button
                   component={Link}
-                  to="/legal"
+                  to="/terms-of-service"
                   color="inherit"
                   css={css`
                     &:not(:hover) {
@@ -172,7 +178,21 @@ function LayoutDesktop() {
                     }
                   `}
                 >
-                  legal information
+                  terms of service
+                </Button>
+              </StickPointerButton>
+              <StickPointerButton>
+                <Button
+                  component={Link}
+                  to="/privacy-policy"
+                  color="inherit"
+                  css={css`
+                    &:not(:hover) {
+                      text-decoration: underline;
+                    }
+                  `}
+                >
+                  privacy policy
                 </Button>
               </StickPointerButton>
             </Box>

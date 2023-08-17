@@ -28,8 +28,9 @@
     "type-fest": "^3.13.1"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.370.0",
-    "@aws-sdk/s3-request-presigner": "^3.370.0",
+    "@app/config": "workspace:*",
+    "@aws-sdk/client-s3": "^3.391.0",
+    "@aws-sdk/s3-presigned-post": "^3.391.0",
     "@fastify/cookie": "^8.3.0",
     "@fastify/cors": "^8.3.0",
     "@fastify/rate-limit": "^8.0.3",
@@ -49,7 +50,6 @@
     "pg": "^8.11.1",
     "postgraphile": "^4.13.0",
     "postgres-bytea": "^3.0.0",
-    "sitemap": "^7.1.1",
-    "@app/config": "workspace:*"
+    "sitemap": "^7.1.1"
   }
 }

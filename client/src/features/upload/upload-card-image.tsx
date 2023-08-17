@@ -5,7 +5,7 @@ import { useMutation } from '@apollo/client';
 import exifr from 'exifr';
 import { Box, Button, CircularProgress, Skeleton, SvgIcon, Typography } from '@mui/material';
 import { css } from '@emotion/react';
-import { graphql } from '../../__generated__/gql.ts';
+import { graphql } from '../../__generated__';
 import { ImageInput } from '../../ui-components/image-input.tsx';
 import { Transition } from '../../ui-components/transition.tsx';
 import { useFetch } from '../../hooks/use-fetch.ts';
@@ -69,7 +69,8 @@ const getImageData = (image: HTMLImageElement) => {
 const CREATE_IMAGE_UPLOAD_MUTATION = graphql(`
   mutation createImageUpload($input: CreateImageUploadInput!) {
     createImageUpload(input: $input) {
-      signedUrl
+      url
+      fields
       image {
         id
       }
@@ -112,7 +113,6 @@ export function UploadCardImage({
     CREATE_IMAGE_UPLOAD_MUTATION,
   );
   const [updateImage, { loading: completeUploadLoading }] = useMutation(UPDATE_IMAGE_MUTATION);
-  const values = form.watch();
   const isLoading = uploadLoading || createUploadLoading || completeUploadLoading || isPending;
 
   const handleImageLoad = React.useCallback(
@@ -121,8 +121,8 @@ export function UploadCardImage({
 
       const imageData = getImageData(img);
 
-      form.setValue('width', img.width);
-      form.setValue('height', img.height);
+      form.setValue('width', img.naturalWidth);
+      form.setValue('height', img.naturalHeight);
 
       // blurhash
       const hash = encode(imageData.data, imageData.width, imageData.height, 4, 4);
@@ -171,17 +171,18 @@ export function UploadCardImage({
         }
 
         // 2. upload image to s3
-        const urlObject = new URL(data.createImageUpload.signedUrl);
-        const request = new Request(urlObject);
-        await uploadImage(request, {
-          method: 'PUT',
-          body: file,
-          headers: new Headers({
-            'Content-Type': file.type,
-          }),
+        const formData = new FormData();
+        for (const [key, value] of Object.entries(data.createImageUpload.fields)) {
+          formData.append(key, value as string);
+        }
+        formData.append('file', file);
+
+        await uploadImage(data.createImageUpload.url, {
+          method: 'POST',
+          body: formData,
         });
 
-        form.setValue('url', `${urlObject.origin}${urlObject.pathname}`);
+        form.setValue('url', `${data.createImageUpload.url}${data.createImageUpload.fields.key}`);
 
         // 3. trigger image processing
         await updateImage({
@@ -255,7 +256,7 @@ export function UploadCardImage({
                   object-fit: contain;
                 `}
                 decoding="async"
-                src={values.url ?? image}
+                src={image}
                 alt="Preview"
                 onLoad={handleImageLoad}
                 crossOrigin="anonymous"

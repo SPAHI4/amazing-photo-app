@@ -267,7 +267,7 @@ export function PhotoLikes(props: PhotoLikesProps) {
             }
           `}
         >
-          {likesCount > 0 && counterProps.likesCount.to((value) => Math.round(value))}
+          {likesCount > 0 && counterProps.likesCount.to((value) => Math.max(Math.round(value), 1))}
         </animated.div>
         {trail.reverse().map((style, index) => (
           <animated.span

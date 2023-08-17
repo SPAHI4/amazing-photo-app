@@ -118,6 +118,11 @@ export function PhotoImage(props: PhotoImageProps) {
           position: relative;
           min-height: 0;
           min-width: 0;
+          container-type: size;
+
+          ${theme.breakpoints.down('md')} {
+            container-type: unset;
+          }
         `}
       >
         <picture
@@ -146,29 +151,22 @@ export function PhotoImage(props: PhotoImageProps) {
               view-transition-name: ${VIEW_TRANSITION_NAME};
               image-rendering: high-quality;
               image-rendering: optimizeQuality;
+
+              // we can't just use object-fit: contain because it doesn't work with view transitions
               display: block;
               position: absolute;
               top: 50%;
               left: 50%;
               translate: -50% -50%;
-
-              ${isPortrait &&
-              css`
-                height: 100%;
-                max-width: 100%;
-              `}
-
-              ${!isPortrait &&
-              css`
-                width: 100%;
-                max-height: 100%;
-              `}
+              height: min(100cqh, 100cqw * ${photo.height / photo.width});
+              width: min(100cqw, 100cqh * ${photo.width / photo.height});
 
               ${theme.breakpoints.down('md')} {
                 display: block;
                 position: unset;
                 translate: unset;
                 width: 100vw;
+                height: auto;
               }
             `}
           />

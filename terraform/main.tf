@@ -120,11 +120,11 @@ data "template_file" "environment" {
     s3_bucket_region = var.aws_region
     s3_bucket_name   = aws_s3_bucket.storage.bucket
 
-    jwt_public_key  = chomp(var.jwt_public_key)
-    jwt_private_key = chomp(var.jwt_private_key)
+    jwt_public_key  = base64encode(var.jwt_public_key)
+    jwt_private_key = base64encode(var.jwt_private_key)
 
-    ssl_cert = chomp(var.ssl_cert)
-    ssl_key  = chomp(var.ssl_key)
+    ssl_cert = base64encode(var.ssl_cert)
+    ssl_key  = base64encode(var.ssl_key)
 
     google_refresh_token = var.google_refresh_token
 
@@ -134,6 +134,10 @@ data "template_file" "environment" {
     web_google_client_id           = local.google_credentials_web_parsed.web.client_id
     web_google_client_secret       = local.google_credentials_web_parsed.web.client_secret
     web_google_redirect_uri        = local.google_credentials_web_parsed.web.redirect_uris[0]
+
+    api_origin = "https://${local.api_domain}"
+    api_port   = "443"
+    web_origin = "https://${local.web_domain}"
   }
 }
 
@@ -342,6 +346,23 @@ resource "aws_s3_bucket" "storage" {
   tags = {
     Name = "photo-app"
   }
+}
+
+# redirect sitemap.xml from client to api
+resource "aws_s3_object" "sitemap_redirect" {
+  bucket = aws_s3_bucket.client.id
+  key    = "sitemap.xml"
+
+  website_redirect_location = "https://${local.api_domain}/sitemap.xml"
+}
+
+resource "aws_s3_bucket_public_access_block" "storage" {
+  bucket = aws_s3_bucket.storage.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }
 
 resource "aws_s3_bucket_versioning" "storage" {

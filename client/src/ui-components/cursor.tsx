@@ -128,7 +128,7 @@ export const CursorProvider = memo(({ children }: { children: React.ReactNode })
                 --cursor-x: 0;
                 --cursor-y: 0;
                 --cursor-scale: 1;
-                --curor-scale-x: 1;
+                --cursor-scale-x: 1;
                 --cursor-translate-x: 0px;
                 --cursor-translate-y: 0px;
                 --cursor-mix-blend-mode: exclusion;
@@ -212,7 +212,7 @@ export const StickPointerButton = memo((props: StickPointerButtonProps) => {
     targetElem.style.setProperty('scale', 'var(--scale, 1)');
     targetElem.style.setProperty('transition-duration', '0.1s');
     targetElem.style.setProperty(
-      'transition-function',
+      'transition-timing-function',
       'var(--motion-easing-emphasized-decelerate)',
     );
     targetElem.style.setProperty('transition-property', 'translate, scale');
@@ -362,7 +362,7 @@ export const StickPointerImage = memo((props: StickPointerImageProps) => {
     targetElem.style.setProperty('scale', 'var(--scale, 1)');
     targetElem.style.setProperty('transition-duration', '0.1s');
     targetElem.style.setProperty(
-      'transition-function',
+      'transition-timing-function',
       'var(--motion-easing-emphasized-decelerate)',
     );
     targetElem.style.setProperty('transition-property', 'translate, scale');

@@ -43,7 +43,7 @@ export function HeaderNavigation() {
           app on github
         </Button>
       </StickPointerButton>
-      {currentUser == null && (
+      {currentUser == null && import.meta.env.DEV && (
         <StickPointerButton key="login">
           <LoadingButton loading={loginLoading} variant="text" color="inherit" onClick={login}>
             login

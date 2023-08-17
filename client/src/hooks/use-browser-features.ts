@@ -14,8 +14,17 @@ export const useBrowserFeatures = (): {
   const [webpSupported, setWebpSupported] = useState<boolean>(webpSupportedVal === true);
   const hdrSupported = useMediaQuery('(dynamic-range: high)');
 
-  const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
-  const isChromuimBased = navigator.userAgent.toLowerCase().includes('chrome');
+  const userAgent = navigator.userAgent.toLowerCase();
+
+  const isFirefox = userAgent.includes('firefox');
+  const isChromuimBased =
+    userAgent.includes('chrome') ||
+    userAgent.includes('chromium') ||
+    userAgent.includes('edg') ||
+    userAgent.includes('opr') ||
+    userAgent.includes('crios');
+  const isSafari =
+    userAgent.includes('safari') && !userAgent.includes('chrome') && !userAgent.includes('crios');
 
   useEffect(() => {
     if (avifSupportedVal !== null) {
@@ -24,6 +33,13 @@ export const useBrowserFeatures = (): {
 
     // Firefox doesn't properly handle HDR downmix images yet
     if (isFirefox) {
+      avifSupportedVal = false;
+      setAvifSupported(avifSupportedVal);
+      return undefined;
+    }
+
+    // I faced really bad performance issues with Safari and HDR avif images, and it doesn't even render them in HDR
+    if (isSafari) {
       avifSupportedVal = false;
       setAvifSupported(avifSupportedVal);
       return undefined;
@@ -45,7 +61,7 @@ export const useBrowserFeatures = (): {
       img.onload = null;
       img.onerror = null;
     };
-  }, [isFirefox]);
+  }, [isFirefox, isSafari]);
 
   useEffect(() => {
     if (webpSupportedVal !== null) {

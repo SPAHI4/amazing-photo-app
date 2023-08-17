@@ -4,15 +4,27 @@ import { LayoutMain } from './app-components/layout-main.tsx';
 import { App } from './app.tsx';
 import { routeMainLoader } from './loaders/route-main-loader.ts';
 import { routeLocationLoader } from './loaders/route-location-loader.ts';
+import { RouteError } from './routes/route-error.tsx';
 
 // all routes of the app
 // loaders are stored in a separate file to enable tree-shaking
+// possible solution to replace loaders is using react router setTransition flag with suspense query, but it doesn't work with patched react router vith startViewTransition api
 
 export const router: Router = createBrowserRouter([
   {
     path: '*',
     element: <App />,
     children: [
+      {
+        path: '*',
+        element: <LayoutMain />,
+        children: [
+          {
+            path: '*',
+            element: <RouteError />,
+          },
+        ],
+      },
       {
         element: <LayoutMain />,
         children: [
@@ -25,10 +37,17 @@ export const router: Router = createBrowserRouter([
             },
           },
           {
-            path: 'legal',
+            path: 'terms-of-service',
             lazy: async () => {
-              const { RouteLegal } = await import('./routes/route-legal.tsx');
-              return { Component: RouteLegal };
+              const { RouteTerms } = await import('./routes/route-terms.tsx');
+              return { Component: RouteTerms };
+            },
+          },
+          {
+            path: 'privacy-policy',
+            lazy: async () => {
+              const { RoutePolicy } = await import('./routes/route-policy.tsx');
+              return { Component: RoutePolicy };
             },
           },
           {

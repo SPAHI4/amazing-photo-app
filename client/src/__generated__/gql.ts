@@ -37,7 +37,7 @@ const documents = {
     types.PhotoLikesUserLikesQueryDocument,
   '\n  mutation PhotoLikesUpsertLikeMutation($input: UpsertPhotoLikeInput!) {\n    upsertPhotoLike(input: $input) {\n      photosLike {\n        id\n        count\n        photo {\n          __typename\n          id\n          likesCount\n        }\n      }\n    }\n  }\n':
     types.PhotoLikesUpsertLikeMutationDocument,
-  '\n  mutation createImageUpload($input: CreateImageUploadInput!) {\n    createImageUpload(input: $input) {\n      signedUrl\n      image {\n        id\n      }\n    }\n  }\n':
+  '\n  mutation createImageUpload($input: CreateImageUploadInput!) {\n    createImageUpload(input: $input) {\n      url\n      fields\n      image {\n        id\n      }\n    }\n  }\n':
     types.CreateImageUploadDocument,
   '\n  mutation updateImage($input: UpdateImageInput!) {\n    updateImage(input: $input) {\n      image {\n        id\n        isUploaded\n      }\n    }\n  }\n':
     types.UpdateImageDocument,
@@ -179,8 +179,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation createImageUpload($input: CreateImageUploadInput!) {\n    createImageUpload(input: $input) {\n      signedUrl\n      image {\n        id\n      }\n    }\n  }\n',
-): (typeof documents)['\n  mutation createImageUpload($input: CreateImageUploadInput!) {\n    createImageUpload(input: $input) {\n      signedUrl\n      image {\n        id\n      }\n    }\n  }\n'];
+  source: '\n  mutation createImageUpload($input: CreateImageUploadInput!) {\n    createImageUpload(input: $input) {\n      url\n      fields\n      image {\n        id\n      }\n    }\n  }\n',
+): (typeof documents)['\n  mutation createImageUpload($input: CreateImageUploadInput!) {\n    createImageUpload(input: $input) {\n      url\n      fields\n      image {\n        id\n      }\n    }\n  }\n'];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

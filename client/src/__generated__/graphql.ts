@@ -218,8 +218,9 @@ export type CreateImageUploadInput = {
 
 export type CreateImageUploadPayload = {
   __typename?: 'CreateImageUploadPayload';
+  fields: Scalars['JSON']['output'];
   image: Image;
-  signedUrl: Scalars['String']['output'];
+  url: Scalars['String']['output'];
 };
 
 /** All input for the create `Location` mutation. */
@@ -2544,7 +2545,8 @@ export type CreateImageUploadMutation = {
   __typename?: 'Mutation';
   createImageUpload: {
     __typename: 'CreateImageUploadPayload';
-    signedUrl: string;
+    url: string;
+    fields: Record<string, unknown>;
     image: { __typename: 'Image'; id: number };
   };
 };
@@ -3952,7 +3954,7 @@ export const PhotoLikesUpsertLikeMutationDocument = {
   PhotoLikesUpsertLikeMutationMutationVariables
 >;
 export const CreateImageUploadDocument = {
-  __meta__: { hash: '2e2fd30bf11967df84d58d1fbca4210f31d9dcf63ad1f4a8b0e19f8345338539' },
+  __meta__: { hash: '7a250ffcad39ebf7a6b227eccfb66d362dea86a2a304d7235231095c22c072ac' },
   kind: 'Document',
   definitions: [
     {
@@ -3985,7 +3987,8 @@ export const CreateImageUploadDocument = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'signedUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'fields' } },
                 {
                   kind: 'Field',
                   name: { kind: 'Name', value: 'image' },

@@ -12,6 +12,7 @@ import {
   Link as MuiLink,
   Skeleton,
   useMediaQuery,
+  type Theme,
 } from '@mui/material';
 import { formatDistanceToNow } from 'date-fns/esm';
 import { LoadingButton } from '@mui/lab';
@@ -132,6 +133,7 @@ interface CommentFormProps {
 
 const CommentForm = React.memo(
   ({ photo, incTmpId, firstCommentRef, inputRef }: CommentFormProps) => {
+    const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
     const [loginWithGoogle, { loading: googleLoading }] = useAppGoogleLogin();
     const [currentUser] = useCurrentUser();
     const [body, setBody] = React.useState('');
@@ -211,7 +213,7 @@ const CommentForm = React.memo(
         });
       };
 
-      if ('startViewTransition' in document) {
+      if ('startViewTransition' in document && !isMobile) {
         // swap the transition name between the input and the first comment to avoid collision
         // swap again once the transition is done
         inputRef.current?.style.setProperty('view-transition-name', VIEW_TRANSITION_COMMENT_ITEM);
@@ -237,6 +239,7 @@ const CommentForm = React.memo(
       firstCommentRef,
       incTmpId,
       inputRef,
+      isMobile,
       loginWithGoogle,
       photo.id,
     ]);
@@ -298,11 +301,13 @@ const CommentForm = React.memo(
           <Box p={1}>
             <Typography variant="caption" color="textSecondary">
               Continuing, you agree to the{' '}
-              <StickPointerButton>
-                <MuiLink component={Link} to="/legal">
-                  Terms of Service
-                </MuiLink>
-              </StickPointerButton>
+              <MuiLink component={Link} to="/terms-of-service">
+                terms of service
+              </MuiLink>{' '}
+              and the{' '}
+              <MuiLink component={Link} to="/privacy-policy">
+                privacy policy
+              </MuiLink>
             </Typography>
           </Box>
         )}
