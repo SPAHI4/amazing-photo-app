@@ -117,8 +117,8 @@ data "template_file" "environment" {
   vars = {
     deployment = terraform.workspace
 
-    root_database_url = "postgres://${aws_db_instance.default.username}:${aws_db_instance.default.password}@${aws_db_instance.default.endpoint}/postgres",
-    database_url      = "postgres://${var.db_app_username}:${var.db_app_password}@${aws_db_instance.default.endpoint}/${local.db_app_name}",
+    root_database_url = "postgres://${aws_db_instance.default.username}:${aws_db_instance.default.password}@${aws_db_instance.default.endpoint}/postgres?sslmode=require",
+    database_url      = "postgres://${var.db_app_username}:${var.db_app_password}@${aws_db_instance.default.endpoint}/${local.db_app_name}?sslmode=require",
 
     s3_bucket_region = var.aws_region
     s3_bucket_name   = aws_s3_bucket.storage.bucket
