@@ -356,7 +356,7 @@ resource "cloudflare_page_rule" "sitemap_redirect" {
   actions {
     forwarding_url {
       status_code = 301
-      url         = "${local.api_domain}/sitemap.xml"
+      url         = "https://${local.api_domain}/sitemap.xml"
     }
   }
 }
