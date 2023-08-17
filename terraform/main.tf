@@ -167,7 +167,8 @@ resource "aws_instance" "app" {
     Name = "photo-app"
   }
 
-  user_data = data.template_file.init.rendered
+  user_data_replace_on_change = true
+  user_data                   = data.template_file.init.rendered
 }
 
 resource "aws_security_group" "allow_rds" {
