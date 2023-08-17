@@ -5,7 +5,7 @@ sudo apt-get install ec2-instance-connect
 sudo apt-get install -y docker.io
 sudo systemctl start docker
 sudo systemctl enable docker
-echo "${env}" > /home/ubuntu/environment.env
+sudo echo "${env}" > /home/ubuntu/environment.env
 
 sudo docker pull ${repository_url}:server-"${git_sha}"
 sudo docker pull ${repository_url}:worker-"${git_sha}"
