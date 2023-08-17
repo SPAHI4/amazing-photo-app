@@ -151,6 +151,7 @@ data "template_file" "init" {
     env            = data.template_file.environment.rendered
     repository_url = data.aws_ecr_repository.ecr_repository.repository_url
     git_sha        = var.git_sha
+    aws_region     = var.aws_region
   }
 
   depends_on = [data.template_file.environment]
