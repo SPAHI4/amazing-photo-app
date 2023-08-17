@@ -123,8 +123,8 @@ data "template_file" "environment" {
     s3_bucket_region = var.aws_region
     s3_bucket_name   = aws_s3_bucket.storage.bucket
 
-    jwt_public_key  = base64encode(var.jwt_public_key)
-    jwt_private_key = base64encode(var.jwt_private_key)
+    jwt_public_key = base64encode(var.jwt_public_key)
+    jwt_secret_key = base64encode(var.jwt_private_key)
 
     ssl_cert = base64encode(var.ssl_cert)
     ssl_key  = base64encode(var.ssl_key)
