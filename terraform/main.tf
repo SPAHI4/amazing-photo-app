@@ -235,7 +235,7 @@ resource "cloudflare_record" "ecs_api" {
   value   = aws_eip.app.public_dns
   type    = "CNAME"
   zone_id = data.cloudflare_zone.default.id
-  proxied = true
+  proxied = false
 }
 
 resource "aws_security_group" "allow_rds" {
