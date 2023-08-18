@@ -12,11 +12,15 @@ import { useAppGoogleLogin } from '../hooks/use-app-google-login.tsx';
 
 export function HeaderNavigation() {
   const theme = useTheme();
+  const searchParams = new URLSearchParams(window.location.search);
   const [login, { loading: loginLoading }] = useAppGoogleLogin();
   const [currentUser] = useCurrentUser();
   const [logout, { loading: logoutLoading }] = useLogout();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const showLogin =
+    (searchParams.get('login') === 'true' || import.meta.env.DEV) && currentUser == null;
 
   return (
     <Box
@@ -43,7 +47,7 @@ export function HeaderNavigation() {
           app on github
         </Button>
       </StickPointerButton>
-      {currentUser == null && import.meta.env.DEV && (
+      {showLogin && (
         <StickPointerButton key="login">
           <LoadingButton loading={loginLoading} variant="text" color="inherit" onClick={login}>
             login
