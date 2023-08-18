@@ -114,7 +114,7 @@ resource "aws_key_pair" "deployer" {
 }
 
 data "template_file" "environment" {
-  template = file("${path.module}/server.tpl.env")
+  template = file("${path.module}/setup/server.tpl.env")
 
   vars = {
     deployment = terraform.workspace
@@ -149,7 +149,7 @@ data "template_file" "environment" {
 }
 
 data "template_file" "init" {
-  template = file("${path.module}/init-servers.tpl.sh")
+  template = file("${path.module}/setup/init-servers.tpl.sh")
 
   vars = {
     env            = data.template_file.environment.rendered
@@ -283,7 +283,7 @@ resource "aws_db_instance" "default" {
 }
 
 data "template_file" "db_init" {
-  template = file("${path.module}/init-db.tpl.sql")
+  template = file("${path.module}/setup/init-db.tpl.sql")
 
   vars = {
     db_app_name     = local.db_app_name
@@ -441,8 +441,9 @@ resource "aws_s3_bucket_cors_configuration" "storage" {
 
   cors_rule {
     allowed_headers = ["*"]
-    allowed_methods = ["PUT", "GET"]
-    allowed_origins = ["*"]
     max_age_seconds = 3000
+    allowed_methods = ["PUT", "POST", "GET"]
+    allowed_origins = [local.web_domain]
+    expose_headers  = ["ETag"]
   }
 }

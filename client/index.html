@@ -2,9 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/png" href="/favicon-hq.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link ref="preconnect" href="%VITE_GRAPHQL_ENDPOINT%" />
     <link
       href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz@1,7..72&family=Montserrat:wght@400;500;700&family=Poppins:wght@500;700;900&display=swap"
       rel="stylesheet"
@@ -20,7 +21,7 @@
       }
     </style>
 
-    <title>spahi4's photo gallery</title>
+    <title>%VITE_BASE_TITLE%</title>
   </head>
   <body>
     <!--force browser to keep hdr on every screen-->
