@@ -35,22 +35,35 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check if only terraform files are modified and other files are not
+        id: terraform-changed
+        run: |
+          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qE '^(terraform/|\.terraform|\.github/workflows/deploy\.yaml)'; then
+            echo "changed=true" >> $GITHUB_ENV
+            else
+            echo "changed=false" >> $GITHUB_ENV
+            fi
+
       - uses: pnpm/action-setup@v2
+        if: steps.terraform-changed.outputs.changed == 'false'
         name: pnpm setup
         with:
           version: 8
 
       - name: Use Node.js
+        if: steps.terraform-changed.outputs.changed == 'false'
         uses: actions/setup-node@v3
         with:
           node-version: '20.5'
           cache: 'pnpm'
 
       - name: pnpm install
+        if: steps.terraform-changed.outputs.changed == 'false'
         run: |
           pnpm --filter client install
 
       - name: Build client just for checks
+        if: steps.terraform-changed.outputs.changed == 'false'
         run: |
           pnpm --filter client run build
 
@@ -62,15 +75,18 @@ jobs:
           aws-region: eu-north-1
 
       - name: Login to Amazon ECR
+        if: steps.terraform-changed.outputs.changed == 'false'
         id: loginecr
         uses: aws-actions/amazon-ecr-login@v1
         with:
           mask-password: 'true'
 
       - name: Set up Docker Buildx
+        if: steps.terraform-changed.outputs.changed == 'false'
         uses: docker/setup-buildx-action@v2
 
       - name: Server image
+        if: steps.terraform-changed.outputs.changed == 'false'
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -79,6 +95,7 @@ jobs:
           target: server
 
       - name: Worker image
+        if: steps.terraform-changed.outputs.changed == 'false'
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -87,6 +104,7 @@ jobs:
           target: worker
 
       - name: Migrate image
+        if: steps.terraform-changed.outputs.changed == 'false'
         uses: docker/build-push-action@v4
         with:
           context: .
