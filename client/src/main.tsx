@@ -67,13 +67,8 @@ ReactDOM.createRoot(rootElement as HTMLElement).render(
   <React.StrictMode>
     <HelmetProvider>
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-        <StyledEngineProvider injectFirst>
-          <CssVarsProvider
-            theme={appTheme}
-            disableTransitionOnChange={canUseTransition}
-            // @ts-expect-error types are wrong, this is a valid value
-            defaultColorScheme="system"
-          >
+        <StyledEngineProvider>
+          <CssVarsProvider theme={appTheme} disableTransitionOnChange={canUseTransition}>
             <CssBaseline />
             <Suspense fallback={<MainSkeleton />}>
               <ApolloProvider client={apolloClient}>

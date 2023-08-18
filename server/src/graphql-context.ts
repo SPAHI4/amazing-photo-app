@@ -26,9 +26,12 @@ export const getGraphqlContext = async (
   req: IncomingMessage,
   res: ServerResponse,
 ): Promise<Partial<GraphqlContext>> => {
-  const clientIp =
-    req.headers['true-client-ip']?.[0] ??
-    req.headers['x-forwarded-for']?.[0] ??
+  const getIp = (header: string | string[] | undefined): string | null =>
+    Array.isArray(header) ? header[0] : header ?? null;
+
+  const clientIp: string =
+    getIp(req.headers['cf-connecting-ip']) ??
+    getIp(req.headers['x-forwarded-for']) ??
     req.socket.remoteAddress ??
     '';
 

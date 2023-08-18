@@ -224,9 +224,9 @@ export const StickPointerButton = memo((props: StickPointerButtonProps) => {
       const rect = targetElem.getBoundingClientRect();
 
       targetElem.style.setProperty('--scale', '1.05');
+
       cursorElem.style.setProperty('--cursor-scale', '1.05');
       cursorElem.style.setProperty('--cursor-scale-x', '1.05');
-
       cursorElem.style.setProperty('--cursor-x', `${rect.left + rect.width / 2}px`);
       cursorElem.style.setProperty('--cursor-y', `${rect.top + rect.height / 2}px`);
       cursorElem.style.setProperty('--cursor-width', `${rect.width}px`);

@@ -1,19 +1,20 @@
-import React, { useCallback, useRef } from 'react';
+import { memo, useCallback, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { IconButton, SvgIcon, useColorScheme } from '@mui/material';
+import { IconButton, SvgIcon } from '@mui/material';
+import { useColorScheme } from '@mui/material/styles';
 import { css, Global } from '@emotion/react';
 import { nextTick } from '../utils/promise.ts';
 import { StickPointerButton } from '../ui-components/cursor.tsx';
 import { IconDarkMode, IconLightMode } from '../icons.tsx';
 
-export const ThemeChangeButton = React.memo(() => {
+export const ThemeChangeButton = memo(() => {
   const { mode, setMode } = useColorScheme();
   const iconRef = useRef<HTMLDivElement>(null);
   const toggleMode = useCallback(
     () => setMode(mode === 'dark' ? 'light' : 'dark'),
     [mode, setMode],
   );
-  const [transitioning, setTransitioning] = React.useState(false);
+  const [transitioning, setTransitioning] = useState(false);
 
   const handleClick = useCallback(
     async (event: React.MouseEvent<HTMLElement>) => {
