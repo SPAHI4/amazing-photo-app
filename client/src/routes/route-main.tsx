@@ -115,7 +115,7 @@ function LocationLink({ location, onMouseEnter, onMouseLeave }: LocationLinkProp
         css={css`
           line-height: 1;
           padding: 8px 0;
-          text-decoration: underline rgba(255, 255, 255, 0);
+          text-decoration: underline transparent;
           width: fit-content;
           font-family: ${theme.typography.h1.fontFamily};
           font-weight: 900;
@@ -149,7 +149,6 @@ function LocationLink({ location, onMouseEnter, onMouseLeave }: LocationLinkProp
                 css={css`
                   view-transition-name: ${TRANSITION_NAME};
                   width: fit-content;
-                  display: inline-block;
                 `}
               >
                 {part}

@@ -23,7 +23,7 @@ import { grey } from '@mui/material/colors';
 import { notEmpty } from '../../utils/array.ts';
 import { StickPointerButton, StickPointerText } from '../../ui-components/cursor.tsx';
 import { Nl2Br } from '../../ui-components/nl2br.tsx';
-import { graphql } from '../../__generated__/gql.ts';
+import { graphql } from '../../__generated__';
 import { useAppGoogleLogin } from '../../hooks/use-app-google-login.tsx';
 import { useCurrentUser } from '../../hooks/use-user.ts';
 import type { CommentsQueryQuery } from '../../__generated__/graphql.ts';
@@ -131,190 +131,188 @@ interface CommentFormProps {
   firstCommentRef: React.RefObject<HTMLDivElement>;
 }
 
-const CommentForm = React.memo(
-  ({ photo, incTmpId, firstCommentRef, inputRef }: CommentFormProps) => {
-    const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
-    const [loginWithGoogle, { loading: googleLoading }] = useAppGoogleLogin();
-    const [currentUser] = useCurrentUser();
-    const [body, setBody] = React.useState('');
-    const formRef = React.useRef<HTMLFormElement>(null);
-    const [createComment, { loading }] = useMutation(PHOTO_COMMENTS_CREATE_COMMENT_MUTATION, {
-      optimisticResponse(variables) {
-        const { comment } = variables;
-        return {
-          createComment: {
-            __typename: 'CreateCommentPayload' as const,
-            comment: {
-              __typename: 'Comment' as const,
-              id: -1,
-              body: comment.body,
-              createdAt: new Date(),
-              isArchived: false,
-              user: {
-                __typename: 'User' as const,
-                id: currentUser!.id,
-                displayName: currentUser!.displayName,
-                pictureUrl: currentUser!.pictureUrl,
-              },
+function CommentForm({ photo, incTmpId, firstCommentRef, inputRef }: CommentFormProps) {
+  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
+  const [loginWithGoogle, { loading: googleLoading }] = useAppGoogleLogin();
+  const [currentUser] = useCurrentUser();
+  const [body, setBody] = React.useState('');
+  const formRef = React.useRef<HTMLFormElement>(null);
+  const [createComment, { loading }] = useMutation(PHOTO_COMMENTS_CREATE_COMMENT_MUTATION, {
+    optimisticResponse(variables) {
+      const { comment } = variables;
+      return {
+        createComment: {
+          __typename: 'CreateCommentPayload' as const,
+          comment: {
+            __typename: 'Comment' as const,
+            id: -1,
+            body: comment.body,
+            createdAt: new Date(),
+            isArchived: false,
+            user: {
+              __typename: 'User' as const,
+              id: currentUser!.id,
+              displayName: currentUser!.displayName,
+              pictureUrl: currentUser!.pictureUrl,
             },
           },
-        };
-      },
-      update(cache, { data }) {
-        cache.updateQuery(
-          { query: PHOTO_COMMENTS_QUERY, variables: { id: photo.id!, first: 20 } },
-          (qdata) => {
-            if (qdata?.comments == null || data?.createComment?.comment == null) {
-              return qdata;
-            }
-
-            return {
-              ...qdata,
-              comments: {
-                ...qdata.comments,
-                __typename: 'CommentsConnection' as const,
-                totalCount: qdata.comments.totalCount + 1,
-                edges: [
-                  {
-                    __typename: 'CommentsEdge' as const,
-                    cursor: data.createComment.comment.id,
-                    node: data.createComment.comment,
-                  },
-                  ...qdata.comments!.edges,
-                ],
-              },
-            };
-          },
-        );
-      },
-    });
-
-    const handleSubmit = useCallback(async () => {
-      incTmpId();
-      setBody(body.trim());
-
-      if (formRef.current?.checkValidity() === false) {
-        return;
-      }
-
-      if (currentUser == null) {
-        await loginWithGoogle();
-      }
-
-      const commentFn = async () => {
-        setBody('');
-        await createComment({
-          variables: {
-            comment: {
-              body,
-              photoId: photo.id!,
-            },
-          },
-        });
+        },
       };
+    },
+    update(cache, { data }) {
+      cache.updateQuery(
+        { query: PHOTO_COMMENTS_QUERY, variables: { id: photo.id!, first: 20 } },
+        (qdata) => {
+          if (qdata?.comments == null || data?.createComment?.comment == null) {
+            return qdata;
+          }
 
-      if ('startViewTransition' in document && !isMobile) {
-        // swap the transition name between the input and the first comment to avoid collision
-        // swap again once the transition is done
-        inputRef.current?.style.setProperty('view-transition-name', VIEW_TRANSITION_COMMENT_ITEM);
-        const transition = document.startViewTransition(async () => {
-          inputRef.current?.style.removeProperty('view-transition-name');
-          firstCommentRef.current?.style.setProperty(
-            'view-transition-name',
-            VIEW_TRANSITION_COMMENT_ITEM,
-          );
-          await commentFn();
-        });
-        await transition.ready;
-        firstCommentRef.current?.style.removeProperty('view-transition-name');
-      } else {
+          return {
+            ...qdata,
+            comments: {
+              ...qdata.comments,
+              __typename: 'CommentsConnection' as const,
+              totalCount: qdata.comments.totalCount + 1,
+              edges: [
+                {
+                  __typename: 'CommentsEdge' as const,
+                  cursor: data.createComment.comment.id,
+                  node: data.createComment.comment,
+                },
+                ...qdata.comments!.edges,
+              ],
+            },
+          };
+        },
+      );
+    },
+  });
+
+  const handleSubmit = useCallback(async () => {
+    incTmpId();
+    setBody(body.trim());
+
+    if (formRef.current?.reportValidity() !== true) {
+      return;
+    }
+
+    if (currentUser == null) {
+      await loginWithGoogle();
+    }
+
+    const commentFn = async () => {
+      setBody('');
+      await createComment({
+        variables: {
+          comment: {
+            body,
+            photoId: photo.id!,
+          },
+        },
+      });
+    };
+
+    if ('startViewTransition' in document && !isMobile) {
+      // swap the transition name between the input and the first comment to avoid collision
+      // swap back once the transition is done
+      inputRef.current?.style.setProperty('view-transition-name', VIEW_TRANSITION_COMMENT_ITEM);
+      const transition = document.startViewTransition(async () => {
+        inputRef.current?.style.removeProperty('view-transition-name');
+        firstCommentRef.current?.style.setProperty(
+          'view-transition-name',
+          VIEW_TRANSITION_COMMENT_ITEM,
+        );
         await commentFn();
+      });
+      await transition.ready;
+      firstCommentRef.current?.style.removeProperty('view-transition-name');
+    } else {
+      await commentFn();
+    }
+
+    firstCommentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [
+    body,
+    createComment,
+    currentUser,
+    firstCommentRef,
+    incTmpId,
+    inputRef,
+    isMobile,
+    loginWithGoogle,
+    photo.id,
+  ]);
+
+  const handleChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setBody(event.target.value);
+    },
+    [setBody],
+  );
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        handleSubmit();
       }
+    },
+    [handleSubmit],
+  );
 
-      firstCommentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, [
-      body,
-      createComment,
-      currentUser,
-      firstCommentRef,
-      incTmpId,
-      inputRef,
-      isMobile,
-      loginWithGoogle,
-      photo.id,
-    ]);
-
-    const handleChange = useCallback(
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        setBody(event.target.value);
-      },
-      [setBody],
-    );
-
-    const handleKeyDown = useCallback(
-      (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter' && !event.shiftKey) {
-          event.preventDefault();
-          handleSubmit();
-        }
-      },
-      [handleSubmit],
-    );
-
-    return (
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          handleSubmit();
-        }}
-        ref={formRef}
-      >
-        <FormControl fullWidth variant="outlined" disabled={loading}>
-          <InputLabel htmlFor="field-body">Leave your thoughts...</InputLabel>
-          <StickPointerText>
-            <OutlinedInput
-              id="field-body"
-              multiline
-              value={body}
-              onChange={handleChange}
-              maxRows={4}
-              inputProps={{
-                minLength: 2,
-                required: true,
-                ref: inputRef,
-              }}
-              label="Leave your thoughts..."
-              endAdornment={
-                <InputAdornment position="end">
-                  <StickPointerButton>
-                    <LoadingButton type="submit" color="primary" loading={googleLoading}>
-                      Send
-                    </LoadingButton>
-                  </StickPointerButton>
-                </InputAdornment>
-              }
-              onKeyDown={handleKeyDown}
-            />
-          </StickPointerText>
-        </FormControl>
-        {currentUser == null && (
-          <Box p={1}>
-            <Typography variant="caption" color="textSecondary">
-              Continuing, you agree to the{' '}
-              <MuiLink component={Link} to="/terms-of-service">
-                terms of service
-              </MuiLink>{' '}
-              and the{' '}
-              <MuiLink component={Link} to="/privacy-policy">
-                privacy policy
-              </MuiLink>
-            </Typography>
-          </Box>
-        )}
-      </form>
-    );
-  },
-);
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        handleSubmit();
+      }}
+      ref={formRef}
+    >
+      <FormControl fullWidth variant="outlined" disabled={loading}>
+        <InputLabel htmlFor="field-body">Leave your thoughts...</InputLabel>
+        <StickPointerText>
+          <OutlinedInput
+            id="field-body"
+            multiline
+            value={body}
+            onChange={handleChange}
+            maxRows={4}
+            inputProps={{
+              minLength: 2,
+              required: true,
+              ref: inputRef,
+            }}
+            label="Leave your thoughts..."
+            endAdornment={
+              <InputAdornment position="end">
+                <StickPointerButton>
+                  <LoadingButton type="submit" color="primary" loading={googleLoading}>
+                    Send
+                  </LoadingButton>
+                </StickPointerButton>
+              </InputAdornment>
+            }
+            onKeyDown={handleKeyDown}
+          />
+        </StickPointerText>
+      </FormControl>
+      {currentUser == null && (
+        <Box p={1}>
+          <Typography variant="caption" color="textSecondary">
+            Continuing, you agree to the{' '}
+            <MuiLink component={Link} to="/terms-of-service">
+              terms of service
+            </MuiLink>{' '}
+            and the{' '}
+            <MuiLink component={Link} to="/privacy-policy">
+              privacy policy
+            </MuiLink>
+          </Typography>
+        </Box>
+      )}
+    </form>
+  );
+}
 
 const PHOTO_COMMENTS_PHOTO = graphql(`
   fragment PhotoComments_photo on Photo {
@@ -520,6 +518,7 @@ const Comment = memo(
       </div>
     );
   },
+  (prevProps, nextProps) => prevProps.comment === nextProps.comment,
 );
 
 interface CommentsProps {
@@ -635,7 +634,7 @@ const Comments = memo((props: CommentsProps) => {
     >
       {comments.filter(notEmpty).map((comment, index) => (
         <Comment
-          key={index === 0 ? tmpId : comment.id}
+          key={index === 0 ? tmpId : `comment-${comment.id}`}
           comment={comment}
           index={index}
           firstCommentRef={firstCommentRef}
@@ -658,7 +657,7 @@ interface PhotoCommentsProps {
   };
 }
 
-export const PhotoComments = memo((props: PhotoCommentsProps) => {
+export function PhotoComments(props: PhotoCommentsProps) {
   const { data: photo, complete } = useFragment({
     fragment: PHOTO_COMMENTS_PHOTO,
     fragmentName: 'PhotoComments_photo',
@@ -772,4 +771,4 @@ export const PhotoComments = memo((props: PhotoCommentsProps) => {
       </Box>
     </>
   );
-});
+}

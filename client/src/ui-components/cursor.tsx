@@ -13,6 +13,18 @@ import { CircularProgress, useMediaQuery } from '@mui/material';
 import { useThrottledValue } from '../hooks/use-throttle.ts';
 import { CursorContext, CursorContextValue } from './cursor-context.tsx';
 
+/*
+ * Context components
+ *
+ * 1. useCursor hook
+ * 2. CursorProvider, which provides context for the cursor and handles cursor state, logic and rendering
+ * 3. StickPointerButton, which is a button that sticks the cursor to it
+ * 4. StickPointerText, which is a text that sticks the cursor to it
+ * 5. StickPointerImage, which is an image that sticks the cursor to it
+ *
+ * Stick*** components contain logic for cursor animation, some logic is duplicated to simplify the code
+ */
+
 export const useCursor = (): CursorContextValue => {
   const context = useContext(CursorContext);
 
@@ -28,7 +40,11 @@ export const CursorProvider = memo(({ children }: { children: React.ReactNode })
   const cursorRef = useRef<HTMLDivElement>(null);
   const cursorLocked = useRef(false);
   const state = useThrottledValue(navigation.state, 100);
+
+  // show loading state until react-router navigation is complete (handles lazy loading, route loaders, etc.)
   const loading = state === 'loading' && !['error', 'idle'].includes(navigation.state);
+
+  // enable cursor only on desktop
   const cursorEnabled = useMediaQuery('(min-width: 600px)');
 
   useLayoutEffect(() => {
@@ -79,6 +95,7 @@ export const CursorProvider = memo(({ children }: { children: React.ReactNode })
     cursorRef.current?.style.setProperty('--cursor-background-color', '#fff');
   }, []);
 
+  // lock means cursor is sticked to some element
   const lockCursor = useCallback(() => {
     cursorLocked.current = true;
     cursorRef.current?.style.setProperty(
@@ -158,7 +175,7 @@ export const CursorProvider = memo(({ children }: { children: React.ReactNode })
               transition-timing-function: var(--motion-easing-emphasized-decelerate);
               transition-property: width, height, border-radius, scale, background-color;
               transform-origin: center;
-              z-index: 99999999999;
+              z-index: 99999999;
               position: fixed;
               pointer-events: none;
             `}
@@ -201,7 +218,7 @@ export const StickPointerButton = memo((props: StickPointerButtonProps) => {
 
     const targetElem = ref.current;
     const cursorElem = cursorRef.current;
-    // <enter> could be not fired because of child elements
+    // <enter> could be not fired if a child element is hovered first
     let enterFired = true;
 
     if (targetElem == null || cursorElem == null) {

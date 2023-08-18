@@ -13,6 +13,7 @@ import { PhotoCard } from '../features/photo/photo-card.tsx';
 import { useBrowserFeatures } from '../hooks/use-browser-features.ts';
 import { ROUTE_LOCATION_QUERY } from '../loaders/route-location-loader.ts';
 import { LoadMoreContainer } from '../ui-components/load-more-conainer.tsx';
+import { viewTransitionLocationHeader } from '../utils/view-transitions.ts';
 
 function HDRBanner() {
   const theme = useTheme();
@@ -135,7 +136,7 @@ function Location() {
           `}
         >
           {nameParts.map((part, index) => {
-            const TRANSITION_NAME = `header-${slug}-${index}`;
+            const TRANSITION_NAME = viewTransitionLocationHeader(slug, index);
             return (
               <React.Fragment key={part}>
                 <Global
@@ -150,7 +151,6 @@ function Location() {
                   css={css`
                     view-transition-name: ${TRANSITION_NAME};
                     width: fit-content;
-                    display: inline-block;
                   `}
                 >
                   {part}

@@ -1,7 +1,7 @@
 import { Box, Button, Menu, MenuItem, SvgIcon } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import useTheme from '@mui/material/styles/useTheme';
 import { IconExpandMore } from '../icons.tsx';
@@ -15,12 +15,17 @@ export function HeaderNavigation() {
   const searchParams = new URLSearchParams(window.location.search);
   const [login, { loading: loginLoading }] = useAppGoogleLogin();
   const [currentUser] = useCurrentUser();
+  const location = useLocation();
   const [logout, { loading: logoutLoading }] = useLogout();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   const showLogin =
     (searchParams.get('login') === 'true' || import.meta.env.DEV) && currentUser == null;
+
+  useEffect(() => {
+    setAnchorEl(null);
+  }, [location.pathname]);
 
   return (
     <Box

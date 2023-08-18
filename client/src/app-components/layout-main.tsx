@@ -62,7 +62,7 @@ function LayoutMobile() {
   );
 }
 
-const VIEW_TRANSITION_HEADER = 'header';
+const VIEW_TRANSITION_HEADER = 'header-main';
 
 function LayoutDesktop() {
   const theme = useTheme();
