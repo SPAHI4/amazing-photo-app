@@ -45,6 +45,7 @@ const cleaned = envalid.cleanEnv(process.env, {
   DEBUG: envalid.str(),
   WEB_ORIGIN: envalid.str(),
   API_ORIGIN: envalid.str(),
+  ROOT_DOMAIN: envalid.str(),
   ADMIN_EMAIL: envalid.str(),
   ROBOT_EMAIL: envalid.str(),
   APP_NAME: envalid.str(),

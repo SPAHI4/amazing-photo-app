@@ -25,7 +25,7 @@ export function HeaderNavigation() {
 
   useEffect(() => {
     setAnchorEl(null);
-  }, [location.pathname]);
+  }, [location.pathname, loginLoading, logoutLoading]);
 
   return (
     <Box

@@ -1,6 +1,7 @@
 import cookie from 'cookie';
 import { PoolClient } from 'pg';
 import { IncomingMessage, ServerResponse } from 'node:http';
+import { env } from '@app/config/env.js';
 import { REFRESH_TOKEN_EXPIRATION_DAYS } from './oauth.js';
 
 type UserRole = 'app_user' | 'app_admin';
@@ -45,10 +46,11 @@ export const getGraphqlContext = async (
         'Set-Cookie',
         cookie.serialize('refreshToken', token, {
           httpOnly: true,
+          secure: true,
           path: '/graphql',
           maxAge: 60 * 60 * 24 * REFRESH_TOKEN_EXPIRATION_DAYS,
-          secure: false,
-          domain: 'localhost',
+          domain: env.ROOT_DOMAIN,
+          sameSite: 'lax',
         }),
       );
     },
@@ -57,10 +59,11 @@ export const getGraphqlContext = async (
         'Set-Cookie',
         cookie.serialize('refreshToken', '', {
           httpOnly: true,
+          secure: true,
           path: '/graphql',
           maxAge: 0,
-          secure: false,
-          domain: 'localhost',
+          domain: env.ROOT_DOMAIN,
+          sameSite: 'lax',
         }),
       );
     },
