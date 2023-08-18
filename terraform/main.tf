@@ -56,6 +56,8 @@ data "aws_ecr_repository" "ecr_repository" {
   name = var.ecr_repository_name
 }
 
+data "cloudflare_ip_ranges" "cloudflare" {}
+
 resource "aws_security_group" "allow_ec2" {
   name        = "allow_ec2"
   description = "Allow web inbound traffic"
@@ -65,7 +67,7 @@ resource "aws_security_group" "allow_ec2" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = data.cloudflare_ip_ranges.cloudflare.ipv4_cidr_blocks
   }
 
   egress {
@@ -228,6 +230,14 @@ resource "aws_instance" "app" {
   user_data                   = data.template_file.init.rendered
 }
 
+resource "cloudflare_record" "ecs_api" {
+  name    = local.api_domain
+  value   = aws_eip.app.public_dns
+  type    = "CNAME"
+  zone_id = data.cloudflare_zone.default.id
+  proxied = true
+}
+
 resource "aws_security_group" "allow_rds" {
   name        = "allow_rds"
   description = "Allow inbound traffic from EC2 instances"
@@ -250,14 +260,6 @@ resource "aws_security_group" "allow_rds" {
 resource "aws_eip" "app" {
   domain   = "vpc"
   instance = aws_instance.app.id
-}
-
-resource "cloudflare_record" "ecs_api" {
-  name    = local.api_domain
-  value   = aws_eip.app.public_dns
-  type    = "CNAME"
-  zone_id = data.cloudflare_zone.default.id
-  proxied = false
 }
 
 resource "aws_db_instance" "default" {
@@ -334,8 +336,6 @@ resource "aws_s3_bucket_website_configuration" "client" {
     key = "index.html"
   }
 }
-
-data "cloudflare_ip_ranges" "cloudflare" {}
 
 data "aws_iam_policy_document" "s3_bucket_policy_public" {
   statement {
