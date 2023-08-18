@@ -38,7 +38,7 @@
       "@remix-run/router@1.7.2": "patches/@remix-run__router@1.7.2.patch"
     },
     "overrides": {
-      "@apollo/client": "^3.8.0-rc.2"
+      "@apollo/client": "^3.8.1"
     }
   }
 }

@@ -22,7 +22,6 @@ import { useThrottledValue } from './hooks/use-throttle.ts';
 export const rootElement = document.getElementById('root');
 const appTheme = makeTheme({ rootElement: rootElement as HTMLDivElement });
 const canUseTransition = 'startViewTransition' in document;
-const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 const MainSkeleton = React.memo(() => {
   const theme = useTheme();
@@ -72,7 +71,8 @@ ReactDOM.createRoot(rootElement as HTMLElement).render(
           <CssVarsProvider
             theme={appTheme}
             disableTransitionOnChange={canUseTransition}
-            defaultColorScheme={prefersDarkMode ? 'dark' : 'light'}
+            // @ts-expect-error types are wrong, this is a valid value
+            defaultColorScheme="system"
           >
             <CssBaseline />
             <Suspense fallback={<MainSkeleton />}>
