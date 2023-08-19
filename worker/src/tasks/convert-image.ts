@@ -112,7 +112,7 @@ const convertImage = async (
     ];
   }
 
-  const args = ['-y', '-i', source.filePath, ...commandArgs.flat(), target.filePath, '2>&1 > /tmp/conversion.log'];
+  const args = ['-y', '-i', source.filePath, ...commandArgs.flat(), target.filePath, '>', '/tmp/conversion.log', '2>&1'];
 
   logger.debug(`🤓 Converting image: ffmpeg ${args.join(' ')}`);
 
