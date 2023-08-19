@@ -123,7 +123,7 @@ data "template_file" "environment" {
     database_url      = "postgres://${var.db_app_username}:${var.db_app_password}@${aws_db_instance.default.endpoint}/${local.db_app_name}?sslmode=require",
 
     s3_bucket_region = var.aws_region
-    s3_bucket_name   = aws_s3_bucket.storage.bucket
+    s3_bucket_name   = aws_s3_bucket.image-storage.bucket
 
     jwt_public_key = base64encode(var.jwt_public_key)
     jwt_secret_key = base64encode(var.jwt_private_key)
@@ -209,7 +209,7 @@ resource "aws_iam_role_policy" "ecr_policy" {
   })
 }
 
-resource "aws_iam_policy" "storage_policy" {
+resource "aws_iam_policy" "image_storage_policy" {
   name = "S3UploadPolicy"
 
   policy = jsonencode({
@@ -218,7 +218,7 @@ resource "aws_iam_policy" "storage_policy" {
       {
         Effect   = "Allow",
         Action   = ["s3:*"],
-        Resource = [aws_s3_bucket.storage.arn, "${aws_s3_bucket.storage.arn}/*"]
+        Resource = [aws_s3_bucket.image-storage.arn, "${aws_s3_bucket.image-storage.arn}/*"]
       }
     ]
   })
@@ -227,7 +227,7 @@ resource "aws_iam_policy" "storage_policy" {
 resource "aws_iam_policy_attachment" "instance_s3_upload_attachment" {
   name       = "InstanceS3UploadAttachment"
   roles      = [aws_iam_role.ec2_instance.name]
-  policy_arn = aws_iam_policy.storage_policy.arn
+  policy_arn = aws_iam_policy.image_storage_policy.arn
 }
 
 resource "aws_instance" "app" {
@@ -419,7 +419,7 @@ resource "cloudflare_record" "s3_website" {
   proxied = true
 }
 
-resource "aws_s3_bucket" "storage" {
+resource "aws_s3_bucket" "image-storage" {
   bucket = local.s3_bucket_storage
 
   tags = {
@@ -441,7 +441,7 @@ resource "cloudflare_page_rule" "sitemap_redirect" {
 }
 
 resource "aws_s3_bucket_public_access_block" "image-storage" {
-  bucket = aws_s3_bucket.storage.id
+  bucket = aws_s3_bucket.image-storage.id
 
   block_public_acls       = false
   block_public_policy     = false
@@ -449,16 +449,16 @@ resource "aws_s3_bucket_public_access_block" "image-storage" {
   restrict_public_buckets = false
 }
 
-resource "aws_s3_bucket_versioning" "storage" {
-  bucket = aws_s3_bucket.storage.id
+resource "aws_s3_bucket_versioning" "image-storage" {
+  bucket = aws_s3_bucket.image-storage.id
 
   versioning_configuration {
     status = "Disabled"
   }
 }
 
-resource "aws_s3_bucket_cors_configuration" "storage" {
-  bucket = aws_s3_bucket.storage.id
+resource "aws_s3_bucket_cors_configuration" "image-storage" {
+  bucket = aws_s3_bucket.image-storage.id
 
   cors_rule {
     allowed_headers = ["*"]

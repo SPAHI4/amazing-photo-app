@@ -296,7 +296,7 @@ function CommentForm({ photo, incTmpId, firstCommentRef, inputRef }: CommentForm
           />
         </StickPointerText>
       </FormControl>
-      {currentUser == null && (
+      {currentUser == null && body.length > 0 && (
         <Box p={1}>
           <Typography variant="caption" color="textSecondary">
             Continuing, you agree to the{' '}
