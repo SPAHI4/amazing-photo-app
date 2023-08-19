@@ -50,7 +50,7 @@ export class TempFile implements AsyncDisposable {
     await this.#fileHandle.close();
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if ((await fileExists(this.#filePath)) && false) {
+    if (await fileExists(this.#filePath)) {
       await fs.unlink(this.#filePath);
     }
   }
