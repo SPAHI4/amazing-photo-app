@@ -209,6 +209,27 @@ resource "aws_iam_role_policy" "ecr_policy" {
   })
 }
 
+resource "aws_iam_policy" "storage_policy" {
+  name = "S3UploadPolicy"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = ["s3:*"],
+        Resource = [aws_s3_bucket.storage.arn, "${aws_s3_bucket.storage.arn}/*"]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy_attachment" "instance_s3_upload_attachment" {
+  name       = "InstanceS3UploadAttachment"
+  roles      = [aws_iam_role.ec2_instance.name]
+  policy_arn = aws_iam_policy.storage_policy.arn
+}
+
 resource "aws_instance" "app" {
   ami                  = data.aws_ami.amazon_linux.id
   instance_type        = "t3.micro"
