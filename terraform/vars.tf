@@ -43,8 +43,8 @@ variable "s3_bucket_terraform" {}
 
 variable "s3_bucket_storage" {
   default = {
-    development = "spahi4-photo-storage-dev"
-    production  = "spahi4-photo-storage-prod"
+    development = "spahi4-photo-images-dev"
+    production  = "spahi4-photo-images-prod"
   }
 }
 

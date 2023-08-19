@@ -440,7 +440,7 @@ resource "cloudflare_page_rule" "sitemap_redirect" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "storage" {
+resource "aws_s3_bucket_public_access_block" "image-storage" {
   bucket = aws_s3_bucket.storage.id
 
   block_public_acls       = false
