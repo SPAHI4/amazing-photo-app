@@ -5,7 +5,7 @@ import { env } from '@app/config/env.js';
 import { s3 } from './s3.js';
 
 const CONTENT_TYPES = { 'image/jpeg': 'jpeg', 'image/avif': 'avif' } as const;
-const MAX_UPLOAD_SIZE = 1024 * 1024 * 20; // 20 MB
+const MAX_UPLOAD_SIZE = 1024 * 1024 * 25; // 25 MB
 
 export const createImageUploadMutation = makeExtendSchemaPlugin(() => ({
   typeDefs: gql`

@@ -1,5 +1,5 @@
 import { PostGraphileOptions, makePluginHook } from 'postgraphile';
-import PgSimplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector';
+import PgSimplifyInflectorPluginImp from '@graphile-contrib/pg-simplify-inflector';
 import PersistedOperationsPlugin from '@graphile/persisted-operations';
 import { GraphQLError } from 'graphql';
 import PgOmitArchivedImp from '@graphile-contrib/pg-omit-archived';
@@ -13,6 +13,9 @@ import { getGraphqlContext } from './graphql-context.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 const PgOmitArchivedPlugin = PgOmitArchivedImp.default ?? PgOmitArchivedImp;
+const PgSimplifyInflectorPlugin =
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  PgSimplifyInflectorPluginImp.default ?? PgSimplifyInflectorPluginImp;
 
 const mutationsPlugins = [createImageUploadMutation, loginWithGoogleMutation];
 const queriesPlugins = [locationBySlugQuery];
@@ -60,7 +63,6 @@ const devBaseConfig: Partial<PostGraphileOptions> = {
   disableQueryLog: false,
   allowExplain: true,
   subscriptions: true,
-  dynamicJson: true,
   exportGqlSchemaPath: './schema.graphql',
   allowUnpersistedOperation(req: IncomingMessage) {
     return req.headers.referer?.endsWith('/graphiql') === true;
@@ -74,6 +76,7 @@ const baseConfig = env.NODE_ENV === 'development' ? devBaseConfig : prodBaseConf
 export const postgraphileConfiig: PostGraphileOptions = {
   ...baseConfig,
   watchPg: true,
+  dynamicJson: true,
   pgDefaultRole: 'app_anonymous',
   ownerConnectionString: env.ROOT_DATABASE_URL,
 
@@ -102,7 +105,7 @@ export const postgraphileConfiig: PostGraphileOptions = {
   pluginHook,
   persistedOperationsDirectory: `./.persisted-documents/`,
   appendPlugins: [
-    PgSimplifyInflectorPlugin.default, // @see https://github.com/microsoft/TypeScript/issues/50690
+    PgSimplifyInflectorPlugin,
     BinaryTypePlugin,
     PgOmitArchivedPlugin,
     ...mutationsPlugins,

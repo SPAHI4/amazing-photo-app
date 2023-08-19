@@ -180,7 +180,6 @@ export function UploadCardImage({
         await uploadImage(data.createImageUpload.url, {
           method: 'POST',
           body: formData,
-          mode: 'no-cors',
         });
 
         form.setValue('url', `${data.createImageUpload.url}${data.createImageUpload.fields.key}`);
