@@ -443,7 +443,7 @@ resource "aws_s3_bucket_cors_configuration" "storage" {
     allowed_headers = ["*"]
     max_age_seconds = 3000
     allowed_methods = ["PUT", "POST", "GET"]
-    allowed_origins = [local.web_domain]
+    allowed_origins = ["https://${local.web_domain}"]
     expose_headers  = ["ETag"]
   }
 }
