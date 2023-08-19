@@ -18,8 +18,7 @@ const convertSizes = [3840, 480, 2560, 960, 1440] as const;
 const flatten = <T>(arr: T[][]): T[] => ([] as T[]).concat(...arr);
 
 const spawnAsync = async (command: string, args: string[]): Promise<void> => {
-  // eslint-disable-next-line
-  using process = spawn(command, args);
+  const process = spawn(command, args);
 
   await new Promise((resolve, reject) => {
     let stdout = '';
@@ -190,6 +189,7 @@ export const convertImageTask: Task = async (inPayload, { logger, query }) => {
       throw new Error('Content type is null');
     }
 
+    // eslint-disable-next-line
     await using sourceTmpFile = await TempFile.createWrite();
     const writeStream = sourceTmpFile.handle.createWriteStream();
 
