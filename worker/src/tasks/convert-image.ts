@@ -34,7 +34,7 @@ const spawnAsync = async (command: string, args: string[]): Promise<void> => {
 
     process.on('close', (code) => {
       if (code !== 0) {
-        reject(new Error(`FFmpeg exited with code ${code}: ${stderr}`));
+        reject(new Error(`FFmpeg exited with code ${code}: ${stdout} ${stderr}`));
       } else {
         resolve(stdout);
       }
@@ -112,7 +112,7 @@ const convertImage = async (
     ];
   }
 
-  const args = ['-y', '-i', source.filePath, ...commandArgs.flat(), target.filePath];
+  const args = ['-y', '-i', source.filePath, ...commandArgs.flat(), target.filePath, '2>&1 > /tmp/conversion.log'];
 
   logger.debug(`🤓 Converting image: ffmpeg ${args.join(' ')}`);
 
@@ -296,7 +296,7 @@ export const convertImageTask: Task = async (inPayload, { logger, query }) => {
       };
     };
 
-    const { results: uploadedImages } = await PromisePool.withConcurrency(4)
+    const { results: uploadedImages } = await PromisePool.withConcurrency(1)
       .for(sourcesToConvert)
       .handleError((err) => {
         throw err;
