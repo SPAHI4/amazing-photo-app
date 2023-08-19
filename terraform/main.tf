@@ -232,7 +232,7 @@ resource "aws_iam_policy_attachment" "instance_s3_upload_attachment" {
 
 resource "aws_instance" "app" {
   ami                  = data.aws_ami.amazon_linux.id
-  instance_type        = "t3.micro"
+  instance_type        = "t3.small"
   iam_instance_profile = aws_iam_instance_profile.instance.name
 
   key_name = aws_key_pair.deployer.key_name
