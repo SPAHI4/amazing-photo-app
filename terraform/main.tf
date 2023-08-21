@@ -119,8 +119,8 @@ data "template_file" "environment" {
   vars = {
     deployment = terraform.workspace
 
-    root_database_url = "postgres://${aws_db_instance.default.username}:${aws_db_instance.default.password}@${aws_db_instance.default.endpoint}/${local.db_app_name}?sslmode=require",
-    database_url      = "postgres://${var.db_app_username}:${var.db_app_password}@${aws_db_instance.default.endpoint}/${local.db_app_name}?sslmode=require",
+    root_database_url = "postgres://${aws_db_instance.default.username}:${aws_db_instance.default.password}@${aws_db_instance.default.endpoint}/${local.db_app_name}",
+    database_url      = "postgres://${var.db_app_username}:${var.db_app_password}@${aws_db_instance.default.endpoint}/${local.db_app_name}",
 
     s3_bucket_region = var.aws_region
     s3_bucket_name   = aws_s3_bucket.image-storage.bucket
@@ -283,8 +283,18 @@ resource "aws_eip" "app" {
   instance = aws_instance.app.id
 }
 
+resource "aws_db_parameter_group" "default" {
+  name   = "${terraform.workspace}-photo-app"
+  family = "postgres15"
+
+  parameter {
+    name  = "rds.force_ssl"
+    value = "0"
+  }
+}
+
 resource "aws_db_instance" "default" {
-  identifier             = "${terraform.workspace}_photo-app"
+  identifier             = "${terraform.workspace}-photo-app"
   allocated_storage      = 20
   engine                 = "postgres"
   engine_version         = "15.3"
@@ -301,6 +311,7 @@ resource "aws_db_instance" "default" {
   apply_immediately                   = true
   skip_final_snapshot                 = true
   publicly_accessible                 = true
+  parameter_group_name                = aws_db_parameter_group.default.name
 }
 
 data "template_file" "db_init" {
@@ -313,6 +324,7 @@ data "template_file" "db_init" {
   }
 }
 
+# TODO: use postgresql provider
 resource "null_resource" "db_init" {
   triggers = {
     instance_id = aws_db_instance.default.id
