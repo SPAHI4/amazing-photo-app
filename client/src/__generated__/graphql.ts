@@ -4740,7 +4740,7 @@ export const RouteMainQueryDocument = {
   ],
 } as unknown as DocumentNode<RouteMainQueryQuery, RouteMainQueryQueryVariables>;
 export const CommentsQueryDocument = {
-  __meta__: { hash: '8dc4034075778d173fe97646f5b77dad6e2df1deeb677dae9ab0b7291e948007' },
+  __meta__: { hash: '946e4f6d4d2f1ee2c27bde87a96d2063d23b64bae9ad90cb27541341fd748594' },
   kind: 'Document',
   definitions: [
     {
@@ -4753,6 +4753,13 @@ export const CommentsQueryDocument = {
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'comments' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'includeArchived' },
+                value: { kind: 'EnumValue', value: 'YES' },
+              },
+            ],
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
@@ -5657,7 +5664,7 @@ export const RouteAdminPhotosDeletePhotoMutationDocument = {
   RouteAdminPhotosDeletePhotoMutationMutationVariables
 >;
 export const UsersQueryDocument = {
-  __meta__: { hash: 'bfc44540e9303db7cf990fc9aaee6d484b1d1470b75ba6987b981ca190eee7d5' },
+  __meta__: { hash: '705d52c96ca7df78ef77cb86b0f76a9b6f47b2c874b676be1a7c9d85829e0da7' },
   kind: 'Document',
   definitions: [
     {
@@ -5670,6 +5677,13 @@ export const UsersQueryDocument = {
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'users' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'includeArchived' },
+                value: { kind: 'EnumValue', value: 'YES' },
+              },
+            ],
             selectionSet: {
               kind: 'SelectionSet',
               selections: [

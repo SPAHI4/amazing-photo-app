@@ -51,6 +51,7 @@ const cleaned = envalid.cleanEnv(process.env, {
   APP_NAME: envalid.str(),
   API_PORT: envalid.port({ default: 8080 }),
   GOOGLE_REFRESH_TOKEN: envalid.str(),
+  USER_UPLOAD_ENABLED: envalid.bool({ default: true }),
 });
 
 let jwts;

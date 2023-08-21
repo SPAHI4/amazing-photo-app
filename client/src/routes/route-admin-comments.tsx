@@ -14,11 +14,11 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { css } from '@emotion/react';
 import { Helmet } from 'react-helmet-async';
 import { StickPointerButton } from '../ui-components/cursor.tsx';
-import { graphql } from '../__generated__/gql.ts';
+import { graphql } from '../__generated__';
 
 const ROUTE_ADMIN_COMMENTS_QUERY = graphql(`
   query CommentsQuery {
-    comments {
+    comments(includeArchived: YES) {
       totalCount
       edges {
         node {
@@ -242,6 +242,10 @@ export function RouteAdminComments() {
         type: 'date',
         width: 100,
         editable: false,
+        valueGetter: ({ row }) =>
+          row.createdAt instanceof Date || row.createdAt == null
+            ? row.createdAt
+            : new Date(row.createdAt),
       },
       {
         field: 'isArchived',
