@@ -435,12 +435,6 @@ resource "aws_s3_bucket_ownership_controls" "image-storage" {
   }
 }
 
-resource "aws_s3_bucket_acl" "image-storage" {
-  bucket = aws_s3_bucket.image-storage.id
-
-  acl = "private"
-}
-
 # redirect sitemap.xml from client to api
 resource "cloudflare_page_rule" "sitemap_redirect" {
   zone_id = data.cloudflare_zone.default.id
