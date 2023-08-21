@@ -39,6 +39,13 @@ variable "db_app_name" {
   }
 }
 
+variable "resource_prefix" {
+  default = {
+    development = ""
+    production  = "prod-"
+  }
+}
+
 variable "deployer_public_key" {
   sensitive = true
 }

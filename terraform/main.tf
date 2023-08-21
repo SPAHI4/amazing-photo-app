@@ -30,6 +30,7 @@ locals {
   api_domain        = var.api_domain[terraform.workspace]
   web_domain        = var.web_domain[terraform.workspace]
   db_app_name       = var.db_app_name[terraform.workspace]
+  resource_prefix   = var.resource_prefix[terraform.workspace]
 
   google_credentials_web_parsed       = sensitive(jsondecode(var.google_credentials_web_json))
   google_credentials_installed_parsed = sensitive(jsondecode(var.google_credentials_installed_json))
@@ -59,7 +60,7 @@ data "aws_ecr_repository" "ecr_repository" {
 data "cloudflare_ip_ranges" "cloudflare" {}
 
 resource "aws_security_group" "allow_ec2" {
-  name        = "allow_ec2"
+  name        = "${local.resource_prefix}allow_ec2"
   description = "Allow web inbound traffic"
 
   ingress {
@@ -79,7 +80,7 @@ resource "aws_security_group" "allow_ec2" {
 }
 
 resource "aws_security_group" "allow_ec2_ssh" {
-  name        = "${terraform.workspace}_allow_ec2_ssh"
+  name        = "${local.resource_prefix}allow_ec2_ssh"
   description = "Allow SSH inbound traffic"
 
   ingress {
@@ -109,7 +110,7 @@ data "aws_ami" "amazon_linux" {
 }
 
 resource "aws_key_pair" "deployer" {
-  key_name   = "${terraform.workspace}_deployer-key"
+  key_name   = "${local.resource_prefix}deployer-key"
   public_key = var.deployer_public_key
 }
 
@@ -260,7 +261,7 @@ resource "cloudflare_record" "ecs_api" {
 }
 
 resource "aws_security_group" "allow_rds" {
-  name        = "${terraform.workspace}_allow_rds"
+  name        = "${local.resource_prefix}allow_rds"
   description = "Allow inbound traffic from EC2 instances"
 
   ingress {
