@@ -72,9 +72,10 @@ const convertImage = async (
   logger: Logger,
 ): Promise<ConvertResult> => {
   const lossless = target.size === 3840;
+  const scaleArg = `w='if(gt(iw,ih),${target.size},-2)':h='if(gt(iw,ih),-2,${target.size})'`;
 
   let commandArgs = [
-    ['-vf', `scale=${target.size}:-1`],
+    ['-vf', `scale=${scaleArg}`],
     ['-c:v', 'libwebp'],
     ['-lossless', lossless ? '1' : '0'],
   ];
@@ -82,7 +83,7 @@ const convertImage = async (
   // simple jpeg conversion
   if (target.type === 'image/jpeg') {
     commandArgs = [
-      ['-vf', `scale=${target.size}:-1`],
+      ['-vf', `scale=${scaleArg}`],
       ['-qscale:v', '80'],
     ];
   }
@@ -94,9 +95,9 @@ const convertImage = async (
       ['-color_trc', 'smpte2084'],
       ['-color_primaries', 'bt2020'],
       ['-c:v', 'libaom-av1'],
-      ['-crf', '8'],
+      ['-crf', '6'],
       ['-still-picture', '1'],
-      ['-vf', `scale=${target.size}:-1`],
+      ['-vf', `scale=${scaleArg}`],
     ];
   }
 
@@ -105,7 +106,7 @@ const convertImage = async (
     commandArgs = [
       [
         '-vf',
-        `scale=${target.size}:-1,format=yuv420p,zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p`,
+        `scale=${scaleArg},format=yuv420p,zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p`,
       ],
       ['-c:v', 'libwebp'],
       ['-lossless', lossless ? '1' : '0'],
@@ -296,7 +297,7 @@ export const convertImageTask: Task = async (inPayload, { logger, query }) => {
       };
     };
 
-    const { results: uploadedImages } = await PromisePool.withConcurrency(1)
+    const { results: uploadedImages } = await PromisePool.withConcurrency(2)
       .for(sourcesToConvert)
       .handleError((err) => {
         throw err;

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { notEmpty } from '../../utils/array.ts';
 import { useBrowserFeatures } from '../../hooks/use-browser-features.ts';
-import { graphql } from '../../__generated__/gql.ts';
+import { graphql } from '../../__generated__';
 import { useSafeTimeout } from '../../hooks/use-safe-timeout.ts';
 
 const PHOTO_IMAGE_PHOTO = graphql(`
@@ -73,7 +73,7 @@ export function PhotoImage(props: PhotoImageProps) {
     .filter((source) => [2560, 3840].includes(source.size ?? 0))
     .map((source) => {
       const w = isPortrait
-        ? Math.ceil(((source.size ?? 0) * photo.height) / photo.width)
+        ? Math.floor(((source.size ?? 0) * photo.width) / photo.height)
         : source.size;
       return `https://${photo.image?.s3Bucket ?? ''}.s3.amazonaws.com/${source.s3Key} ${w}w`;
     });
@@ -83,7 +83,7 @@ export function PhotoImage(props: PhotoImageProps) {
     .filter((source) => [2560, 3840].includes(source.size ?? 0))
     .map((source) => {
       const w = isPortrait
-        ? Math.ceil(((source.size ?? 0) * photo.height) / photo.width)
+        ? Math.floor(((source.size ?? 0) * photo.width) / photo.height)
         : source.size;
       return `https://${photo.image?.s3Bucket ?? ''}.s3.amazonaws.com/${source.s3Key} ${w}w`;
     });
