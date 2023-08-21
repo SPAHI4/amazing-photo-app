@@ -103,6 +103,10 @@ jobs:
         working-directory: terraform
         run: terraform init
 
+      - name: Terraform refresh
+        working-directory: terraform
+        run: terraform refresh
+
       - name: Terraform Apply
         id: terraform-apply
         working-directory: terraform
