@@ -285,7 +285,7 @@ resource "aws_eip" "app" {
 }
 
 resource "aws_db_parameter_group" "default" {
-  name   = "${terraform.workspace}__photo-app"
+  name   = "${terraform.workspace}-photo-app-db"
   family = "postgres15"
 
   parameter {
