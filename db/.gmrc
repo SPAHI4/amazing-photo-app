@@ -30,9 +30,7 @@
    * these.
    */
   "placeholders": {
-    // ":DATABASE_VISITOR": "!ENV", // Uses process.env.DATABASE_VISITOR
     ":ROLE_USER": "app_user",
-    ":ROLE_OWNER": "app_postgraphile",
     ":ROLE_VIEWER": "app_anonymous",
     ":ROLE_ADMIN": "app_admin",
   },
@@ -57,8 +55,7 @@
    * afterReset: actions executed after a `graphile-migrate reset` command.
    */
   "afterReset": [
-    "!_extensions.sql",
-    // "afterReset.sql",
+    "!afterReset.sql",
     // { "_": "command", "command": "graphile-worker --schema-only" },
   ],
  

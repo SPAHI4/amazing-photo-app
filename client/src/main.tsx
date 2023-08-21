@@ -17,14 +17,20 @@ import { css } from '@emotion/react';
 import { makeTheme } from './make-theme.tsx';
 import { apolloClient } from './apollo-client.ts';
 import { router } from './router.tsx';
+import { useThrottledValue } from './hooks/use-throttle.ts';
 
 export const rootElement = document.getElementById('root');
 const appTheme = makeTheme({ rootElement: rootElement as HTMLDivElement });
 const canUseTransition = 'startViewTransition' in document;
-const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 const MainSkeleton = React.memo(() => {
   const theme = useTheme();
+  const [rendered, setRendered] = React.useState(false);
+  const show = useThrottledValue(rendered, 1000);
+
+  React.useEffect(() => {
+    setRendered(true);
+  }, []);
 
   return (
     <div
@@ -45,10 +51,14 @@ const MainSkeleton = React.memo(() => {
         `}
       />
 
-      <Typography variant="h6">
-        Actually, you should not see this because the site is very fast. Though, here we are.
-      </Typography>
-      <CircularProgress />
+      {show && (
+        <>
+          <Typography variant="h6">
+            Actually, you should not see this because the site is very fast. Though, here we are.
+          </Typography>
+          <CircularProgress />
+        </>
+      )}
     </div>
   );
 });
@@ -57,12 +67,8 @@ ReactDOM.createRoot(rootElement as HTMLElement).render(
   <React.StrictMode>
     <HelmetProvider>
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-        <StyledEngineProvider injectFirst>
-          <CssVarsProvider
-            theme={appTheme}
-            disableTransitionOnChange={canUseTransition}
-            defaultColorScheme={prefersDarkMode ? 'dark' : 'light'}
-          >
+        <StyledEngineProvider>
+          <CssVarsProvider theme={appTheme} disableTransitionOnChange={canUseTransition}>
             <CssBaseline />
             <Suspense fallback={<MainSkeleton />}>
               <ApolloProvider client={apolloClient}>

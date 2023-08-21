@@ -292,6 +292,8 @@ export function RouteAdminPhotos() {
         type: 'date',
         width: 90,
         editable: true,
+        valueGetter: ({ row }) =>
+          row.shotAt instanceof Date || row.shotAt == null ? row.shotAt : new Date(row.shotAt),
       },
       {
         field: 'createdAt',
@@ -299,6 +301,10 @@ export function RouteAdminPhotos() {
         type: 'date',
         width: 90,
         editable: false,
+        valueGetter: ({ row }) =>
+          row.createdAt instanceof Date || row.createdAt == null
+            ? row.createdAt
+            : new Date(row.createdAt),
       },
       {
         field: 'likesCount',

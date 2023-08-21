@@ -9,15 +9,15 @@
     "lint": "tsc --noEmit",
     "preview": "vite preview"
   },
+  "type": "module",
   "dependencies": {
-    "@apollo/client": "3.8.0-rc.2",
+    "@apollo/client": "^3.8.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@hookform/devtools": "^4.3.1",
-    "@mui/lab": "5.0.0-alpha.135",
-    "@mui/material": "^5.14.3",
+    "@mui/lab": "5.0.0-alpha.140",
+    "@mui/material": "^5.14.5",
     "@mui/styled-engine": "^5.13.2",
-    "@mui/x-data-grid": "^6.11.0",
+    "@mui/x-data-grid": "^6.11.2",
     "@react-oauth/google": "^0.11.1",
     "@react-spring/web": "^9.7.3",
     "@remix-run/router": "^1.7.2",
@@ -34,14 +34,13 @@
     "react": "^18.2.0",
     "react-blurhash": "^0.3.0",
     "react-dom": "^18.2.0",
-    "react-globe.gl": "^2.24.2",
     "react-helmet-async": "^1.3.0",
     "react-hook-form": "^7.45.2",
     "react-router-dom": "^6.14.2",
-    "react-social-icons": "^5.15.0",
     "react-use": "^17.4.0"
   },
   "devDependencies": {
+    "@hookform/devtools": "^4.3.1",
     "@emotion/eslint-plugin": "^11.11.0",
     "@graphql-codegen/add": "^5.0.0",
     "@graphql-codegen/cli": "^4.0.1",
@@ -52,9 +51,8 @@
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-typed-document-node/core": "^3.2.0",
     "@homebound/graphql-typescript-scalar-type-policies": "^2.8.0",
-    "@swc/core": "^1.3.74",
-    "@swc/plugin-emotion": "^2.5.70",
-    "@types/apollo-upload-client": "^17.0.2",
+    "@swc/core": "^1.3.78",
+    "@swc/plugin-emotion": "^2.5.71",
     "@types/react": "^18.2.18",
     "@types/react-dom": "^18.2.7",
     "@types/react-transition-group": "^4.4.6",
@@ -65,10 +63,11 @@
     "eslint-plugin-react-refresh": "^0.4.3",
     "rollup-plugin-visualizer": "^5.9.2",
     "type-fest": "^3.13.1",
-    "vite": "^4.4.8",
+    "vite": "^4.4.9",
     "vite-plugin-checker": "^0.6.1",
     "vite-plugin-eslint": "^1.8.1",
-    "vite-plugin-graphql-codegen": "^3.2.3",
-    "@app/config": "workspace:*"
+    "vite-plugin-graphql-codegen": "^3.2.4",
+    "@app/config": "workspace:*",
+    "optionator": "^0.9.1"
   }
 }

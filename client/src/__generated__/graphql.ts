@@ -218,8 +218,9 @@ export type CreateImageUploadInput = {
 
 export type CreateImageUploadPayload = {
   __typename?: 'CreateImageUploadPayload';
+  fields: Scalars['JSON']['output'];
   image: Image;
-  signedUrl: Scalars['String']['output'];
+  url: Scalars['String']['output'];
 };
 
 /** All input for the create `Location` mutation. */
@@ -2544,7 +2545,8 @@ export type CreateImageUploadMutation = {
   __typename?: 'Mutation';
   createImageUpload: {
     __typename: 'CreateImageUploadPayload';
-    signedUrl: string;
+    url: string;
+    fields: Record<string, unknown>;
     image: { __typename: 'Image'; id: number };
   };
 };
@@ -3952,7 +3954,7 @@ export const PhotoLikesUpsertLikeMutationDocument = {
   PhotoLikesUpsertLikeMutationMutationVariables
 >;
 export const CreateImageUploadDocument = {
-  __meta__: { hash: '2e2fd30bf11967df84d58d1fbca4210f31d9dcf63ad1f4a8b0e19f8345338539' },
+  __meta__: { hash: '7a250ffcad39ebf7a6b227eccfb66d362dea86a2a304d7235231095c22c072ac' },
   kind: 'Document',
   definitions: [
     {
@@ -3985,7 +3987,8 @@ export const CreateImageUploadDocument = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'signedUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'fields' } },
                 {
                   kind: 'Field',
                   name: { kind: 'Name', value: 'image' },
@@ -4256,7 +4259,7 @@ export const LogoutMutationDocument = {
   ],
 } as unknown as DocumentNode<LogoutMutationMutation, LogoutMutationMutationVariables>;
 export const LocationQueryDocument = {
-  __meta__: { hash: 'bfcba9e48b6ae476b6dc4d9a57fa310d14e8a2867f210ee03212558015497c0d' },
+  __meta__: { hash: '6faa05b39461e64ca44350bdd484bf15fb1ddf8992ee6a0d1378556bcad70db9' },
   kind: 'Document',
   definitions: [
     {
@@ -4316,7 +4319,10 @@ export const LocationQueryDocument = {
                       name: { kind: 'Name', value: 'orderBy' },
                       value: {
                         kind: 'ListValue',
-                        values: [{ kind: 'EnumValue', value: 'CREATED_AT_DESC' }],
+                        values: [
+                          { kind: 'EnumValue', value: 'SHOT_AT_DESC' },
+                          { kind: 'EnumValue', value: 'CREATED_AT_DESC' },
+                        ],
                       },
                     },
                     {
@@ -4734,7 +4740,7 @@ export const RouteMainQueryDocument = {
   ],
 } as unknown as DocumentNode<RouteMainQueryQuery, RouteMainQueryQueryVariables>;
 export const CommentsQueryDocument = {
-  __meta__: { hash: '8dc4034075778d173fe97646f5b77dad6e2df1deeb677dae9ab0b7291e948007' },
+  __meta__: { hash: '946e4f6d4d2f1ee2c27bde87a96d2063d23b64bae9ad90cb27541341fd748594' },
   kind: 'Document',
   definitions: [
     {
@@ -4747,6 +4753,13 @@ export const CommentsQueryDocument = {
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'comments' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'includeArchived' },
+                value: { kind: 'EnumValue', value: 'YES' },
+              },
+            ],
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
@@ -5651,7 +5664,7 @@ export const RouteAdminPhotosDeletePhotoMutationDocument = {
   RouteAdminPhotosDeletePhotoMutationMutationVariables
 >;
 export const UsersQueryDocument = {
-  __meta__: { hash: 'bfc44540e9303db7cf990fc9aaee6d484b1d1470b75ba6987b981ca190eee7d5' },
+  __meta__: { hash: '705d52c96ca7df78ef77cb86b0f76a9b6f47b2c874b676be1a7c9d85829e0da7' },
   kind: 'Document',
   definitions: [
     {
@@ -5664,6 +5677,13 @@ export const UsersQueryDocument = {
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'users' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'includeArchived' },
+                value: { kind: 'EnumValue', value: 'YES' },
+              },
+            ],
             selectionSet: {
               kind: 'SelectionSet',
               selections: [

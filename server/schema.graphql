@@ -2839,7 +2839,8 @@ input UpsertPhotoLikeInput {
 }
 
 type CreateImageUploadPayload {
-  signedUrl: String!
+  url: String!
+  fields: JSON!
   image: Image!
 }
 

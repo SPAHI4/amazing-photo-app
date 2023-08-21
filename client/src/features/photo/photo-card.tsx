@@ -47,13 +47,15 @@ type PhotoCardProps = {
 
 function PhotoLabel({ children }: { children: React.ReactNode }) {
   const theme = useTheme();
+  const { mode } = theme.palette;
+
   return (
     <div
       css={css`
         color: ${theme.vars.palette.text.primary};
         display: flex;
         align-items: center;
-        backdrop-filter: blur(20px) brightness(1.5);
+        backdrop-filter: blur(20px) ${mode === 'dark' ? 'brightness(0.5)' : 'brightness(1.5)'};
         border-radius: 20px;
         padding: 6px 16px;
       `}

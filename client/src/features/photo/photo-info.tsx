@@ -284,6 +284,7 @@ export function PhotoInfo(props: PhotoInfoProps) {
 
           ${theme.breakpoints.down('md')} {
             height: auto;
+            align-self: start;
             background-color: transparent;
             grid-template:
               'info-likes' 1fr

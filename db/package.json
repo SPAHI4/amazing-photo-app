@@ -4,8 +4,9 @@
   "type": "module",
   "scripts": {
     "gm": "NODE_OPTIONS=\"--import @app/config/dist/env.js\" graphile-migrate",
-    "gm:watch": "pnpm gm watch --once",
-    "gm:commit": "pnpm gm commit"
+    "watch": "pnpm gm watch --once",
+    "commit": "pnpm gm commit",
+    "migrate": "pnpm gm migrate"
   },
   "dependencies": {
     "graphile-migrate": "^1.4.1",

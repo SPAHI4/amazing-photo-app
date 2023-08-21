@@ -2,19 +2,57 @@ name: Deploy
 
 on:
   push:
-    branches: ['main']
+    branches: ['main', 'develop']
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build images
+    name: Build & Deploy
     runs-on: ubuntu-latest
+    env:
+      TF_WORKSPACE: ${{ github.ref == 'refs/heads/main' && 'production' || (github.ref == 'refs/heads/develop' && 'development') }}
+      TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
+      TF_VAR_db_app_username: ${{ secrets.DB_APP_USERNAME }}
+      TF_VAR_db_app_password: ${{ secrets.DB_APP_PASSWORD }}
+      TF_VAR_deployer_public_key: ${{ secrets.DEPLOYER_PUBLIC_KEY }}
+      TF_VAR_s3_bucket_terraform: ${{ secrets.S3_BUCKET_TERRAFORM }}
+      TF_VAR_git_sha: ${{ github.sha }}
+      TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TF_VAR_jwt_public_key: ${{ secrets.JWT_PUBLIC_KEY }}
+      TF_VAR_jwt_private_key: ${{ secrets.JWT_PRIVATE_KEY }}
+      TF_VAR_ssl_cert: ${{ secrets.SSL_CERT }}
+      TF_VAR_ssl_key: ${{ secrets.SSL_KEY }}
+      TF_VAR_google_refresh_token: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+      TF_VAR_google_credentials_web_json: ${{ secrets.GOOGLE_CREDENTIALS_WEB_JSON }}
+      TF_VAR_google_credentials_installed_json: ${{ secrets.GOOGLE_CREDENTIALS_INSTALLED_JSON }}
+      TF_VAR_aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      TF_VAR_aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - uses: pnpm/action-setup@v2
+        name: pnpm setup
+        with:
+          version: 8
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.5'
+          cache: 'pnpm'
+
+      - name: pnpm install
+        run: |
+          pnpm --filter client install
+
+      - name: Build client just for checks
+        run: |
+          pnpm --filter client run build
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -26,15 +64,71 @@ jobs:
       - name: Login to Amazon ECR
         id: loginecr
         uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
 
-      - name: Build, tag, and push images to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.loginecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-          IMAGE_TAG_SERVER: server-${{ github.sha }}
-          IMAGE_TAG_WORKER: worker-${{ github.sha }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Server image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:server-${{ github.sha }}
+          target: server
+
+      - name: Worker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:worker-${{ github.sha }}
+          target: worker
+
+      - name: Migrate image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.loginecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:migrate-${{ github.sha }}
+          target: migrate
+
+      - name: Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Apply
+        id: terraform-apply
+        working-directory: terraform
         run: |
-          docker build . --target server --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SERVER
-          docker build . --target worker --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_WORKER
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SERVER
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_WORKER
+          terraform apply -auto-approve
+
+      - name: Terraform Output
+        id: terraform-output
+        working-directory: terraform
+        run: |
+          echo "client_bucket=$(terraform output -raw client_bucket)" >> $GITHUB_OUTPUT
+          echo "api_origin=$(terraform output -raw api_origin)" >> $GITHUB_OUTPUT
+
+      - name: Build client
+        env:
+          VITE_GRAPHQL_ENDPOINT: ${{ steps.terraform-output.outputs.api_origin }}/graphql
+          GOOGLE_CREDENTIALS_WEB_JSON: ${{ secrets.GOOGLE_CREDENTIALS_WEB_JSON }}
+        run: |
+          VITE_GOOGLE_CLIENT_ID=$(echo $GOOGLE_CREDENTIALS_WEB_JSON | jq -r '.client_id')
+          pnpm --filter client run build
+
+      - name: Deploy Client
+        uses: jakejarvis/s3-sync-action@master
+        env:
+          AWS_S3_BUCKET: ${{ steps.terraform-output.outputs.client_bucket }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: eu-north-1
+          SOURCE_DIR: client/dist

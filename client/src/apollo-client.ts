@@ -20,7 +20,7 @@ import { mergeDeep } from '@apollo/client/utilities/common/mergeDeep';
 import { graphql } from './__generated__';
 import { scalarTypePolicies } from './__generated__/graphql-types.ts';
 
-if (import.meta.env.DEV === true) {
+if (import.meta.env.DEV) {
   const { loadErrorMessages, loadDevMessages } = await import('@apollo/client/dev');
 
   loadDevMessages();
@@ -168,7 +168,9 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
     }
   }
 
-  if (networkError) console.error(`[Network error]: ${networkError}`);
+  if (networkError) {
+    console.error(`[Network error]: ${networkError}`);
+  }
 
   return forward(operation);
 });

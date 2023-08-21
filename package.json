@@ -31,14 +31,14 @@
     "lint-staged": "^13.2.3",
     "prettier": "^3.0.1",
     "prettier-plugin-sql": "^0.15.1",
-    "typescript": "^5.2.0-beta"
+    "typescript": "^5.2.1-rc"
   },
   "pnpm": {
     "patchedDependencies": {
       "@remix-run/router@1.7.2": "patches/@remix-run__router@1.7.2.patch"
     },
     "overrides": {
-      "@apollo/client": "^3.8.0-rc.2"
+      "@apollo/client": "^3.8.1"
     }
   }
 }

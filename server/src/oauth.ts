@@ -292,8 +292,10 @@ export const loginWithGoogleMutation = makeExtendSchemaPlugin(() => ({
             select
                 *
             from
-                app_private.upsert_user (google_id := $1, google_email := $2, google_refresh_token := $3, google_picture_url := $4, google_name := $5, google_given_name := $6, google_family_name := $7, google_locale := $8, google_verified_email := $9)
-`,
+                app_private.upsert_user 
+                  (google_id := $1, google_email := $2, 
+                  google_refresh_token := $3, google_picture_url := $4, google_name := $5, google_given_name := $6, google_family_name := $7, google_locale := $8, google_verified_email := $9)
+            `,
           [
             data.id,
             data.email,

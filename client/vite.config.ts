@@ -45,10 +45,11 @@ export default defineConfig({
     },
   },
   plugins: [
-    visualizer() as unknown as PluginOption,
+    visualizer.default() as unknown as PluginOption,
     react({
       jsxImportSource: '@emotion/react',
       plugins: [
+        // fix awaiting https://github.com/dotansimha/graphql-code-generator/issues/9450
         // [
         //   '@graphql-codegen/client-preset-swc-plugin',
         //   {
@@ -66,6 +67,7 @@ export default defineConfig({
         ],
       ],
     }),
+    // @ts-expect-error default export type bug
     codegen({
       throwOnStart: true,
       enableWatcher: false,

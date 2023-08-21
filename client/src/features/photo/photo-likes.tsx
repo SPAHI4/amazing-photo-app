@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { animated, config, useSpring, useTrail } from '@react-spring/web';
-import { Box, Divider, SvgIcon, useColorScheme, useMediaQuery } from '@mui/material';
+import { Box, Divider, SvgIcon, useMediaQuery } from '@mui/material';
 import { css } from '@emotion/react';
 import { useFragment, useMutation, useSuspenseQuery } from '@apollo/client';
 import useTheme from '@mui/material/styles/useTheme';
 import { LoadingButton } from '@mui/lab';
-import { graphql } from '../../__generated__/gql.ts';
+import { graphql } from '../../__generated__';
 import { StickPointerButton, useCursor } from '../../ui-components/cursor.tsx';
 import { useCurrentUser } from '../../hooks/use-user.ts';
 import { useAppGoogleLogin } from '../../hooks/use-app-google-login.tsx';
@@ -52,7 +52,7 @@ interface PhotoLikesProps {
 
 export function PhotoLikes(props: PhotoLikesProps) {
   const maxCount = 5;
-  const texts: ReadonlyArray<string> & { length: 6 } = [
+  const texts: readonly string[] & { length: 6 } = [
     'Like it?',
     'Really like it!',
     'Absolutely nice!',
@@ -61,7 +61,6 @@ export function PhotoLikes(props: PhotoLikesProps) {
     'All-time fave!',
   ] as const;
 
-  const { mode } = useColorScheme();
   const [currentUser] = useCurrentUser();
   const [loginWithGoogle, { loading: googleLoading }] = useAppGoogleLogin();
   const theme = useTheme();
@@ -164,6 +163,7 @@ export function PhotoLikes(props: PhotoLikesProps) {
     });
   }, [buttonApi, currentUser, upsertPhotoLike, photo.id, userLikesCount, loginWithGoogle]);
 
+  // show maximum 5 (from current user) + 1 (from other users) icons
   const visibleLikesCount = Math.min(likesCount, maxCount + 1);
 
   const likesArray = Array.from({ length: visibleLikesCount }, (_, i) => i);
@@ -177,6 +177,7 @@ export function PhotoLikes(props: PhotoLikesProps) {
     [likesArray.length],
   );
 
+  // run counter animation on likesCount change, animate value and translateX to move to the left by the count of visible likes
   const [counterProps] = useSpring(
     () => ({
       likesCount,
@@ -194,12 +195,15 @@ export function PhotoLikes(props: PhotoLikesProps) {
 
   const isFirstRender = useRef(true);
 
+  // run trail animation on likesCount change
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
 
+    // added icon is animated from the very right to it's position on the left
+    // all other icons are animated like a wave, shaking from the added icon touch
     trailApi.start((index) => {
       const currentIndex = index + 1;
       const isSelected = currentIndex === visibleLikesCount;
@@ -267,8 +271,9 @@ export function PhotoLikes(props: PhotoLikesProps) {
             }
           `}
         >
-          {likesCount > 0 && counterProps.likesCount.to((value) => Math.round(value))}
+          {likesCount > 0 && counterProps.likesCount.to((value) => Math.max(Math.round(value), 1))}
         </animated.div>
+
         {trail.reverse().map((style, index) => (
           <animated.span
             style={{
@@ -285,10 +290,14 @@ export function PhotoLikes(props: PhotoLikesProps) {
           >
             <SvgIcon
               css={css`
-                --color: ${mode === 'dark' ? 100 - (index + 1) * 10 : (index + 1) * 15 - 15}%;
+                --color: ${(index + 1) * 15 - 15}%;
                 font-size: ${ICON_SIZE}px;
                 position: relative;
                 color: hsl(0, 0%, var(--color));
+
+                ${theme.getColorSchemeSelector('dark')} {
+                  --color: ${100 - (index + 1) * 10}%;
+                }
               `}
             >
               <IconFavoriteFilled />
@@ -296,6 +305,7 @@ export function PhotoLikes(props: PhotoLikesProps) {
           </animated.span>
         ))}
       </Box>
+
       <animated.div style={buttonProps}>
         <StickPointerButton>
           <LoadingButton

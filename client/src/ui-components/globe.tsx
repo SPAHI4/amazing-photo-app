@@ -29,18 +29,18 @@ export function Globe({ locations, currentLocation }: MainGlobeProps) {
   React.useEffect(() => {
     const dark = mode === 'dark' ? 1 : 0;
 
-    let currentPhi = 0;
-    let currentTheta = 0.9;
+    let currentPhi = -3;
+    let currentTheta = 0.3;
     let currentScale = 1;
     const doublePi = Math.PI * 2;
-    let currentMarkerSize = 0.8;
+    let currentMarkerSize = 0.5;
 
     const globe = createGlobe(ref.current!, {
       devicePixelRatio: 2,
       width: globeHeight * 2,
       height: globeHeight * 2,
-      phi: 0,
-      theta: 0.3,
+      phi: currentPhi,
+      theta: currentTheta,
       dark,
       diffuse: 1.2,
       mapSamples: 20000,
@@ -48,11 +48,11 @@ export function Globe({ locations, currentLocation }: MainGlobeProps) {
       baseColor: dark ? [0.1, 0.1, 0.1] : [0.9, 0.9, 0.9],
       markerColor: [1, 0.54, 0.319],
       glowColor: dark ? [0.3, 0.3, 0.3] : [0.8, 0.8, 0.8],
-      scale: 0.8,
+      scale: currentScale,
       opacity: 0.9,
       markers: locations.map((location) => ({
         location: [location.lat, location.lng],
-        size: 0.05,
+        size: currentMarkerSize,
       })),
       onRender: (state) => {
         /* eslint-disable no-param-reassign */
@@ -64,15 +64,15 @@ export function Globe({ locations, currentLocation }: MainGlobeProps) {
           location: [location.lat, location.lng],
           size:
             location.lat === focusRef.current?.lat && location.lng === focusRef.current.lng
-              ? currentMarkerSize
-              : 0.08,
+              ? currentMarkerSize * 1.2
+              : 0.05,
         }));
         state.scale = currentScale;
 
         if (focusRef.current == null) {
           currentPhi += 0.002;
           // currentTheta *= currentTheta * 0.98;
-          currentMarkerSize = 0.5;
+          currentMarkerSize = 0.8;
           currentScale = currentScale * 0.98 + 0.02;
           return;
         }

@@ -1,7 +1,7 @@
 import { Box, Button, Menu, MenuItem, SvgIcon } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import useTheme from '@mui/material/styles/useTheme';
 import { IconExpandMore } from '../icons.tsx';
@@ -12,11 +12,23 @@ import { useAppGoogleLogin } from '../hooks/use-app-google-login.tsx';
 
 export function HeaderNavigation() {
   const theme = useTheme();
+  const searchParams = new URLSearchParams(window.location.search);
   const [login, { loading: loginLoading }] = useAppGoogleLogin();
   const [currentUser] = useCurrentUser();
+  const location = useLocation();
   const [logout, { loading: logoutLoading }] = useLogout();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const showLogin =
+    (searchParams.get('login') === 'true' || import.meta.env.DEV) && currentUser == null;
+
+  useEffect(() => {
+    setAnchorEl(null);
+  }, [location.pathname, loginLoading, logoutLoading]);
+
+  const uploadEnabled =
+    import.meta.env.VITE_UPLOAD_ENABLED === 'true' || currentUser?.role === 'APP_ADMIN';
 
   return (
     <Box
@@ -43,7 +55,7 @@ export function HeaderNavigation() {
           app on github
         </Button>
       </StickPointerButton>
-      {currentUser == null && (
+      {showLogin && (
         <StickPointerButton key="login">
           <LoadingButton loading={loginLoading} variant="text" color="inherit" onClick={login}>
             login
@@ -96,7 +108,7 @@ export function HeaderNavigation() {
                 </MenuItem>
               </StickPointerButton>
             )}
-            {import.meta.env.VITE_UPLOAD_ENABLED === 'true' && (
+            {uploadEnabled && (
               <StickPointerButton>
                 <MenuItem component={Link} to="/upload">
                   upload

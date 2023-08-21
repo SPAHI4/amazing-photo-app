@@ -2,11 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" href="/favicon-hq.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link ref="preconnect" href="%VITE_GRAPHQL_ENDPOINT%" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Alegreya&family=Literata:ital,opsz@1,7..72&family=Montserrat:wght@100;400;500;700&family=Poppins:wght@500;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz@1,7..72&family=Montserrat:wght@400;500;700&family=Poppins:wght@500;700;900&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -20,8 +21,23 @@
       }
     </style>
 
-    <title>spahi4's photo gallery</title>
+    <title>%VITE_BASE_TITLE%</title>
   </head>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DCNHNX5NJK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-DCNHNX5NJK');
+  </script>
+
   <body>
     <!--force browser to keep hdr on every screen-->
     <img src="/placeholder.AVIF" alt="" class="hack-image" />

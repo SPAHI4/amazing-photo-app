@@ -13,32 +13,12 @@ import { s3 } from '../s3.js';
 import { TempFile } from '../fs.js';
 
 const convertTypes = ['image/avif', 'image/webp', 'image/jpeg'] as const;
-const convertSizes = [3840, 480, 2560, 960, 1440] as const; 
-
-/*
-
-  well, what we're doing here is:
-
-  1. the task is triggered whenever an image is uploaded to s3 and a record is inserted into the images table
-  2. we download the image from s3 to a local temp file
-  3. we use ffmpeg resize the image to different sizes. ffmpeg is a must because it's the only tool that properly handle hdr for the time being
-    3.1 if the image is hdr avif, we set conversionto hdr and create webp fallback
-    3.2 if the image is not hdr avif, we just set conversion to webp
-    3.3 batch the conversion process to 3 at a time, wait for the exec() to finish
-    3.4 whenever an exec() fails, we abort all the exec() processes
-  4. we upload the resized images to s3
-  5. delete all the temp files
-  6. we update the image record with the resized images
-  7. ???
-  8. PROFIT
-
- */
+const convertSizes = [2560, 960, 3840, 480, 1440] as const;
 
 const flatten = <T>(arr: T[][]): T[] => ([] as T[]).concat(...arr);
 
 const spawnAsync = async (command: string, args: string[]): Promise<void> => {
-  // eslint-disable-next-line
-  using process = spawn(command, args);
+  const process = spawn(command, args);
 
   await new Promise((resolve, reject) => {
     let stdout = '';
@@ -54,7 +34,7 @@ const spawnAsync = async (command: string, args: string[]): Promise<void> => {
 
     process.on('close', (code) => {
       if (code !== 0) {
-        reject(new Error(`FFmpeg exited with code ${code}: ${stderr}`));
+        reject(new Error(`FFmpeg exited with code ${code}: ${stdout} ${stderr}`));
       } else {
         resolve(stdout);
       }
@@ -91,10 +71,11 @@ const convertImage = async (
   target: ConvertTarget,
   logger: Logger,
 ): Promise<ConvertResult> => {
-  const lossless = target.size >= 1920;
+  const lossless = target.size === 3840;
+  const scaleArg = `w='if(gt(iw,ih),${target.size},-2)':h='if(gt(iw,ih),-2,${target.size})'`;
 
   let commandArgs = [
-    ['-vf', `scale=${target.size}:-1`],
+    ['-vf', `scale=${scaleArg}`],
     ['-c:v', 'libwebp'],
     ['-lossless', lossless ? '1' : '0'],
   ];
@@ -102,7 +83,7 @@ const convertImage = async (
   // simple jpeg conversion
   if (target.type === 'image/jpeg') {
     commandArgs = [
-      ['-vf', `scale=${target.size}:-1`],
+      ['-vf', `scale=${scaleArg}`],
       ['-qscale:v', '80'],
     ];
   }
@@ -114,9 +95,9 @@ const convertImage = async (
       ['-color_trc', 'smpte2084'],
       ['-color_primaries', 'bt2020'],
       ['-c:v', 'libaom-av1'],
-      ['-crf', '8'],
+      ['-crf', '6'],
       ['-still-picture', '1'],
-      ['-vf', `scale=${target.size}:-1`],
+      ['-vf', `scale=${scaleArg}`],
     ];
   }
 
@@ -125,7 +106,7 @@ const convertImage = async (
     commandArgs = [
       [
         '-vf',
-        `scale=${target.size}:-2,format=yuv420p,zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p`,
+        `scale=${scaleArg},format=yuv420p,zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p`,
       ],
       ['-c:v', 'libwebp'],
       ['-lossless', lossless ? '1' : '0'],
@@ -209,6 +190,7 @@ export const convertImageTask: Task = async (inPayload, { logger, query }) => {
       throw new Error('Content type is null');
     }
 
+    // eslint-disable-next-line
     await using sourceTmpFile = await TempFile.createWrite();
     const writeStream = sourceTmpFile.handle.createWriteStream();
 
@@ -258,8 +240,8 @@ export const convertImageTask: Task = async (inPayload, { logger, query }) => {
         };
 
         return [
-          [source, targetAvif],
           [source, targetWebp],
+          [source, targetAvif],
         ];
       }),
     );
@@ -315,7 +297,7 @@ export const convertImageTask: Task = async (inPayload, { logger, query }) => {
       };
     };
 
-    const { results: uploadedImages } = await PromisePool.withConcurrency(4)
+    const { results: uploadedImages } = await PromisePool.withConcurrency(2)
       .for(sourcesToConvert)
       .handleError((err) => {
         throw err;

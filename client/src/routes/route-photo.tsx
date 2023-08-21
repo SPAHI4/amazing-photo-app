@@ -87,11 +87,12 @@ export function RoutePhoto() {
 
           ${theme.breakpoints.down('md')} {
             height: auto;
+            min-height: 100dvh;
             padding-bottom: 56px;
             grid-template:
               'photo-header' auto
-              'photo-image' 1fr
-              'photo-info' auto
+              'photo-image' auto
+              'photo-info' 1fr
               / 100vw;
           }
         `}

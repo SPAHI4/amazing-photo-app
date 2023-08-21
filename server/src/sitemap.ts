@@ -3,7 +3,10 @@ import { SitemapStream, streamToPromise } from 'sitemap';
 import { env } from '@app/config/env.js';
 import { PgClient } from './pg-client.js';
 
-const staticUrls = [{ url: '/legal', changefreq: 'monthly', priority: 0.9 }];
+const staticUrls = [
+  { url: '/privacy-policy', changefreq: 'monthly', priority: 0.2 },
+  { url: '/terms-of-service', changefreq: 'monthly', priority: 0.2 },
+];
 
 let sitemap: Buffer | null = null;
 
@@ -29,7 +32,7 @@ const getPhotosUrls = async (pgClient: PgClient) => {
   return rows.map(({ id, slug }) => ({
     url: `/location/${slug}/${id}`,
     changefreq: 'daily',
-    priority: 0.9,
+    priority: 1,
   }));
 };
 
@@ -47,8 +50,8 @@ const getLocationsUrls = async (pgClient: PgClient) => {
 
   return rows.map(({ slug }) => ({
     url: `/location/${slug}`,
-    changefreq: 'monthly',
-    priority: 0.9,
+    changefreq: 'daily',
+    priority: 0.8,
   }));
 };
 

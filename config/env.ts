@@ -21,8 +21,8 @@ if (process.env.NODE_ENV === 'production' && process.env.DEPLOYMENT == null) {
 const cleanedBase = envalid.cleanEnv(process.env, {
   NODE_ENV: envalid.str({ choices: ['development', 'production'], default: 'development' }),
   DEPLOYMENT: envalid.str({
-    choices: ['production', 'stage', 'development'],
-    default: 'development',
+    choices: ['production', 'development', 'localhost'],
+    default: 'localhost',
   }),
 });
 
@@ -40,18 +40,18 @@ dotenv.config({ path: baseEnv });
 const cleaned = envalid.cleanEnv(process.env, {
   DATABASE_URL: envalid.str(),
   ROOT_DATABASE_URL: envalid.str(),
-  AWS_ACCESS_KEY_ID: envalid.str(),
-  AWS_SECRET_ACCESS_KEY: envalid.str(),
   S3_BUCKET_NAME: envalid.str(),
   S3_BUCKET_REGION: envalid.str(),
   DEBUG: envalid.str(),
   WEB_ORIGIN: envalid.str(),
   API_ORIGIN: envalid.str(),
+  ROOT_DOMAIN: envalid.str(),
   ADMIN_EMAIL: envalid.str(),
   ROBOT_EMAIL: envalid.str(),
   APP_NAME: envalid.str(),
   API_PORT: envalid.port({ default: 8080 }),
   GOOGLE_REFRESH_TOKEN: envalid.str(),
+  USER_UPLOAD_ENABLED: envalid.bool({ default: true }),
 });
 
 let jwts;
@@ -66,10 +66,20 @@ if (cleanedBase.NODE_ENV === 'production') {
     JWT_SECRET_KEY: envalid.str(),
   });
 
+  jwts = {
+    JWT_PUBLIC_KEY: Buffer.from(jwts.JWT_PUBLIC_KEY, 'base64').toString(),
+    JWT_SECRET_KEY: Buffer.from(jwts.JWT_SECRET_KEY, 'base64').toString(),
+  };
+
   ssls = envalid.cleanEnv(process.env, {
     SSL_CERT: envalid.str(),
     SSL_KEY: envalid.str(),
   });
+
+  ssls = {
+    SSL_CERT: Buffer.from(ssls.SSL_CERT, 'base64').toString(),
+    SSL_KEY: Buffer.from(ssls.SSL_KEY, 'base64').toString(),
+  };
 
   google = envalid.cleanEnv(process.env, {
     INSTALLED_GOOGLE_CLIENT_ID: envalid.str(),
@@ -118,10 +128,27 @@ if (cleanedBase.NODE_ENV === 'production') {
   });
 }
 
+let aws = {
+  AWS_ACCESS_KEY_ID: null,
+  AWS_SECRET_ACCESS_KEY: null,
+} as {
+  AWS_ACCESS_KEY_ID: string | null;
+  AWS_SECRET_ACCESS_KEY: string | null;
+};
+
+// load aws configs based on environment for production
+if (cleanedBase.NODE_ENV !== 'production') {
+  aws = envalid.cleanEnv(process.env, {
+    AWS_ACCESS_KEY_ID: envalid.str(),
+    AWS_SECRET_ACCESS_KEY: envalid.str(),
+  });
+}
+
 export const env = {
   ...cleanedBase,
   ...cleaned,
   ...jwts,
   ...ssls,
   ...google,
+  ...aws,
 };

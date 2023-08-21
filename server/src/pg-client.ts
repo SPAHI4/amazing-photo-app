@@ -28,7 +28,7 @@ export class PgClient implements AsyncDisposable {
 
   #transacting = false;
 
-  #commited = false;
+  #committed = false;
 
   constructor(logger: FastifyBaseLogger) {
     this.#logger = logger;
@@ -95,7 +95,7 @@ export class PgClient implements AsyncDisposable {
     this.#logger.debug('Committed transaction');
 
     this.#transacting = false;
-    this.#commited = true;
+    this.#committed = true;
   }
 
   async rollback(): Promise<void> {
@@ -103,12 +103,12 @@ export class PgClient implements AsyncDisposable {
       throw new Error('Cannot rollback without transaction');
     }
 
-    if (this.#commited) {
+    if (this.#committed) {
       throw new Error('Cannot rollback after commit');
     }
 
     this.#transacting = false;
-    this.#commited = false;
+    this.#committed = false;
 
     await this.#connection!.query('ROLLBACK');
 
@@ -116,7 +116,7 @@ export class PgClient implements AsyncDisposable {
   }
 
   async [Symbol.asyncDispose](): Promise<void> {
-    if (this.#transacting && !this.#commited) {
+    if (this.#transacting && !this.#committed) {
       await this.rollback();
 
       throw new Error('Transaction was not either committed or rolled back');
