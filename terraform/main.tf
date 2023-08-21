@@ -353,8 +353,18 @@ resource "aws_s3_bucket_website_configuration" "client" {
     suffix = "index.html"
   }
 
-  error_document {
-    key = "index.html"
+  routing_rule {
+    condition {
+      http_error_code_returned_equals = 404
+    }
+
+    redirect {
+      protocol = "https"
+      host     = local.web_domain
+      path     = "/index.html"
+      query    = ""
+      status   = "200"
+    }
   }
 }
 
@@ -425,6 +435,12 @@ resource "aws_s3_bucket" "image-storage" {
   tags = {
     Name = "photo-app"
   }
+}
+
+resource "aws_s3_bucket_acl" "image-storage" {
+  bucket = aws_s3_bucket.image-storage.id
+
+  acl = "private"
 }
 
 # redirect sitemap.xml from client to api
