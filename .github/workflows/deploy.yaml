@@ -107,6 +107,7 @@ jobs:
         id: terraform-apply
         working-directory: terraform
         run: |
+          terraform workspace select $TF_WORKSPACE || terraform workspace new $TF_WORKSPACE
           terraform apply -auto-approve
 
       - name: Terraform Output
