@@ -18,10 +18,7 @@ GRANT CONNECT ON DATABASE "${db_app_name}" TO app_postgraphile;
 GRANT CONNECT ON DATABASE "${db_app_name}" TO app_anonymous;
 GRANT ALL ON DATABASE "${db_app_name}" TO app_postgraphile;
 
-ALTER SCHEMA public OWNER TO :DATABASE_OWNER;
-
-GRANT :ROLE_VIEWER TO :ROLE_USER;
-GRANT :ROLE_USER TO :ROLE_ADMIN;
+ALTER SCHEMA public OWNER TO app_postgraphile;
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 CREATE EXTENSION IF NOT EXISTS postgis;
