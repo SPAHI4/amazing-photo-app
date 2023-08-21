@@ -359,11 +359,8 @@ resource "aws_s3_bucket_website_configuration" "client" {
     }
 
     redirect {
-      protocol = "https"
-      host     = local.web_domain
-      path     = "/index.html"
-      query    = ""
-      status   = "200"
+      replace_key_with   = "index.html"
+      http_redirect_code = "200"
     }
   }
 }
