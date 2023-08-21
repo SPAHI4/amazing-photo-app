@@ -4259,7 +4259,7 @@ export const LogoutMutationDocument = {
   ],
 } as unknown as DocumentNode<LogoutMutationMutation, LogoutMutationMutationVariables>;
 export const LocationQueryDocument = {
-  __meta__: { hash: 'bfcba9e48b6ae476b6dc4d9a57fa310d14e8a2867f210ee03212558015497c0d' },
+  __meta__: { hash: '6faa05b39461e64ca44350bdd484bf15fb1ddf8992ee6a0d1378556bcad70db9' },
   kind: 'Document',
   definitions: [
     {
@@ -4319,7 +4319,10 @@ export const LocationQueryDocument = {
                       name: { kind: 'Name', value: 'orderBy' },
                       value: {
                         kind: 'ListValue',
-                        values: [{ kind: 'EnumValue', value: 'CREATED_AT_DESC' }],
+                        values: [
+                          { kind: 'EnumValue', value: 'SHOT_AT_DESC' },
+                          { kind: 'EnumValue', value: 'CREATED_AT_DESC' },
+                        ],
                       },
                     },
                     {

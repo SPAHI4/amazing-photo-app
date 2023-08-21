@@ -33,7 +33,7 @@ export function Globe({ locations, currentLocation }: MainGlobeProps) {
     let currentTheta = 0.3;
     let currentScale = 1;
     const doublePi = Math.PI * 2;
-    let currentMarkerSize = 0.8;
+    let currentMarkerSize = 0.5;
 
     const globe = createGlobe(ref.current!, {
       devicePixelRatio: 2,
@@ -64,8 +64,8 @@ export function Globe({ locations, currentLocation }: MainGlobeProps) {
           location: [location.lat, location.lng],
           size:
             location.lat === focusRef.current?.lat && location.lng === focusRef.current.lng
-              ? 0.8
-              : 0.1,
+              ? currentMarkerSize * 1.2
+              : 0.05,
         }));
         state.scale = currentScale;
 

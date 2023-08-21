@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs } from 'react-router-dom';
-import { graphql } from '../__generated__/gql.ts';
+import { graphql } from '../__generated__';
 import { apolloClient } from '../apollo-client.ts';
 
 export const ROUTE_LOCATION_QUERY = graphql(`
@@ -9,7 +9,7 @@ export const ROUTE_LOCATION_QUERY = graphql(`
       name
       slug
       description
-      photos(orderBy: [CREATED_AT_DESC], after: $after, first: $first)
+      photos(orderBy: [SHOT_AT_DESC, CREATED_AT_DESC], after: $after, first: $first)
         @connection(key: "RouteLocation_photos", filter: [$slug]) {
         totalCount
         pageInfo {
