@@ -11,3 +11,5 @@ server/.persisted-documents
 server/schema.graphql
 
 db/tests
+
+terraform/setup
