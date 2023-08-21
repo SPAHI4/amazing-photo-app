@@ -13,6 +13,10 @@ variable "ecr_repository_name" {
   default = "spahi4-photo-app"
 }
 
+variable "upload_enabled" {
+  default = true
+}
+
 variable "db_password" {
   sensitive = true
 }

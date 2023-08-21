@@ -13,7 +13,7 @@ import { s3 } from '../s3.js';
 import { TempFile } from '../fs.js';
 
 const convertTypes = ['image/avif', 'image/webp', 'image/jpeg'] as const;
-const convertSizes = [3840, 480, 2560, 960, 1440] as const;
+const convertSizes = [2560, 960, 3840, 480, 1440] as const;
 
 const flatten = <T>(arr: T[][]): T[] => ([] as T[]).concat(...arr);
 
@@ -71,7 +71,7 @@ const convertImage = async (
   target: ConvertTarget,
   logger: Logger,
 ): Promise<ConvertResult> => {
-  const lossless = target.size >= 1920;
+  const lossless = target.size === 3840;
 
   let commandArgs = [
     ['-vf', `scale=${target.size}:-1`],
@@ -105,7 +105,7 @@ const convertImage = async (
     commandArgs = [
       [
         '-vf',
-        `scale=${target.size}:-2,format=yuv420p,zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p`,
+        `scale=${target.size}:-1,format=yuv420p,zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p`,
       ],
       ['-c:v', 'libwebp'],
       ['-lossless', lossless ? '1' : '0'],
@@ -239,8 +239,8 @@ export const convertImageTask: Task = async (inPayload, { logger, query }) => {
         };
 
         return [
-          [source, targetAvif],
           [source, targetWebp],
+          [source, targetAvif],
         ];
       }),
     );
