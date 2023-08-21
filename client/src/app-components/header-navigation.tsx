@@ -27,6 +27,9 @@ export function HeaderNavigation() {
     setAnchorEl(null);
   }, [location.pathname, loginLoading, logoutLoading]);
 
+  const uploadEnabled =
+    import.meta.env.VITE_UPLOAD_ENABLED === 'true' || currentUser?.role === 'APP_ADMIN';
+
   return (
     <Box
       display="flex"
@@ -105,7 +108,7 @@ export function HeaderNavigation() {
                 </MenuItem>
               </StickPointerButton>
             )}
-            {import.meta.env.VITE_UPLOAD_ENABLED === 'true' && (
+            {uploadEnabled && (
               <StickPointerButton>
                 <MenuItem component={Link} to="/upload">
                   upload

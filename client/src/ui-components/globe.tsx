@@ -64,7 +64,7 @@ export function Globe({ locations, currentLocation }: MainGlobeProps) {
           location: [location.lat, location.lng],
           size:
             location.lat === focusRef.current?.lat && location.lng === focusRef.current.lng
-              ? currentMarkerSize
+              ? 0.8
               : 0.1,
         }));
         state.scale = currentScale;

@@ -67,7 +67,7 @@ resource "aws_security_group" "allow_ec2" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = data.cloudflare_ip_ranges.cloudflare.ipv4_cidr_blocks
   }
 
   egress {
@@ -79,7 +79,7 @@ resource "aws_security_group" "allow_ec2" {
 }
 
 resource "aws_security_group" "allow_ec2_ssh" {
-  name        = "allow_ec2_ssh"
+  name        = "${terraform.workspace}_allow_ec2_ssh"
   description = "Allow SSH inbound traffic"
 
   ingress {
@@ -109,7 +109,7 @@ data "aws_ami" "amazon_linux" {
 }
 
 resource "aws_key_pair" "deployer" {
-  key_name   = "deployer-key"
+  key_name   = "${terraform.workspace}_deployer-key"
   public_key = var.deployer_public_key
 }
 
@@ -162,7 +162,7 @@ data "template_file" "init" {
 }
 
 resource "aws_iam_role" "ec2_instance" {
-  name = "ec2_instance"
+  name = "${terraform.workspace}_ec2_instance"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -185,7 +185,7 @@ resource "aws_iam_instance_profile" "instance" {
 }
 
 resource "aws_iam_role_policy" "ecr_policy" {
-  name = "ecr_policy"
+  name = "${terraform.workspace}_ecr_policy"
   role = aws_iam_role.ec2_instance.id
 
   policy = jsonencode({
@@ -210,7 +210,7 @@ resource "aws_iam_role_policy" "ecr_policy" {
 }
 
 resource "aws_iam_policy" "image_storage_policy" {
-  name = "S3UploadPolicy"
+  name = "${terraform.workspace}_S3UploadPolicy"
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -225,7 +225,7 @@ resource "aws_iam_policy" "image_storage_policy" {
 }
 
 resource "aws_iam_policy_attachment" "instance_s3_upload_attachment" {
-  name       = "InstanceS3UploadAttachment"
+  name       = "${terraform.workspace}_InstanceS3UploadAttachment"
   roles      = [aws_iam_role.ec2_instance.name]
   policy_arn = aws_iam_policy.image_storage_policy.arn
 }
@@ -260,7 +260,7 @@ resource "cloudflare_record" "ecs_api" {
 }
 
 resource "aws_security_group" "allow_rds" {
-  name        = "allow_rds"
+  name        = "${terraform.workspace}_allow_rds"
   description = "Allow inbound traffic from EC2 instances"
 
   ingress {
@@ -284,7 +284,7 @@ resource "aws_eip" "app" {
 }
 
 resource "aws_db_instance" "default" {
-  identifier             = var.db_instance_name
+  identifier             = "${terraform.workspace}_photo-app"
   allocated_storage      = 20
   engine                 = "postgres"
   engine_version         = "15.3"
