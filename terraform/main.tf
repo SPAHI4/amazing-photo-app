@@ -163,7 +163,7 @@ data "template_file" "init" {
 }
 
 resource "aws_iam_role" "ec2_instance" {
-  name = "${terraform.workspace}_ec2_instance"
+  name = "${terraform.workspace}__ec2_instance"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -285,7 +285,7 @@ resource "aws_eip" "app" {
 }
 
 resource "aws_db_parameter_group" "default" {
-  name   = "${terraform.workspace}-photo-app"
+  name   = "${terraform.workspace}__photo-app"
   family = "postgres15"
 
   parameter {
@@ -430,6 +430,19 @@ resource "cloudflare_record" "s3_website" {
   type    = "CNAME"
   zone_id = data.cloudflare_zone.default.id
   proxied = true
+}
+
+# worker to replace 404 status code with 200 for client
+resource "cloudflare_worker_script" "client" {
+  name       = "client"
+  content    = file("${path.module}/setup/cloudflare-worker.js")
+  account_id = data.cloudflare_zone.default.account_id
+}
+
+resource "cloudflare_worker_route" "client" {
+  pattern = "${local.web_domain}/*"
+  script  = cloudflare_worker_script.client.id
+  zone_id = data.cloudflare_zone.default.id
 }
 
 resource "aws_s3_bucket" "image-storage" {
