@@ -427,6 +427,14 @@ resource "aws_s3_bucket" "image-storage" {
   }
 }
 
+resource "aws_s3_bucket_ownership_controls" "image-storage" {
+  bucket = aws_s3_bucket.image-storage.id
+
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "image-storage" {
   bucket = aws_s3_bucket.image-storage.id
 
