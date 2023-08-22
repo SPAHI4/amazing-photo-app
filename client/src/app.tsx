@@ -1,6 +1,6 @@
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { css, Global } from '@emotion/react';
-import { memo } from 'react';
+import { memo, useLayoutEffect } from 'react';
 import { useCurrentUser } from './hooks/use-user.ts';
 import { CursorProvider } from './ui-components/cursor.tsx';
 
@@ -77,12 +77,39 @@ const Styles = memo(() => (
       .view-transition-lock * {
         view-transition-name: unset !important;
       }
+
+      body {
+        visibility: hidden;
+
+        &.fonts-loaded {
+          visibility: visible;
+        }
+      }
     `}
   />
 ));
 
+const wait = (ms: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
 export function App() {
   useCurrentUser();
+
+  useLayoutEffect(() => {
+    (async () => {
+      await Promise.race([wait(100), document.fonts.ready]);
+
+      if ('startViewTransition' in document) {
+        document.startViewTransition(() => {
+          document.body.classList.add('fonts-loaded');
+        });
+      } else {
+        (document as Document).body.classList.add('fonts-loaded');
+      }
+    })();
+  }, []);
 
   return (
     <CursorProvider>

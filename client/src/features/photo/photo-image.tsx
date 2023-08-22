@@ -93,7 +93,7 @@ export function PhotoImage(props: PhotoImageProps) {
     .filter((source) =>
       features.avifSupported ? source.type === 'image/avif' : source.type === 'image/webp',
     )
-    .find((source) => source.size === (isPortrait ? 1440 : 960));
+    .find((source) => source.size === 960);
   const srcUrl = `https://${photo.image?.s3Bucket}.s3.amazonaws.com/${src?.s3Key}`;
 
   return (
