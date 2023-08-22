@@ -2,8 +2,11 @@
 /// <reference types="@emotion/react/types/css-prop" />
 
 interface ImportMetaEnv {
+  VITE_DEPLOYMENT: 'development' | 'production' | 'localhost';
   VITE_GRAPHQL_ENDPOINT: string;
   VITE_GOOGLE_CLIENT_ID: string;
+  VITE_GOOGLE_MAPS_API_KEY: string;
+  VITE_SENTRY_DSN: string;
   VITE_UPLOAD_ENABLED: string;
   VITE_GITHUB_URL: string;
   VITE_TELEGRAM_URL: string;

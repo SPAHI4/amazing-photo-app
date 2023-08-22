@@ -13,9 +13,10 @@ import {
 import { useForm } from 'react-hook-form';
 import { css } from '@emotion/react';
 import { useSuspenseQuery } from '@apollo/client';
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import { LoadingButton } from '@mui/lab';
 import { Link } from 'react-router-dom';
+import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { graphql } from '../../__generated__';
 import { Transition } from '../../ui-components/transition.tsx';
 import { convertShutterSpeed } from '../../utils/number.ts';
@@ -35,10 +36,78 @@ const locationsByDistanceQuery = graphql(`
       nodes {
         id
         name
+        geo {
+          x
+          y
+        }
       }
     }
   }
 `);
+
+function MapPicker({ form }: { form: ReturnType<typeof useForm<RouteUploadFormValues>> }) {
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+  });
+
+  const values = form.watch();
+
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const markerRef = useRef<google.maps.Marker | null>(null);
+
+  useEffect(() => {
+    if (mapRef.current != null) {
+      mapRef.current.setCenter({ lat: values.lat ?? 0, lng: values.lng ?? 0 });
+    }
+  }, [values.lat, values.lng]);
+
+  useEffect(() => {
+    if (markerRef.current != null) {
+      markerRef.current.setPosition({ lat: values.lat ?? 0, lng: values.lng ?? 0 });
+    }
+  }, [values.lat, values.lng]);
+
+  return (
+    <Box
+      css={css`
+        height: 300px;
+        width: 100%;
+      `}
+    >
+      {isLoaded && (
+        <GoogleMap
+          mapContainerStyle={{
+            height: '100%',
+            width: '100%',
+          }}
+          zoom={15}
+          center={{ lat: values.lat ?? 0, lng: values.lng ?? 0 }}
+          options={{
+            disableDefaultUI: true,
+            zoomControl: true,
+          }}
+          onLoad={(map) => {
+            mapRef.current = map;
+            markerRef.current = new google.maps.Marker({
+              position: { lat: values.lat ?? 0, lng: values.lng ?? 0 },
+              map,
+              draggable: true,
+            });
+
+            google.maps.event.addListener(markerRef.current, 'dragend', () => {
+              const position = markerRef.current?.getPosition();
+              if (position != null) {
+                form.setValue('lat', position.lat());
+                form.setValue('lng', position.lng());
+              }
+            });
+          }}
+        />
+      )}
+    </Box>
+  );
+}
 
 function LocationsSelect({ form }: { form: ReturnType<typeof useForm<RouteUploadFormValues>> }) {
   const values = form.watch();
@@ -53,18 +122,23 @@ function LocationsSelect({ form }: { form: ReturnType<typeof useForm<RouteUpload
     const firstLocation = data.locationsByDistance?.nodes[0];
     if (firstLocation != null) {
       form.setValue('locationId', firstLocation.id.toLocaleString());
+
+      if (values.lat == null && values.lng == null) {
+        form.setValue('lat', firstLocation.geo.x);
+        form.setValue('lng', firstLocation.geo.y);
+      }
     }
-  }, [data.locationsByDistance?.nodes, form]);
+  }, [data.locationsByDistance?.nodes, form, values.lat, values.lng]);
 
   return (
     <Box display="grid" gap={2}>
-      <Typography variant="h5">
-        {values.lat != null && values.lng != null ? (
-          <>So, its location is</>
-        ) : (
-          <>Choose a location (GPS data unavailable)</>
-        )}
-      </Typography>
+      {values.lat == null && values.lng == null && (
+        <Box>
+          <Typography variant="h5">It was taken, precisely</Typography>
+          <MapPicker form={form} />
+        </Box>
+      )}
+      <Typography variant="h5">So, its location is...</Typography>
       <FormControl variant="outlined" fullWidth required>
         <InputLabel id="field-location">Location</InputLabel>
         <Select

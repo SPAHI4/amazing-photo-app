@@ -1,12 +1,12 @@
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Box, Button, Container, IconButton, SvgIcon, Theme, useMediaQuery } from '@mui/material';
+import { Outlet, useLocation } from 'react-router-dom';
+import { Box, Container, IconButton, SvgIcon, Theme, useMediaQuery } from '@mui/material';
 import { Global, css } from '@emotion/react';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { HeaderNavigation } from './header-navigation.tsx';
-import { StickPointerButton } from '../ui-components/cursor.tsx';
 import { ThemeChangeButton } from './theme-change-button.tsx';
 import { IconMenu } from '../icons.tsx';
+import { FooterNavigation } from './footer-navigation.tsx';
 
 const MobileDrawerLazy = lazy(async () => {
   const module = await import('./mobile-drawer.tsx');
@@ -116,87 +116,7 @@ function LayoutDesktop() {
         <Outlet />
 
         <Box py={3} mt={8}>
-          <Container
-            css={css`
-              display: flex;
-              justify-content: space-between;
-            `}
-          >
-            <Box
-              gap={2}
-              css={css`
-                display: flex;
-                align-items: center;
-              `}
-            >
-              <span>meet me on</span>
-              <StickPointerButton>
-                <Button
-                  component="a"
-                  href={import.meta.env.VITE_TELEGRAM_URL}
-                  color="inherit"
-                  target="_blank"
-                  css={css`
-                    &:not(:hover) {
-                      text-decoration: underline;
-                    }
-                  `}
-                >
-                  telegram
-                </Button>
-              </StickPointerButton>
-              <StickPointerButton>
-                <Button
-                  component="a"
-                  href={import.meta.env.VITE_INSTAGRAM_URL}
-                  color="inherit"
-                  target="_blank"
-                  css={css`
-                    &:not(:hover) {
-                      text-decoration: underline;
-                    }
-                  `}
-                >
-                  instagram
-                </Button>
-              </StickPointerButton>
-            </Box>
-            <Box
-              gap={1}
-              css={css`
-                display: flex;
-              `}
-            >
-              <StickPointerButton>
-                <Button
-                  component={Link}
-                  to="/terms-of-service"
-                  color="inherit"
-                  css={css`
-                    &:not(:hover) {
-                      text-decoration: underline;
-                    }
-                  `}
-                >
-                  terms of service
-                </Button>
-              </StickPointerButton>
-              <StickPointerButton>
-                <Button
-                  component={Link}
-                  to="/privacy-policy"
-                  color="inherit"
-                  css={css`
-                    &:not(:hover) {
-                      text-decoration: underline;
-                    }
-                  `}
-                >
-                  privacy policy
-                </Button>
-              </StickPointerButton>
-            </Box>
-          </Container>
+          <FooterNavigation />
         </Box>
       </Box>
     </>

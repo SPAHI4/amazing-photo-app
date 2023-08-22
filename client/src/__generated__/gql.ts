@@ -41,7 +41,7 @@ const documents = {
     types.CreateImageUploadDocument,
   '\n  mutation updateImage($input: UpdateImageInput!) {\n    updateImage(input: $input) {\n      image {\n        id\n        isUploaded\n      }\n    }\n  }\n':
     types.UpdateImageDocument,
-  '\n  query LocationsByDistance($lat: Float!, $lng: Float!) {\n    locationsByDistance(lat: $lat, lng: $lng) {\n      nodes {\n        id\n        name\n      }\n    }\n  }\n':
+  '\n  query LocationsByDistance($lat: Float!, $lng: Float!) {\n    locationsByDistance(lat: $lat, lng: $lng) {\n      nodes {\n        id\n        name\n        geo {\n          x\n          y\n        }\n      }\n    }\n  }\n':
     types.LocationsByDistanceDocument,
   '\n  mutation LoginWithGoogle($code: String!) {\n    loginWithGoogle(input: { code: $code, toCookie: true }) {\n      accessToken\n      refreshToken\n    }\n  }\n':
     types.LoginWithGoogleDocument,
@@ -191,8 +191,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query LocationsByDistance($lat: Float!, $lng: Float!) {\n    locationsByDistance(lat: $lat, lng: $lng) {\n      nodes {\n        id\n        name\n      }\n    }\n  }\n',
-): (typeof documents)['\n  query LocationsByDistance($lat: Float!, $lng: Float!) {\n    locationsByDistance(lat: $lat, lng: $lng) {\n      nodes {\n        id\n        name\n      }\n    }\n  }\n'];
+  source: '\n  query LocationsByDistance($lat: Float!, $lng: Float!) {\n    locationsByDistance(lat: $lat, lng: $lng) {\n      nodes {\n        id\n        name\n        geo {\n          x\n          y\n        }\n      }\n    }\n  }\n',
+): (typeof documents)['\n  query LocationsByDistance($lat: Float!, $lng: Float!) {\n    locationsByDistance(lat: $lat, lng: $lng) {\n      nodes {\n        id\n        name\n        geo {\n          x\n          y\n        }\n      }\n    }\n  }\n'];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
