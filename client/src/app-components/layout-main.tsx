@@ -84,7 +84,6 @@ function LayoutDesktop() {
       />
       <Box
         css={css`
-          view-transition-name: ${VIEW_TRANSITION_HEADER};
           position: sticky;
           top: 0;
           width: 100%;

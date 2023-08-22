@@ -1,6 +1,6 @@
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { css, Global } from '@emotion/react';
-import { memo, useLayoutEffect } from 'react';
+import { memo, useLayoutEffect, useRef } from 'react';
 import { useCurrentUser } from './hooks/use-user.ts';
 import { CursorProvider } from './ui-components/cursor.tsx';
 
@@ -96,10 +96,16 @@ const wait = (ms: number) =>
 
 export function App() {
   useCurrentUser();
+  const fontsLoaded = useRef(false);
 
   useLayoutEffect(() => {
     (async () => {
+      if (fontsLoaded.current) {
+        return;
+      }
+
       await Promise.race([wait(100), document.fonts.ready]);
+      fontsLoaded.current = true;
 
       if ('startViewTransition' in document) {
         document.startViewTransition(() => {

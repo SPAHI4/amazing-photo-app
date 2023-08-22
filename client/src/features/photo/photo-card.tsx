@@ -116,6 +116,10 @@ export const PhotoCard = memo((props: PhotoCardProps) => {
             mix-blend-mode: normal;
             animation-timing-function: var(--motion-easin-emphasized-accelerate);
           }
+
+          ::view-transition-new(${TRANSITION_NAME}):only-child {
+            animation: fade-in 0.3s var(--motion-easing-standard);
+          }
         `}
       />
       <Link to={`/location/${photo.location?.slug}/${photo.id}`}>
