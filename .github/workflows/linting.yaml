@@ -30,7 +30,7 @@ jobs:
 
   plan:
     env:
-      TF_WORKSPACE: ${{ github.ref == 'refs/heads/main' && 'production' || (github.ref == 'refs/heads/develop' && 'development') }}
+      TF_WORKSPACE: ${{ (github.event.pull_request && github.event.pull_request.base.ref == 'main') && 'production' || ((github.event.pull_request && github.event.pull_request.base.ref == 'develop') && 'development') }}
       TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
       TF_VAR_db_app_username: ${{ secrets.DB_APP_USERNAME }}
       TF_VAR_db_app_password: ${{ secrets.DB_APP_PASSWORD }}
