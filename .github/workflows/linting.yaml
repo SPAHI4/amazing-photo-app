@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -27,3 +27,113 @@ jobs:
       - name: Run lint-staged
         run: |
           pnpm exec lint-staged --diff="origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF}"
+
+  plan:
+    env:
+      TF_WORKSPACE: ${{ github.ref == 'refs/heads/main' && 'production' || (github.ref == 'refs/heads/develop' && 'development') }}
+      TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
+      TF_VAR_db_app_username: ${{ secrets.DB_APP_USERNAME }}
+      TF_VAR_db_app_password: ${{ secrets.DB_APP_PASSWORD }}
+      TF_VAR_deployer_public_key: ${{ secrets.DEPLOYER_PUBLIC_KEY }}
+      TF_VAR_s3_bucket_terraform: ${{ secrets.S3_BUCKET_TERRAFORM }}
+      TF_VAR_git_sha: ${{ github.sha }}
+      TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TF_VAR_jwt_public_key: ${{ secrets.JWT_PUBLIC_KEY }}
+      TF_VAR_jwt_private_key: ${{ secrets.JWT_PRIVATE_KEY }}
+      TF_VAR_ssl_cert: ${{ secrets.SSL_CERT }}
+      TF_VAR_ssl_key: ${{ secrets.SSL_KEY }}
+      TF_VAR_google_refresh_token: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+      TF_VAR_google_credentials_web_json: ${{ secrets.GOOGLE_CREDENTIALS_WEB_JSON }}
+      TF_VAR_google_credentials_installed_json: ${{ secrets.GOOGLE_CREDENTIALS_INSTALLED_JSON }}
+      TF_VAR_aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      TF_VAR_aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      tf_actions_working_dir: 'terraform'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.tf_actions_working_dir }}
+    permissions:
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check
+        continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color
+        continue-on-error: true
+
+      - uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // 1. Retrieve existing bot comments for the PR
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+            const botComment = comments.find(comment => {
+              return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style')
+            })
+            
+            // 2. Prepare format of the comment
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            <details><summary>Validation Output</summary>
+            
+            \`\`\`\n
+            ${{ steps.validate.outputs.stdout }}
+            \`\`\`
+            
+            </details>
+            
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+            
+            <details><summary>Show Plan</summary>
+            
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+            
+            </details>
+            
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+            
+            // 3. If we have a comment, update it, otherwise create a new one
+            if (botComment) {
+              github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: output
+              })
+            } else {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: output
+              })
+            }
