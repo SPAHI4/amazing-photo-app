@@ -1,6 +1,5 @@
 BEGIN;
 
-
 CREATE ROLE app_postgraphile WITH LOGIN PASSWORD '${db_app_password}';
 
 CREATE ROLE app_user;

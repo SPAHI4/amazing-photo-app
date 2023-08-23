@@ -7,7 +7,7 @@
   "cc17dfd07b8e9a0e2900bcaa8ff7a7fa0839ba7be4ba616299233e23a3a27056": "mutation PhotoLikesUpsertLikeMutation($input: UpsertPhotoLikeInput!) { upsertPhotoLike(input: $input) { __typename photosLike { __typename count id photo { __typename __typename id likesCount } } } }",
   "7a250ffcad39ebf7a6b227eccfb66d362dea86a2a304d7235231095c22c072ac": "mutation createImageUpload($input: CreateImageUploadInput!) { createImageUpload(input: $input) { __typename fields image { __typename id } url } }",
   "854706124543341d846d95cfa504d662a52d136fd4b90b8c7b525354bba639d9": "mutation updateImage($input: UpdateImageInput!) { updateImage(input: $input) { __typename image { __typename id isUploaded } } }",
-  "6e6cf55dbb1b8662d2d106d5cc4973170e4a7d266f68705dd30285626b0c8f45": "query LocationsByDistance($lat: Float!, $lng: Float!) { locationsByDistance(lat: $lat, lng: $lng) { __typename nodes { __typename id name } } }",
+  "de0e230bb6966c994628355e76dd3c8e05f2adfb9e8b15b643e2937284103b5f": "query LocationsByDistance($lat: Float!, $lng: Float!) { locationsByDistance(lat: $lat, lng: $lng) { __typename nodes { __typename geo { __typename x y } id name } } }",
   "ff6b42d28343d5d03dbfe01cf9a29749cba8d44febbee772e56414b924f7a728": "mutation LoginWithGoogle($code: String!) { loginWithGoogle(input: {code: $code, toCookie: true}) { __typename accessToken refreshToken } }",
   "bf3b3b5387cf6d3d1a8a8350a2a1ee8a4eebfc2e93a541603daf7e2d59985010": "query CurrentUserQuery { currentUser { __typename __typename displayName id pictureUrl role } }",
   "0c7bec12ccf4ce632876cdc80d5862083aa32dd9f21dac78ca1e1f1f03e9f073": "mutation LogoutMutation { logout(input: {fromCookie: true}) }",

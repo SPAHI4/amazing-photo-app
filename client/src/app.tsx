@@ -1,6 +1,6 @@
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { css, Global } from '@emotion/react';
-import { memo } from 'react';
+import { memo, useLayoutEffect, useRef } from 'react';
 import { useCurrentUser } from './hooks/use-user.ts';
 import { CursorProvider } from './ui-components/cursor.tsx';
 
@@ -8,16 +8,14 @@ const Styles = memo(() => (
   <Global
     styles={css`
       :root {
+        // https://m3.material.io/styles/motion/easing-and-duration/applying-easing-and-duration
         --motion-easing-emphasized: cubic-bezier(0.4, 0, 0.2, 1);
         --motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
-        --motion-easin-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+        --motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
         --motion-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
         --motion-easing-decelerate: cubic-bezier(0, 0, 0, 1);
         --motion-easing-accelerate: cubic-bezier(0.3, 0, 1, 1);
-
         --easing-bounce: cubic-bezier(0.5, 2.05, 0.58, -0.25);
-
-        -webkit-font-smoothing: antialiased;
       }
 
       @keyframes fade-in {
@@ -74,15 +72,52 @@ const Styles = memo(() => (
         }
       }
 
+      // disable any view transitions for theme change animation
       .view-transition-lock * {
         view-transition-name: unset !important;
+      }
+
+      body {
+        visibility: hidden;
+
+        -webkit-font-smoothing: antialiased;
+
+        &.fonts-loaded {
+          visibility: visible;
+        }
       }
     `}
   />
 ));
 
+const wait = (ms: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
 export function App() {
   useCurrentUser();
+  const fontsLoaded = useRef(false);
+
+  // Wait for fonts to load before showing the app
+  useLayoutEffect(() => {
+    (async () => {
+      if (fontsLoaded.current) {
+        return;
+      }
+
+      await Promise.race([wait(100), document.fonts.ready]);
+      fontsLoaded.current = true;
+
+      if ('startViewTransition' in document) {
+        document.startViewTransition(() => {
+          document.body.classList.add('fonts-loaded');
+        });
+      } else {
+        (document as Document).body.classList.add('fonts-loaded');
+      }
+    })();
+  }, []);
 
   return (
     <CursorProvider>

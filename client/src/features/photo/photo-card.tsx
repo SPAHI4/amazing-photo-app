@@ -92,14 +92,13 @@ export const PhotoCard = memo((props: PhotoCardProps) => {
   }
 
   const TRANSITION_NAME = viewTransitionPhoto(photo.id);
-  const isPortrait = photo.height > photo.width;
   const sources = photo.image?.sources.filter(notEmpty) ?? [];
 
   const src = sources
     .filter((source) =>
       features.avifSupported ? source.type === 'image/avif' : source.type === 'image/webp',
     )
-    .find((source) => source.size === (isPortrait ? 1440 : 960));
+    .find((source) => source.size === 960);
   const srcUrl =
     src != null ? `https://${photo.image?.s3Bucket}.s3.amazonaws.com/${src.s3Key}` : '';
 
@@ -117,6 +116,10 @@ export const PhotoCard = memo((props: PhotoCardProps) => {
             mix-blend-mode: normal;
             animation-timing-function: var(--motion-easin-emphasized-accelerate);
           }
+
+          ::view-transition-new(${TRANSITION_NAME}):only-child {
+            animation: fade-in 0.3s var(--motion-easing-standard);
+          }
         `}
       />
       <Link to={`/location/${photo.location?.slug}/${photo.id}`}>
@@ -126,7 +129,6 @@ export const PhotoCard = memo((props: PhotoCardProps) => {
               width: 100%;
               aspect-ratio: ${photo.width} / ${photo.height};
               position: relative;
-              border-radius: 0px;
               overflow: hidden;
             `}
           >
@@ -164,9 +166,6 @@ export const PhotoCard = memo((props: PhotoCardProps) => {
                 image-rendering: optimizeSpeed;
                 position: relative;
                 display: block;
-                background-image: ${photo.thumbnail};
-                background-position: center;
-                background-repeat: no-repeat;
               `}
             />
           </div>

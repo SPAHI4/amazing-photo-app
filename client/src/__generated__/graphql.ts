@@ -2572,7 +2572,12 @@ export type LocationsByDistanceQuery = {
   __typename?: 'Query';
   locationsByDistance?: {
     __typename: 'LocationsConnection';
-    nodes: Array<{ __typename: 'Location'; id: number; name: string }>;
+    nodes: Array<{
+      __typename: 'Location';
+      id: number;
+      name: string;
+      geo: { __typename: 'Point'; x: number; y: number };
+    }>;
   } | null;
 };
 
@@ -4065,7 +4070,7 @@ export const UpdateImageDocument = {
   ],
 } as unknown as DocumentNode<UpdateImageMutation, UpdateImageMutationVariables>;
 export const LocationsByDistanceDocument = {
-  __meta__: { hash: '6e6cf55dbb1b8662d2d106d5cc4973170e4a7d266f68705dd30285626b0c8f45' },
+  __meta__: { hash: 'de0e230bb6966c994628355e76dd3c8e05f2adfb9e8b15b643e2937284103b5f' },
   kind: 'Document',
   definitions: [
     {
@@ -4119,6 +4124,18 @@ export const LocationsByDistanceDocument = {
                     selections: [
                       { kind: 'Field', name: { kind: 'Name', value: 'id' } },
                       { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'geo' },
+                        selectionSet: {
+                          kind: 'SelectionSet',
+                          selections: [
+                            { kind: 'Field', name: { kind: 'Name', value: 'x' } },
+                            { kind: 'Field', name: { kind: 'Name', value: 'y' } },
+                            { kind: 'Field', name: { kind: 'Name', value: '__typename' } },
+                          ],
+                        },
+                      },
                       { kind: 'Field', name: { kind: 'Name', value: '__typename' } },
                     ],
                   },

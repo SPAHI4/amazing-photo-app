@@ -1,30 +1,24 @@
 import { createBrowserRouter } from 'react-router-dom';
+import * as Sentry from '@sentry/react';
 import type { Router } from '@remix-run/router/dist/router';
 import { LayoutMain } from './app-components/layout-main.tsx';
 import { App } from './app.tsx';
 import { routeMainLoader } from './loaders/route-main-loader.ts';
 import { routeLocationLoader } from './loaders/route-location-loader.ts';
-import { RouteError } from './routes/route-error.tsx';
+import { RouterErrorBoundary } from './routes/router-error-boundary.tsx';
+
+const sentryCreateBrowserRouter = Sentry.wrapCreateBrowserRouter(createBrowserRouter);
 
 // all routes of the app
 // loaders are stored in a separate file to enable tree-shaking
 // possible solution to replace loaders is using react router setTransition flag with suspense query, but it doesn't work with patched react router vith startViewTransition api
 
-export const router: Router = createBrowserRouter([
+export const router: Router = sentryCreateBrowserRouter([
   {
     path: '*',
     element: <App />,
+    errorElement: <RouterErrorBoundary />,
     children: [
-      {
-        path: '*',
-        element: <LayoutMain />,
-        children: [
-          {
-            path: '*',
-            element: <RouteError />,
-          },
-        ],
-      },
       {
         element: <LayoutMain />,
         children: [

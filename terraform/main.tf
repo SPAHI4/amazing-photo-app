@@ -244,12 +244,12 @@ resource "aws_instance" "app" {
     aws_security_group.allow_ec2_ssh.id
   ]
 
-  tags = {
-    Name = "photo-app"
-  }
-
   user_data_replace_on_change = true
   user_data                   = data.template_file.init.rendered
+
+  tags = {
+    Name = "photo-app-${terraform.workspace}"
+  }
 }
 
 resource "cloudflare_record" "ecs_api" {
@@ -295,24 +295,25 @@ resource "aws_db_parameter_group" "default" {
 }
 
 resource "aws_db_instance" "default" {
-  identifier             = "${terraform.workspace}-photo-app"
-  allocated_storage      = 20
-  engine                 = "postgres"
-  engine_version         = "15.3"
-  instance_class         = "db.t3.micro"
-  username               = "postgres"
-  db_name                = "postgres"
-  password               = var.db_password
-  vpc_security_group_ids = [aws_security_group.allow_rds.id]
-  tags = {
-    Name = "photo-app"
-  }
+  identifier                          = "${terraform.workspace}-photo-app"
+  allocated_storage                   = 20
+  engine                              = "postgres"
+  engine_version                      = "15.3"
+  instance_class                      = "db.t3.micro"
+  username                            = "postgres"
+  db_name                             = "postgres"
+  password                            = var.db_password
+  vpc_security_group_ids              = [aws_security_group.allow_rds.id]
   iam_database_authentication_enabled = false
   auto_minor_version_upgrade          = true
   apply_immediately                   = true
   skip_final_snapshot                 = true
   publicly_accessible                 = true
   parameter_group_name                = aws_db_parameter_group.default.name
+
+  tags = {
+    Name = "photo-app-${terraform.workspace}"
+  }
 }
 
 data "template_file" "db_init" {
@@ -353,10 +354,6 @@ resource "null_resource" "db_init" {
 
 resource "aws_s3_bucket" "client" {
   bucket = local.s3_bucket_client
-
-  tags = {
-    Name = "photo-app"
-  }
 }
 
 resource "aws_s3_bucket_website_configuration" "client" {
@@ -447,10 +444,6 @@ resource "cloudflare_worker_route" "client" {
 
 resource "aws_s3_bucket" "image-storage" {
   bucket = local.s3_bucket_storage
-
-  tags = {
-    Name = "photo-app"
-  }
 }
 
 resource "aws_s3_bucket_ownership_controls" "image-storage" {

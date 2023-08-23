@@ -186,8 +186,11 @@ export function PhotoLikes(props: PhotoLikesProps) {
         likesCount,
         translateX: `-${visibleLikesCount * HALF_ICON_SIZE}px`,
       },
-      config: config.wobbly,
-      delay: visibleLikesCount * ICON_SIZE,
+      config: {
+        ...config.wobbly,
+        mass: 1.2,
+      },
+      delay: (visibleLikesCount + 1) * ICON_SIZE,
       reset: true,
     }),
     [likesCount, visibleLikesCount],

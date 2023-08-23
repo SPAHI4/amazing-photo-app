@@ -1,5 +1,6 @@
 import {
   ApolloClient,
+  ApolloError,
   ApolloLink,
   defaultDataIdFromObject,
   FetchResult,
@@ -7,6 +8,7 @@ import {
   HttpLink,
   InMemoryCache,
   NextLink,
+  Observer,
   Operation,
 } from '@apollo/client';
 import { createPersistedQueryLink } from '@apollo/client/link/persisted-queries';
@@ -66,28 +68,35 @@ const GET_ACCESS_TOKEN_MUTATION = graphql(`
 `);
 
 const fetchAccessToken = async () => {
-  const res = await fetch(import.meta.env.VITE_GRAPHQL_ENDPOINT, {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      extensions: {
-        persistedQuery: {
-          version: 1,
-          // eslint-disable-next-line no-underscore-dangle
-          sha256Hash: (GET_ACCESS_TOKEN_MUTATION as unknown as { __meta__: { hash: string } })
-            .__meta__.hash,
-        },
+  try {
+    const res = await fetch(import.meta.env.VITE_GRAPHQL_ENDPOINT, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'content-type': 'application/json',
       },
-    }),
-  });
+      body: JSON.stringify({
+        extensions: {
+          persistedQuery: {
+            version: 1,
+            // eslint-disable-next-line no-underscore-dangle
+            sha256Hash: (GET_ACCESS_TOKEN_MUTATION as unknown as { __meta__: { hash: string } })
+              .__meta__.hash,
+          },
+        },
+      }),
+    });
 
-  const { data } = await res.json();
+    const { data } = await res.json();
 
-  fetchedOnInit = true;
-  accessToken = data?.getAccessToken?.accessToken ?? null;
+    fetchedOnInit = true;
+    accessToken = data?.getAccessToken?.accessToken ?? null;
+  } catch (err) {
+    throw new ApolloError({
+      errorMessage: 'Failed to fetch access token',
+      networkError: err as Error,
+    });
+  }
 };
 
 const shouldUseToken = (operation: Operation) => {
@@ -128,7 +137,14 @@ class TokenLink extends ApolloLink {
         if (!this.fetching) {
           (async () => {
             this.fetching = true;
-            await fetchAccessToken();
+
+            try {
+              await fetchAccessToken();
+            } catch (err) {
+              this.queue.queuedRequests.forEach((request) => {
+                request.error?.(err as Error);
+              });
+            }
 
             this.fetching = false;
             this.queue.consumeQueue();
@@ -141,6 +157,24 @@ class TokenLink extends ApolloLink {
   }
 }
 
+// errors subscriber to receive all errors during the request to get then in ui, used later in errorLink
+
+let graphqlErrorsObserver: Observer<Error[]> = {
+  next: () => {},
+  error: () => {},
+  complete: () => {},
+};
+
+export const graphqlErrorsObservable = new Observable((observer) => {
+  const subscriber = {
+    next: observer.next.bind(observer),
+    error: observer.error.bind(observer),
+    complete: observer.complete.bind(observer),
+  };
+
+  graphqlErrorsObserver = subscriber;
+});
+
 const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
   if (graphQLErrors != null) {
     for (const error of graphQLErrors) {
@@ -152,25 +186,36 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
         if (error.extensions.code === 'TOKEN_EXPIRED') {
           return new Observable((observer) => {
             (async () => {
-              await fetchAccessToken();
-
               const subscriber = {
                 next: observer.next.bind(observer),
                 error: observer.error.bind(observer),
                 complete: observer.complete.bind(observer),
               };
 
+              try {
+                await fetchAccessToken();
+              } catch (err) {
+                observer.error(err);
+              }
+
               forward(operation).subscribe(subscriber);
             })().catch((err) => observer.error(err));
           });
         }
       }
+
+      console.error(`[GraphQL error]: ${error.message}`);
     }
   }
 
   if (networkError) {
     console.error(`[Network error]: ${networkError}`);
   }
+
+  graphqlErrorsObserver.next?.([
+    ...(graphQLErrors ?? []),
+    ...(networkError != null ? [networkError] : []),
+  ]);
 
   return forward(operation);
 });
