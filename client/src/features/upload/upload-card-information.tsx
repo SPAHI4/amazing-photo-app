@@ -1,6 +1,5 @@
 import {
   Box,
-  Chip,
   FormControl,
   InputAdornment,
   InputLabel,
@@ -195,6 +194,8 @@ function LocationsSelect({ form }: { form: ReturnType<typeof useForm<RouteUpload
 export function UploadCardInformation({ form, onSubmit, loading }: UploadCardInformationProps) {
   const values = form.watch();
 
+  const canSubmit = values.imageId != null && values.lng != null && values.lat != null;
+
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}
@@ -218,19 +219,19 @@ export function UploadCardInformation({ form, onSubmit, loading }: UploadCardInf
           <Suspense fallback={<div>Loading...</div>}>
             <LocationsSelect form={form} />
           </Suspense>
-          <Typography variant="h5">Technical things</Typography>
-          <Box display="flex" alignItems="center" justifyContent="space-evenly" gap={2}>
+          <Typography variant="h5">Photo details</Typography>
+          <Box display="flex" gap={6}>
             <Typography
-              variant="subtitle1"
+              variant="h5"
               css={css`
                 display: flex;
                 align-items: center;
               `}
             >
-              {values.aperture}
+              F/{values.aperture}
             </Typography>
             <Typography
-              variant="subtitle1"
+              variant="h5"
               css={css`
                 display: flex;
                 align-items: center;
@@ -239,13 +240,13 @@ export function UploadCardInformation({ form, onSubmit, loading }: UploadCardInf
               {convertShutterSpeed(values.shutterSpeed ?? 0)}
             </Typography>
             <Typography
-              variant="subtitle1"
+              variant="h5"
               css={css`
                 display: flex;
                 align-items: center;
               `}
             >
-              <Chip label="ISO" css={{ marginRight: 8 }} /> {values.iso}
+              {values.iso}
             </Typography>
           </Box>
         </Box>
@@ -263,7 +264,7 @@ export function UploadCardInformation({ form, onSubmit, loading }: UploadCardInf
                   </SvgIcon>
                 }
                 loading={loading}
-                disabled={values.imageId == null}
+                disabled={!canSubmit}
               >
                 Finish
               </LoadingButton>
