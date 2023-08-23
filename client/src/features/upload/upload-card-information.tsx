@@ -17,7 +17,7 @@ import { useSuspenseQuery } from '@apollo/client';
 import { Suspense, useEffect, useRef, useTransition } from 'react';
 import { LoadingButton } from '@mui/lab';
 import { Link } from 'react-router-dom';
-import { GoogleMap, useJsApiLoader, StandaloneSearchBox } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, Autocomplete } from '@react-google-maps/api';
 import CircularProgress from '@mui/material/CircularProgress';
 import { graphql } from '../../__generated__';
 import { Transition } from '../../ui-components/transition.tsx';
@@ -47,11 +47,13 @@ const locationsByDistanceQuery = graphql(`
   }
 `);
 
+const libraries = ['places'];
+
 function MapPicker({ form }: { form: ReturnType<typeof useForm<RouteUploadFormValues>> }) {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-    libraries: ['places'],
+    libraries: libraries as never,
   });
   const [, startTransition] = useTransition();
 
@@ -75,9 +77,34 @@ function MapPicker({ form }: { form: ReturnType<typeof useForm<RouteUploadFormVa
   return (
     <>
       <Box>
-        <StandaloneSearchBox>
-          <TextField fullWidth variant="outlined" label="Search for a location" />
-        </StandaloneSearchBox>
+        {isLoaded && (
+          <Autocomplete
+            onLoad={(autocomplete) => {
+              autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+
+                if (place.geometry?.location != null) {
+                  startTransition(() => {
+                    form.setValue('lat', place.geometry!.location!.lat());
+                    form.setValue('lng', place.geometry!.location!.lng());
+                    form.setValue('locationId', '');
+                  });
+                }
+              });
+            }}
+          >
+            <TextField
+              label="Search for a location"
+              variant="outlined"
+              fullWidth
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                }
+              }}
+            />
+          </Autocomplete>
+        )}
       </Box>
       <Box
         css={css`
@@ -122,7 +149,11 @@ function MapPicker({ form }: { form: ReturnType<typeof useForm<RouteUploadFormVa
   );
 }
 
-function LocationsSelect({ form }: { form: ReturnType<typeof useForm<RouteUploadFormValues>> }) {
+interface LocationsSelectProps {
+  form: ReturnType<typeof useForm<RouteUploadFormValues>>;
+}
+
+function LocationsSelect({ form }: LocationsSelectProps) {
   const values = form.watch();
   const { data } = useSuspenseQuery(locationsByDistanceQuery, {
     variables: {
