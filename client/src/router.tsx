@@ -52,15 +52,13 @@ export const router: Router = sentryCreateBrowserRouter([
               return { Component: RouteLocation };
             },
           },
-          import.meta.env.VITE_UPLOAD_ENABLED === 'true'
-            ? {
-                path: 'upload',
-                lazy: async () => {
-                  const { RouteUpload } = await import('./routes/route-upload.tsx');
-                  return { Component: RouteUpload };
-                },
-              }
-            : {},
+          {
+            path: 'upload',
+            lazy: async () => {
+              const { RouteUpload } = await import('./routes/route-upload.tsx');
+              return { Component: RouteUpload };
+            },
+          },
         ],
       },
 
