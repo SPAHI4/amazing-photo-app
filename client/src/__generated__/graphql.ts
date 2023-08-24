@@ -1441,7 +1441,6 @@ export type PhotoPatch = {
   iso?: InputMaybe<Scalars['Int']['input']>;
   lat?: InputMaybe<Scalars['Float']['input']>;
   lens?: InputMaybe<Scalars['String']['input']>;
-  likesCount?: InputMaybe<Scalars['Int']['input']>;
   lng?: InputMaybe<Scalars['Float']['input']>;
   locationId?: InputMaybe<Scalars['Int']['input']>;
   shotAt?: InputMaybe<Scalars['Datetime']['input']>;

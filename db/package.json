@@ -6,6 +6,7 @@
     "gm": "NODE_OPTIONS=\"--import @app/config/dist/env.js\" graphile-migrate",
     "watch": "pnpm gm watch --once",
     "commit": "pnpm gm commit",
+    "uncommit": "pnpm gm uncommit",
     "migrate": "pnpm gm migrate"
   },
   "dependencies": {
