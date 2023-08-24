@@ -1,8 +1,13 @@
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { css, Global } from '@emotion/react';
-import { memo, useLayoutEffect, useRef } from 'react';
+import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Slide, Snackbar } from '@mui/material';
+import { ServerError, ServerParseError } from '@apollo/client';
+import { GraphQLError } from 'graphql/error';
+import { NetworkError } from '@apollo/client/errors';
 import { useCurrentUser } from './hooks/use-user.ts';
 import { CursorProvider } from './ui-components/cursor.tsx';
+import { graphqlErrorsObservable } from './apollo-client.ts';
 
 const Styles = memo(() => (
   <Global
@@ -95,8 +100,34 @@ const wait = (ms: number) =>
     setTimeout(resolve, ms);
   });
 
-export function App() {
-  useCurrentUser();
+const ErrorSnackbar = memo(() => {
+  const [[firstError], setErrors] = useState<
+    Error[] | [ServerParseError] | [ServerError] | GraphQLError[] | [NetworkError]
+  >([]);
+
+  useEffect(() => {
+    const subscription = graphqlErrorsObservable.subscribe((newErrors) => {
+      setErrors(newErrors);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  return (
+    <Snackbar
+      open={firstError != null}
+      onClose={() => setErrors([])}
+      message={firstError?.message}
+      TransitionComponent={Slide}
+      autoHideDuration={6000}
+      key={firstError?.message ?? 'error'}
+    />
+  );
+});
+
+const useFontsLoaded = () => {
   const fontsLoaded = useRef(false);
 
   // Wait for fonts to load before showing the app
@@ -118,12 +149,18 @@ export function App() {
       }
     })();
   }, []);
+};
+
+export const App = memo(() => {
+  useCurrentUser();
+  useFontsLoaded();
 
   return (
     <CursorProvider>
+      <ErrorSnackbar />
       <ScrollRestoration getKey={(location) => location.pathname} />
       <Styles />
       <Outlet />
     </CursorProvider>
   );
-}
+});

@@ -10,6 +10,8 @@ import {
   NextLink,
   Observer,
   Operation,
+  ServerError,
+  ServerParseError,
 } from '@apollo/client';
 import { createPersistedQueryLink } from '@apollo/client/link/persisted-queries';
 import { setContext } from '@apollo/client/link/context';
@@ -19,6 +21,8 @@ import decode from 'jwt-decode';
 import { OperationQueuing } from 'apollo-link-token-refresh';
 import { TypePolicies } from '@apollo/client/cache/inmemory/policies';
 import { mergeDeep } from '@apollo/client/utilities/common/mergeDeep';
+import { NetworkError } from '@apollo/client/errors';
+import { GraphQLError } from 'graphql/error';
 import { graphql } from './__generated__';
 import { scalarTypePolicies } from './__generated__/graphql-types.ts';
 
@@ -159,13 +163,17 @@ class TokenLink extends ApolloLink {
 
 // errors subscriber to receive all errors during the request to get then in ui, used later in errorLink
 
-let graphqlErrorsObserver: Observer<Error[]> = {
+let graphqlErrorsObserver: Observer<
+  Error[] | [ServerParseError] | [ServerError] | GraphQLError[] | [NetworkError]
+> = {
   next: () => {},
   error: () => {},
   complete: () => {},
 };
 
-export const graphqlErrorsObservable = new Observable((observer) => {
+export const graphqlErrorsObservable = new Observable<
+  Error[] | [ServerParseError] | [ServerError] | GraphQLError[] | [NetworkError]
+>((observer) => {
   const subscriber = {
     next: observer.next.bind(observer),
     error: observer.error.bind(observer),
