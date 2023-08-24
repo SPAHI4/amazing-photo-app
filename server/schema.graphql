@@ -2245,7 +2245,6 @@ input PhotoPatch {
   shotAt: Datetime
   blurhash: String
   imageId: Int
-  likesCount: Int
   isArchived: Boolean
   archivedAt: Datetime
 }
