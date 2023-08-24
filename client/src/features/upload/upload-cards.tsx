@@ -24,7 +24,10 @@ export function UploadCardMore({ form }: CardMoreProps) {
             variant="outlined"
             size="large"
             onClick={() => {
-              form.setValue('uploadStep', UploadStep.Image);
+              form.reset({
+                uploadStep: UploadStep.Image,
+                locationId: '',
+              });
             }}
             startIcon={
               <SvgIcon>
