@@ -1,16 +1,18 @@
-import React from 'react';
 import { Container, Paper, Typography } from '@mui/material';
 import { css } from '@emotion/react';
 import { useForm } from 'react-hook-form';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useMutation } from '@apollo/client';
 import useTheme from '@mui/material/styles/useTheme';
+import { Navigate } from 'react-router-dom';
+import { useCallback } from 'react';
 import { UploadCardInformation } from '../features/upload/upload-card-information.tsx';
 import { Transition } from '../ui-components/transition.tsx';
 import { graphql } from '../__generated__/gql.ts';
 import { UploadCardImage } from '../features/upload/upload-card-image.tsx';
 import { UploadCardMore, UploadCardViewImage } from '../features/upload/upload-cards.tsx';
 import { RouteUploadFormValues, UploadStep } from '../features/upload/upload-types.ts';
+import { useCurrentUser } from '../hooks/use-user.ts';
 
 const CREATE_PHOTO_MUTATION = graphql(`
   mutation CreatePhoto($input: CreatePhotoInput!) {
@@ -40,6 +42,7 @@ function Card({ children }: { children: React.ReactNode }) {
 }
 
 export function RouteUpload() {
+  const [currentUser] = useCurrentUser();
   const form = useForm<RouteUploadFormValues>({
     defaultValues: {
       uploadStep: UploadStep.Image,
@@ -49,7 +52,7 @@ export function RouteUpload() {
   const [uploadStep] = form.watch(['uploadStep']);
 
   const [createPhoto, { data: mutationData, loading }] = useMutation(CREATE_PHOTO_MUTATION);
-  const onSubmit = React.useCallback(
+  const onSubmit = useCallback(
     async (values: RouteUploadFormValues) => {
       if (values.url == null) {
         throw new Error('Missing image URL');
@@ -85,6 +88,13 @@ export function RouteUpload() {
     },
     [createPhoto, form],
   );
+
+  if (
+    currentUser == null ||
+    (currentUser.role !== 'APP_ADMIN' && !import.meta.env.VITE_UPLOAD_ENABLED)
+  ) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <Container
