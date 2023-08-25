@@ -48,7 +48,7 @@ export const getGraphqlContext = async (
           httpOnly: true,
           secure: true,
           path: '/graphql',
-          maxAge: 60 * 60 * 24 * REFRESH_TOKEN_EXPIRATION_DAYS,
+          maxAge: 1000 * 60 * 60 * 24 * REFRESH_TOKEN_EXPIRATION_DAYS,
           domain: env.ROOT_DOMAIN,
           sameSite: 'lax',
         }),
