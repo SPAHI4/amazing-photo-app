@@ -4,7 +4,7 @@ import { graphql } from '../__generated__/gql.ts';
 import { resetToken } from '../apollo-client.ts';
 import { CurrentUserQueryQuery } from '../__generated__/graphql.ts';
 
-const currentUserQuery = graphql(`
+const CURRENT_USER_QUERY = graphql(`
   query CurrentUserQuery {
     currentUser {
       __typename
@@ -25,19 +25,26 @@ const logoutMutation = graphql(`
 export const useCurrentUser = (): [
   CurrentUserQueryQuery['currentUser'] | null,
   {
-    refetch: () => Promise<void>;
+    refetch: () => Promise<CurrentUserQueryQuery['currentUser'] | null>;
   },
 ] => {
   const client = useApolloClient();
-  const { data } = useSuspenseQuery(currentUserQuery, {
+  const { data } = useSuspenseQuery(CURRENT_USER_QUERY, {
     fetchPolicy: 'cache-and-network',
   });
 
   // refetch from suspenseQuery is not a promise
   const refetch = useCallback(async () => {
     await client.refetchQueries({
-      include: [currentUserQuery],
+      include: [CURRENT_USER_QUERY],
+      optimistic: false,
     });
+
+    const result = client.readQuery({
+      query: CURRENT_USER_QUERY,
+    });
+
+    return result?.currentUser ?? null;
   }, [client]);
 
   return [data.currentUser, { refetch }];

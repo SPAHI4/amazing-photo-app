@@ -138,27 +138,6 @@ function CommentForm({ photo, incTmpId, firstCommentRef, inputRef }: CommentForm
   const [body, setBody] = React.useState('');
   const formRef = React.useRef<HTMLFormElement>(null);
   const [createComment, { loading }] = useMutation(PHOTO_COMMENTS_CREATE_COMMENT_MUTATION, {
-    optimisticResponse(variables) {
-      const { comment } = variables;
-      return {
-        createComment: {
-          __typename: 'CreateCommentPayload' as const,
-          comment: {
-            __typename: 'Comment' as const,
-            id: -1,
-            body: comment.body,
-            createdAt: new Date(),
-            isArchived: false,
-            user: {
-              __typename: 'User' as const,
-              id: currentUser!.id,
-              displayName: currentUser!.displayName,
-              pictureUrl: currentUser!.pictureUrl,
-            },
-          },
-        },
-      };
-    },
     update(cache, { data }) {
       cache.updateQuery(
         { query: PHOTO_COMMENTS_QUERY, variables: { id: photo.id!, first: 20 } },
@@ -191,13 +170,17 @@ function CommentForm({ photo, incTmpId, firstCommentRef, inputRef }: CommentForm
   const handleSubmit = useCallback(async () => {
     incTmpId();
     setBody(body.trim());
+    let user = currentUser;
 
     if (formRef.current?.reportValidity() !== true) {
       return;
     }
 
     if (currentUser == null) {
-      await loginWithGoogle();
+      user = await loginWithGoogle();
+      if (user == null) {
+        return;
+      }
     }
 
     const commentFn = async () => {
@@ -208,6 +191,31 @@ function CommentForm({ photo, incTmpId, firstCommentRef, inputRef }: CommentForm
             body,
             photoId: photo.id!,
           },
+        },
+        optimisticResponse(variables) {
+          const { comment } = variables;
+          if (user == null) {
+            throw new Error('user is null');
+          }
+
+          return {
+            createComment: {
+              __typename: 'CreateCommentPayload' as const,
+              comment: {
+                __typename: 'Comment' as const,
+                id: -1,
+                body: comment.body,
+                createdAt: new Date(),
+                isArchived: false,
+                user: {
+                  __typename: 'User' as const,
+                  id: user.id,
+                  displayName: user.displayName,
+                  pictureUrl: user.pictureUrl,
+                },
+              },
+            },
+          };
         },
       });
     };

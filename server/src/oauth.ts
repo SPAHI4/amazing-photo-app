@@ -13,7 +13,7 @@ export enum TokenErrors {
   REFRESH_TOKEN_EMPTY = 'REFRESH_TOKEN_EMPTY',
 }
 
-interface IRefreshTokenPayload {
+interface RefreshTokenPayload {
   userId: string;
 }
 
@@ -43,7 +43,7 @@ const verifyAndUpdateTokenSession = async (
   token: string,
   { pgClient, clientIp }: GraphqlContext,
 ) => {
-  const payload = jwt.verify(token, env.JWT_PUBLIC_KEY) as IRefreshTokenPayload;
+  const payload = jwt.verify(token, env.JWT_PUBLIC_KEY) as RefreshTokenPayload;
   const {
     rows: [existingToken],
   } = await pgClient.query(
@@ -141,6 +141,29 @@ const handleAdminUser = async (userId: string, { pgClient }: GraphqlContext) => 
   }
 };
 
+const handleArchivedUser = async (userId: string, { pgClient }: GraphqlContext) => {
+  const {
+    rows: [user],
+  } = await pgClient.query(
+    `
+select
+    id,
+    is_archived
+from
+    app_public.users
+where
+    id = $1
+`,
+    [userId],
+  );
+
+  if (user.is_archived === true) {
+    throw new GraphQLError('User is blocked', null, null, null, null, null, {
+      code: 'USER_BLOCKED',
+    });
+  }
+};
+
 export const loginWithGoogleMutation = makeExtendSchemaPlugin(() => ({
   typeDefs: gql`
     input LoginWithGoogleInput {
@@ -201,6 +224,8 @@ export const loginWithGoogleMutation = makeExtendSchemaPlugin(() => ({
           const payload = await verifyAndUpdateTokenSession(refreshToken, context);
 
           const accessToken = await getAccessToken(payload.userId, context);
+
+          await handleArchivedUser(payload.userId, context);
 
           return {
             accessToken,
@@ -310,6 +335,8 @@ export const loginWithGoogleMutation = makeExtendSchemaPlugin(() => ({
         );
 
         await handleAdminUser(user.id, context);
+
+        await handleArchivedUser(user.id, context);
 
         const [refreshToken, accessToken] = await Promise.all([
           createTokenSession(user.id, context),

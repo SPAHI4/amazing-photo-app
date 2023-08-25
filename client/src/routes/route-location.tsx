@@ -78,6 +78,11 @@ function HDRBanner() {
     )
   );
 }
+// const wait = (ms: number) =>
+//   new Promise((resolve) => {
+//     setTimeout(resolve, ms);
+//   });
+
 function Location() {
   const { slug = '' } = useParams();
   const theme = useTheme();
