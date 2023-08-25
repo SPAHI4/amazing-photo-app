@@ -75,7 +75,7 @@ const convertImage = async (
   const scaleArg = `w='if(gt(iw,ih),${target.size},-2)':h='if(gt(iw,ih),-2,${target.size})'`;
 
   let commandArgs = [
-    ['-vf', `scale=${scaleArg}`],
+    ['-vf', `scale=${scaleArg},format=yuv420p`],
     ['-c:v', 'libwebp'],
     ['-lossless', lossless ? '1' : '0'],
   ];
@@ -85,6 +85,15 @@ const convertImage = async (
     commandArgs = [
       ['-vf', `scale=${scaleArg}`],
       ['-qscale:v', '80'],
+    ];
+  }
+
+  if (target.type === 'image/avif') {
+    commandArgs = [
+      ['-vf', `scale=${scaleArg}`],
+      ['-c:v', 'libaom-av1'],
+      ['-crf', '6'],
+      ['-still-picture', '1'],
     ];
   }
 

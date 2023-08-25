@@ -15,18 +15,18 @@ import { RouteUploadFormValues, UploadStep } from './upload-types.ts';
 
 type ExifData = Record<string, string | number | Date> & { errors: [[string]] };
 
-const mapExifToFormValues = (exif: ExifData) => ({
-  lat: exif.latitude,
-  lng: exif.longitude,
-  camera: `${exif.Make} ${exif.Model}`,
-  lens: exif.LensModel,
-  focalLength: exif.FocalLength,
-  iso: exif.ISO,
-  aperture: exif.FNumber,
-  shutterSpeed: exif.ExposureTime,
-  shotAt: exif.DateTimeOriginal,
-  width: exif.ImageWidth,
-  height: exif.ImageHeight,
+const mapExifToFormValues = (exif?: ExifData) => ({
+  lat: exif?.latitude,
+  lng: exif?.longitude,
+  camera: `${exif?.Make} ${exif?.Model}`,
+  lens: exif?.LensModel,
+  focalLength: exif?.FocalLength,
+  iso: exif?.ISO,
+  aperture: exif?.FNumber,
+  shutterSpeed: exif?.ExposureTime,
+  shotAt: exif?.DateTimeOriginal,
+  width: exif?.ImageWidth,
+  height: exif?.ImageHeight,
 });
 
 const getExifValues = async (file: File) => {
@@ -153,6 +153,9 @@ export function UploadCardImage({
       // set exif data
       const exif = await getExifValues(file);
       Object.entries(exif).forEach(([key, value]) => {
+        if (value == null) {
+          return;
+        }
         form.setValue(key as keyof ReturnType<typeof mapExifToFormValues>, value);
       });
 
