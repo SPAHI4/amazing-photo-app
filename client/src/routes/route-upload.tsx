@@ -79,6 +79,8 @@ export function RouteUpload() {
               blurhash: values.blurhash,
               thumbnail: values.thumbnail,
               imageId: values.imageId,
+              lens: values.lens,
+              camera: values.camera,
             },
           },
         },

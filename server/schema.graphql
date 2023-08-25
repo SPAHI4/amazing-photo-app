@@ -508,7 +508,7 @@ type Image implements Node {
   id: Int!
   createdAt: Datetime!
   updatedAt: Datetime!
-  userId: Int!
+  userId: Int
   s3Bucket: String!
   s3Key: String!
   isHdr: Boolean!

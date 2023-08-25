@@ -5,6 +5,7 @@ import React from 'react';
 import { graphql } from '../__generated__/gql.ts';
 import { resetToken, setAccessToken } from '../apollo-client.ts';
 import { useCurrentUser } from './use-user.ts';
+import { CurrentUserQueryQuery } from '../__generated__/graphql.ts';
 
 const loginWithGoogleMutation = graphql(`
   mutation LoginWithGoogle($code: String!) {
@@ -18,7 +19,7 @@ const loginWithGoogleMutation = graphql(`
 export type GoogleError = NonOAuthError['type'] | ErrorCode | 'unknown';
 
 export const useAppGoogleLogin = (): [
-  () => Promise<void>,
+  () => Promise<CurrentUserQueryQuery['currentUser'] | null>,
   {
     loading: boolean;
     error: GoogleError | null;
@@ -65,7 +66,7 @@ export const useAppGoogleLogin = (): [
     setGoogleError(null);
 
     try {
-      await new Promise<void>((resolve, reject) => {
+      return await new Promise<CurrentUserQueryQuery['currentUser'] | null>((resolve, reject) => {
         const observable = new Observable((subscriber) => {
           observerRef.current = subscriber;
         });
@@ -75,8 +76,8 @@ export const useAppGoogleLogin = (): [
             if (value != null) {
               resetToken();
               setAccessToken(value);
-              await refetch();
-              resolve();
+              const currentUser = await refetch();
+              resolve(currentUser);
             }
           },
           error: (err) => {

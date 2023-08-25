@@ -707,7 +707,7 @@ export type Image = Node & {
   updatedAt: Scalars['Datetime']['output'];
   /** Reads a single `User` that is related to this `Image`. */
   user?: Maybe<User>;
-  userId: Scalars['Int']['output'];
+  userId?: Maybe<Scalars['Int']['output']>;
 };
 
 export type ImagePhotosArgs = {
@@ -2891,6 +2891,8 @@ export type RouteAdminPhotosQueryQuery = {
         shutterSpeed?: number | null;
         aperture?: string | null;
         focalLength?: string | null;
+        lens?: string | null;
+        camera?: string | null;
         shotAt?: Date | null;
         createdAt: Date;
         likesCount: number;
@@ -3240,6 +3242,8 @@ export const PhotoInfo_PhotoFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'iso' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lat' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lng' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'lens' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'camera' } },
         ],
       },
     },
@@ -3418,6 +3422,8 @@ export const RoutePhoto_EssentialsFragmentFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'iso' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lat' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lng' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'lens' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'camera' } },
         ],
       },
     },
@@ -4275,7 +4281,7 @@ export const LogoutMutationDocument = {
   ],
 } as unknown as DocumentNode<LogoutMutationMutation, LogoutMutationMutationVariables>;
 export const LocationQueryDocument = {
-  __meta__: { hash: '6faa05b39461e64ca44350bdd484bf15fb1ddf8992ee6a0d1378556bcad70db9' },
+  __meta__: { hash: '248f926476ed407e9c534df4b03edd2bde358daef1eda6107297b7bbacf8cc1f' },
   kind: 'Document',
   definitions: [
     {
@@ -4522,6 +4528,8 @@ export const LocationQueryDocument = {
           { kind: 'Field', name: { kind: 'Name', value: 'iso' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lat' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lng' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'lens' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'camera' } },
         ],
       },
     },
@@ -5363,7 +5371,7 @@ export const DeleteLocationDocument = {
   ],
 } as unknown as DocumentNode<DeleteLocationMutation, DeleteLocationMutationVariables>;
 export const RouteAdminPhotosQueryDocument = {
-  __meta__: { hash: 'c5ba69f10bef2dc51231085804612a0fb235fe4fba15b3b7384e6595f9f18ab1' },
+  __meta__: { hash: '892e218d3670417c295e2f32402490799b8f5812ec0533f5433f5fe36751cfc3' },
   kind: 'Document',
   definitions: [
     {
@@ -5404,6 +5412,8 @@ export const RouteAdminPhotosQueryDocument = {
                             { kind: 'Field', name: { kind: 'Name', value: 'shutterSpeed' } },
                             { kind: 'Field', name: { kind: 'Name', value: 'aperture' } },
                             { kind: 'Field', name: { kind: 'Name', value: 'focalLength' } },
+                            { kind: 'Field', name: { kind: 'Name', value: 'lens' } },
+                            { kind: 'Field', name: { kind: 'Name', value: 'camera' } },
                             { kind: 'Field', name: { kind: 'Name', value: 'shotAt' } },
                             { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
                             {
@@ -5917,7 +5927,7 @@ export const DeleteUserMutationDocument = {
   ],
 } as unknown as DocumentNode<DeleteUserMutationMutation, DeleteUserMutationMutationVariables>;
 export const RoutePhotoQueryDocument = {
-  __meta__: { hash: 'e0a13921e5aa7360b27e13c40c60e61e1a896d38c96db45e8b73212b747a70bf' },
+  __meta__: { hash: 'b0d4ae83619a7c42fa9463b858c02f95e5973972f74022de28db6f9981050f7d' },
   kind: 'Document',
   definitions: [
     {
@@ -6007,6 +6017,8 @@ export const RoutePhotoQueryDocument = {
           { kind: 'Field', name: { kind: 'Name', value: 'iso' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lat' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lng' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'lens' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'camera' } },
         ],
       },
     },

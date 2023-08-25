@@ -149,6 +149,7 @@ function LocationLink({ location, onMouseEnter, onMouseLeave }: LocationLinkProp
                 css={css`
                   view-transition-name: ${TRANSITION_NAME};
                   width: fit-content;
+                  display: inline;
                 `}
               >
                 {part}

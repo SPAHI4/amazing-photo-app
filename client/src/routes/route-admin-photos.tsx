@@ -8,7 +8,7 @@ import {
   GridToolbarContainer,
 } from '@mui/x-data-grid';
 import { css } from '@emotion/react';
-import { Alert, Button, Container, LinearProgress, Snackbar, Link as MuiLink } from '@mui/material';
+import { Alert, Button, LinearProgress, Snackbar, Link as MuiLink, Box } from '@mui/material';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { StickPointerButton } from '../ui-components/cursor.tsx';
@@ -25,6 +25,8 @@ const ROUTE_ADMIN_PHOTOS_QUERY = graphql(`
           shutterSpeed
           aperture
           focalLength
+          lens
+          camera
           shotAt
           createdAt
           location {
@@ -287,6 +289,20 @@ export function RouteAdminPhotos() {
         editable: true,
       },
       {
+        field: 'camera',
+        headerName: 'Camera',
+        type: 'string',
+        width: 130,
+        editable: true,
+      },
+      {
+        field: 'lens',
+        headerName: 'Lens',
+        type: 'string',
+        width: 150,
+        editable: true,
+      },
+      {
         field: 'shotAt',
         headerName: 'Shot At',
         type: 'date',
@@ -384,6 +400,8 @@ export function RouteAdminPhotos() {
               shutterSpeed: row.shutterSpeed,
               aperture: row.aperture,
               focalLength: row.focalLength,
+              camera: row.camera,
+              lens: row.lens,
               shotAt: row.shotAt,
               locationId: row.location?.id,
               isArchived: row.isArchived,
@@ -402,7 +420,7 @@ export function RouteAdminPhotos() {
       <Helmet>
         <title>{import.meta.env.VITE_BASE_TITLE} | Admin | Photos</title>
       </Helmet>
-      <Container>
+      <Box px={4}>
         <Snackbar open={error != null} autoHideDuration={6000} onClose={() => setError(null)}>
           <Alert severity="error">{error}</Alert>
         </Snackbar>
@@ -428,7 +446,7 @@ export function RouteAdminPhotos() {
           }}
           autoHeight
         />
-      </Container>
+      </Box>
     </>
   );
 }
