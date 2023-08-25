@@ -29,7 +29,7 @@ import { graphql } from '../../__generated__/gql.ts';
 import { StickPointerButton } from '../../ui-components/cursor.tsx';
 import { PhotoLikes } from './photo-likes.tsx';
 
-function ExifItem({ children, title }: { children: React.ReactNode; title: string }) {
+function ExifItem({ children, title }: { children: React.ReactNode; title: React.ReactNode }) {
   const theme = useTheme();
 
   return (
@@ -238,6 +238,8 @@ const PHOTO_INFO_PHOTO = graphql(`
     iso
     lat
     lng
+    lens
+    camera
   }
 `);
 
@@ -258,6 +260,10 @@ export function PhotoInfo(props: PhotoInfoProps) {
     fragmentName: 'PhotoInfo_photo',
     from: props.photo,
   });
+
+  const isCropSensor = photo.camera?.toUpperCase().includes('FUJIFILM') === true;
+  const cropFactor = isCropSensor ? 1.5 : 1;
+  const ffEquivalent = (value: number) => Math.round(value / cropFactor);
 
   return (
     <>
@@ -313,7 +319,22 @@ export function PhotoInfo(props: PhotoInfoProps) {
           </ExifItem>
           <ExifItem title="Aperture">F/{photo.aperture ?? 0}</ExifItem>
           <ExifItem title="ISO">{photo.iso ?? 0}</ExifItem>
-          <ExifItem title="Focal length">
+          <ExifItem
+            title={
+              <div>
+                <div>
+                  Focal length{' '}
+                  {cropFactor > 1 && (
+                    <>
+                      <strong>({ffEquivalent(parseInt(photo.focalLength ?? '', 10))}mm</strong> full
+                      frame)
+                    </>
+                  )}
+                </div>
+                {photo.lens != null && <div>{photo.lens}</div>}
+              </div>
+            }
+          >
             {parseInt(photo.focalLength ?? '', 10)}
             <small>mm</small>
           </ExifItem>
