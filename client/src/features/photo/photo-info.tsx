@@ -263,7 +263,7 @@ export function PhotoInfo(props: PhotoInfoProps) {
 
   const isCropSensor = photo.camera?.toUpperCase().includes('FUJIFILM') === true;
   const cropFactor = isCropSensor ? 1.5 : 1;
-  const ffEquivalent = (value: number) => Math.round(value / cropFactor);
+  const ffEquivalent = (value: number) => Math.round(value * cropFactor);
 
   return (
     <>

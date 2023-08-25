@@ -134,6 +134,9 @@ export function PhotoImage(props: PhotoImageProps) {
           css={css`
             &:fullscreen * {
               cursor: initial !important;
+              height: 100vh;
+              width: 100vw;
+              object-fit: contain;
             }
           `}
         >
