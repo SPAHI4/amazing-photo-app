@@ -5,9 +5,15 @@
     <link rel="icon" type="image/png" href="/favicon-hq.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-    <link ref="preconnect" href="%VITE_GRAPHQL_ENDPOINT%" />
+    <link ref="preconnect" href="%VITE_API_ORIGIN%" crossorigin="use-credentials" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz@1,7..72&family=Montserrat:wght@400;500;700&family=Poppins:wght@500;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz@1,7..72"
+      rel="preload"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Poppins:wght@500;700;900&display=swap"
       rel="stylesheet"
     />
     <style>

@@ -114,7 +114,7 @@ export const ThemeChangeButton = memo(() => {
 
       <div ref={iconRef}>
         <StickPointerButton>
-          <IconButton onClick={handleClick}>
+          <IconButton onClick={handleClick} aria-hidden>
             <SvgIcon>{mode === 'light' ? <IconLightMode /> : <IconDarkMode />}</SvgIcon>
           </IconButton>
         </StickPointerButton>
