@@ -63,6 +63,11 @@ Directory structure is quite simple:
   - utils
   - \_\_generated__: contains generated types for graphql queries and mutations, tracked by git to simplify CI/CD and transparent commit history
 
+## Libraries worth mentioning
+- [react-hook-form](https://react-hook-form.com/) - great library for forms with built-in validation and performance optimizations
+- react-use
+- 
+
 ## Security and auth
 
 Client app is using JWT for authentication. 
@@ -123,4 +128,4 @@ Mobile browsers are supported as well, there are some issues with HDR images tho
 
 **TBD**
 
-## [Deployment](../terraform/README.MD#deploy-client)
+## [Deployment](../terraform/README.md#deploy-client)
