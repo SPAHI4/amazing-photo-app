@@ -119,6 +119,7 @@ jobs:
       - name: Build client
         env:
           VITE_GRAPHQL_ENDPOINT: ${{ steps.terraform-output.outputs.api_origin }}/graphql
+          VITE_API_ORIGIN: ${{ steps.terraform-output.outputs.api_origin }}
           VITE_DEPLOYMENT: ${{ env.TF_WORKSPACE }}
           VITE_UPLOAD_ENABLED: ${{ env.TF_WORKSPACE == 'production' && 'false' || 'true' }}
           GOOGLE_CREDENTIALS_WEB_JSON: ${{ secrets.GOOGLE_CREDENTIALS_WEB_JSON }}
@@ -128,6 +129,8 @@ jobs:
 
       - name: Deploy Client
         uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --follow-symlinks --delete --cache-control 'max-age=31536000'
         env:
           AWS_S3_BUCKET: ${{ steps.terraform-output.outputs.client_bucket }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
