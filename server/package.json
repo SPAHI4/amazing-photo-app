@@ -13,8 +13,8 @@
   "scripts": {
     "dev": "pnpm schema:documents && nodemon --exec 'NODE_ENV=development node --no-warnings=ExperimentalWarning --loader ts-node/esm --import=./log-error.js' src/app.ts",
     "start": "NODE_ENV=production node --conditions=production ./dist/src/app.js",
-    "schema:export": "node --loader ts-node/esm --experimental-specifier-resolution=node -r dotenv/config ./scripts/export-schema.ts",
-    "schema:documents": "node --loader ts-node/esm --experimental-specifier-resolution=node -r dotenv/config ./scripts/persisted-documents.ts"
+    "schema:export": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/export-schema.ts",
+    "schema:documents": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/persisted-documents.ts"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^4.0.1",
@@ -39,8 +39,6 @@
     "@graphile-contrib/pg-simplify-inflector": "^6.1.0",
     "@graphile/persisted-operations": "^0.1.1",
     "cookie": "^0.5.0",
-    "dotenv": "^16.3.1",
-    "envalid": "^7.3.1",
     "fastify": "^4.20.0",
     "google-auth-library": "^8.9.0",
     "graphile-build": "^4.13.0",

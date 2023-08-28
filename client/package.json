@@ -24,7 +24,6 @@
     "@remix-run/router": "^1.7.2",
     "@sentry/react": "^7.64.0",
     "@types/date-fns": "^2.6.0",
-    "@vitejs/plugin-basic-ssl": "^1.0.1",
     "apollo-link-token-refresh": "^0.6.0",
     "blurhash": "^2.0.5",
     "cobe": "^0.6.3",
@@ -43,6 +42,7 @@
   },
   "devDependencies": {
     "@app/config": "workspace:*",
+    "@vitejs/plugin-basic-ssl": "^1.0.1",
     "@emotion/eslint-plugin": "^11.11.0",
     "@graphql-codegen/add": "^5.0.0",
     "@graphql-codegen/cli": "^4.0.1",
