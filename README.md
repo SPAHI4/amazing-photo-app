@@ -3,6 +3,8 @@
 
 In a nutshell, this is a simple app that allows you to upload photos and view them in a gallery.
 
+live on https://spahi4.me | development on https://dev.spahi4.me/?login=true (user upload enabled [here](https://dev.spahi4.me/upload))
+
 ### Features
 - Focused on fancy UI and animations as it's a portfolio project
 - Photos upload (resize, compress, convert, focused primarily on **HDR** images)
@@ -68,9 +70,11 @@ Lint-staged is used to run linters and formatters on husky hook for typescript, 
 ## Authorization and authentication
 
 Simple diagram of google oauth flow:
+
 ![auth-diagram-1.svg](.github%2Fassets%2Fauth-diagram-1.svg)
 
 JWT flow:
+
 ![auth-diagram-2.svg](.github%2Fassets%2Fauth-diagram-2.svg)
 
 More details in [server/README.md](./server/README.md) and [client/README.md](./client/README.md)
