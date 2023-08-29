@@ -1,5 +1,5 @@
 import useTheme from '@mui/material/styles/useTheme';
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useRef, useState } from 'react';
 import { Box, ImageListItem } from '@mui/material';
 import { css, Global } from '@emotion/react';
 import { Link } from 'react-router-dom';
@@ -9,7 +9,7 @@ import { StickPointerImage } from '../../ui-components/cursor.tsx';
 import { viewTransitionPhoto } from '../../utils/view-transitions.ts';
 import { useBrowserFeatures } from '../../hooks/use-browser-features.ts';
 import { graphql } from '../../__generated__/gql.ts';
-import { notEmpty } from '../../utils/array.ts';
+import { getSourceSrc, preloadImageLink } from './photo-utils.ts';
 
 const PHOTO_CARD_PHOTO_FRAGMENT = graphql(`
   fragment PhotoCard_photo on Photo {
@@ -83,27 +83,44 @@ export const PhotoCard = memo((props: PhotoCardProps) => {
   const features = useBrowserFeatures();
   const [loaded, setLoaded] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const preloadRef = useRef<HTMLLinkElement | null>(null);
   const handleLoad = useCallback(() => {
     setLoaded(true);
   }, []);
+  const handleMouseEnter = useCallback(() => {
+    setHovered(true);
+
+    if (preloadRef.current == null && photo.image != null) {
+      const srcUrl = getSourceSrc(
+        photo.image as {
+          s3Bucket: string;
+          sources: { type: string; s3Key: string; size: number }[];
+        },
+        3840,
+        features.avifSupported ? 'image/avif' : 'image/webp',
+      );
+
+      if (srcUrl == null) {
+        return;
+      }
+
+      preloadRef.current = preloadImageLink(srcUrl);
+    }
+  }, [features.avifSupported, photo.image]);
 
   if (!complete) {
     return null;
   }
 
   const TRANSITION_NAME = viewTransitionPhoto(photo.id);
-  const sources = photo.image?.sources.filter(notEmpty) ?? [];
-
-  const src = sources
-    .filter((source) =>
-      features.avifSupported ? source.type === 'image/avif' : source.type === 'image/webp',
-    )
-    .find((source) => source.size === 960);
-  const srcUrl =
-    src != null ? `https://${photo.image?.s3Bucket}.s3.amazonaws.com/${src.s3Key}` : '';
+  const srcUrl = getSourceSrc(
+    photo.image!,
+    960,
+    features.avifSupported ? 'image/avif' : 'image/webp',
+  );
 
   return (
-    <ImageListItem onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+    <ImageListItem onMouseEnter={handleMouseEnter} onMouseLeave={() => setHovered(false)}>
       <Global
         styles={css`
           ::view-transition-old(${TRANSITION_NAME}) {
@@ -153,7 +170,7 @@ export const PhotoCard = memo((props: PhotoCardProps) => {
               </div>
             )}
             <img
-              src={srcUrl}
+              src={srcUrl ?? photo.thumbnail}
               alt=""
               loading={index < 4 ? 'eager' : 'lazy'}
               decoding="async"

@@ -7,6 +7,7 @@ import { notEmpty } from '../../utils/array.ts';
 import { useBrowserFeatures } from '../../hooks/use-browser-features.ts';
 import { graphql } from '../../__generated__';
 import { useSafeTimeout } from '../../hooks/use-safe-timeout.ts';
+import { getSourceSrc } from './photo-utils.ts';
 
 const PHOTO_IMAGE_PHOTO = graphql(`
   fragment PhotoImage_photo on Photo {
@@ -26,6 +27,7 @@ const PHOTO_IMAGE_PHOTO = graphql(`
     width
     height
     blurhash
+    thumbnail
   }
 `);
 
@@ -89,12 +91,10 @@ export function PhotoImage(props: PhotoImageProps) {
     });
 
   // if user is coming from the location page, this image should be cached already
-  const src = sources
-    .filter((source) =>
-      features.avifSupported ? source.type === 'image/avif' : source.type === 'image/webp',
-    )
-    .find((source) => source.size === 960);
-  const srcUrl = `https://${photo.image?.s3Bucket}.s3.amazonaws.com/${src?.s3Key}`;
+  const srcUrl =
+    photo.image != null
+      ? getSourceSrc(photo.image, 960, features.avifSupported ? 'image/avif' : 'image/webp')
+      : null;
 
   return (
     <>
@@ -149,7 +149,7 @@ export function PhotoImage(props: PhotoImageProps) {
           <img
             alt={photo.location?.name ?? ''}
             decoding="sync"
-            src={srcUrl}
+            src={srcUrl ?? photo.thumbnail}
             css={css`
               view-transition-name: ${VIEW_TRANSITION_NAME};
               image-rendering: high-quality;
