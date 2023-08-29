@@ -27,7 +27,7 @@ const documents = {
     types.PhotoComments_PhotoFragmentDoc,
   '\n  fragment PhotoHeader_photo on Photo {\n    id\n    location {\n      id\n      slug\n      name\n    }\n  }\n':
     types.PhotoHeader_PhotoFragmentDoc,
-  '\n  fragment PhotoImage_photo on Photo {\n    id\n    location {\n      id\n      name\n    }\n    image {\n      s3Bucket\n      sources {\n        type\n        s3Key\n        size\n      }\n    }\n    width\n    height\n    blurhash\n  }\n':
+  '\n  fragment PhotoImage_photo on Photo {\n    id\n    location {\n      id\n      name\n    }\n    image {\n      s3Bucket\n      sources {\n        type\n        s3Key\n        size\n      }\n    }\n    width\n    height\n    blurhash\n    thumbnail\n  }\n':
     types.PhotoImage_PhotoFragmentDoc,
   '\n  fragment PhotoInfo_photo on Photo {\n    ...PhotoLikes_photo @nonreactive\n    __typename\n    id\n    shotAt\n    shutterSpeed\n    aperture\n    focalLength\n    camera\n    lens\n    iso\n    lat\n    lng\n    lens\n    camera\n  }\n':
     types.PhotoInfo_PhotoFragmentDoc,
@@ -149,8 +149,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  fragment PhotoImage_photo on Photo {\n    id\n    location {\n      id\n      name\n    }\n    image {\n      s3Bucket\n      sources {\n        type\n        s3Key\n        size\n      }\n    }\n    width\n    height\n    blurhash\n  }\n',
-): (typeof documents)['\n  fragment PhotoImage_photo on Photo {\n    id\n    location {\n      id\n      name\n    }\n    image {\n      s3Bucket\n      sources {\n        type\n        s3Key\n        size\n      }\n    }\n    width\n    height\n    blurhash\n  }\n'];
+  source: '\n  fragment PhotoImage_photo on Photo {\n    id\n    location {\n      id\n      name\n    }\n    image {\n      s3Bucket\n      sources {\n        type\n        s3Key\n        size\n      }\n    }\n    width\n    height\n    blurhash\n    thumbnail\n  }\n',
+): (typeof documents)['\n  fragment PhotoImage_photo on Photo {\n    id\n    location {\n      id\n      name\n    }\n    image {\n      s3Bucket\n      sources {\n        type\n        s3Key\n        size\n      }\n    }\n    width\n    height\n    blurhash\n    thumbnail\n  }\n'];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

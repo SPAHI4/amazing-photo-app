@@ -2476,6 +2476,7 @@ export type PhotoImage_PhotoFragment = {
   width: number;
   height: number;
   blurhash?: string | null;
+  thumbnail?: any | null;
   location?: { __typename: 'Location'; id: number; name: string } | null;
   image?: {
     __typename: 'Image';
@@ -3340,6 +3341,7 @@ export const PhotoImage_PhotoFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'width' } },
           { kind: 'Field', name: { kind: 'Name', value: 'height' } },
           { kind: 'Field', name: { kind: 'Name', value: 'blurhash' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'thumbnail' } },
         ],
       },
     },
@@ -3498,6 +3500,7 @@ export const RoutePhoto_EssentialsFragmentFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'width' } },
           { kind: 'Field', name: { kind: 'Name', value: 'height' } },
           { kind: 'Field', name: { kind: 'Name', value: 'blurhash' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'thumbnail' } },
         ],
       },
     },
@@ -4281,7 +4284,7 @@ export const LogoutMutationDocument = {
   ],
 } as unknown as DocumentNode<LogoutMutationMutation, LogoutMutationMutationVariables>;
 export const LocationQueryDocument = {
-  __meta__: { hash: '248f926476ed407e9c534df4b03edd2bde358daef1eda6107297b7bbacf8cc1f' },
+  __meta__: { hash: '2b56990fae3fd0082a37ab537665e34aa7655a7181601d5cc8a50b84fd0c1f99' },
   kind: 'Document',
   definitions: [
     {
@@ -4604,6 +4607,7 @@ export const LocationQueryDocument = {
           { kind: 'Field', name: { kind: 'Name', value: 'width' } },
           { kind: 'Field', name: { kind: 'Name', value: 'height' } },
           { kind: 'Field', name: { kind: 'Name', value: 'blurhash' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'thumbnail' } },
         ],
       },
     },
@@ -5927,7 +5931,7 @@ export const DeleteUserMutationDocument = {
   ],
 } as unknown as DocumentNode<DeleteUserMutationMutation, DeleteUserMutationMutationVariables>;
 export const RoutePhotoQueryDocument = {
-  __meta__: { hash: 'b0d4ae83619a7c42fa9463b858c02f95e5973972f74022de28db6f9981050f7d' },
+  __meta__: { hash: 'd73b36584c0dbe97a90c4110bd5a037b43b291f6bc5550c8febcca181c2342cf' },
   kind: 'Document',
   definitions: [
     {
@@ -6093,6 +6097,7 @@ export const RoutePhotoQueryDocument = {
           { kind: 'Field', name: { kind: 'Name', value: 'width' } },
           { kind: 'Field', name: { kind: 'Name', value: 'height' } },
           { kind: 'Field', name: { kind: 'Name', value: 'blurhash' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'thumbnail' } },
         ],
       },
     },
