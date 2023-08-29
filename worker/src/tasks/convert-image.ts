@@ -199,7 +199,6 @@ export const convertImageTask: Task = async (inPayload, { logger, query }) => {
       throw new Error('Content type is null');
     }
 
-    // eslint-disable-next-line
     await using sourceTmpFile = await TempFile.createWrite();
     const writeStream = sourceTmpFile.handle.createWriteStream();
 
