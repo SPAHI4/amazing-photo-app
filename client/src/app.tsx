@@ -78,8 +78,12 @@ const Styles = memo(() => (
       }
 
       // disable any view transitions for theme change animation
-      .view-transition-lock * {
-        view-transition-name: unset !important;
+      .view-transition-lock {
+        pointer-events: none;
+
+        & * {
+          view-transition-name: unset !important;
+        }
       }
 
       body {

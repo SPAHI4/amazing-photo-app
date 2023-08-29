@@ -26,7 +26,7 @@ export const ThemeChangeButton = memo(() => {
         return;
       }
 
-      // Get the click position, or fallback to the middle of the screen
+      // Get the click position
       const x = lastClick.clientX;
       const y = lastClick.clientY;
       // Get the distance to the furthest corner
@@ -58,7 +58,11 @@ export const ThemeChangeButton = memo(() => {
       });
 
       // Wait for the pseudo-elements to be created:
-      await transition.ready;
+      try {
+        await transition.ready;
+      } catch (err) {
+        console.error(err); // in case of transition timeout
+      }
 
       document.documentElement.classList.remove('view-transition-lock');
 
