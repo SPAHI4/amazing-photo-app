@@ -15,6 +15,14 @@ module.exports = {
         'import/no-default-export': 'error',
       },
     },
+    // turn off prettier for ts 5.2 files
+    {
+      files: [`**/convert-image.ts`],
+      plugins: ['@typescript-eslint', 'sql'],
+      rules: {
+        'prettier/prettier': 'off',
+      },
+    },
   ],
   rules: {
     curly: 'error',
