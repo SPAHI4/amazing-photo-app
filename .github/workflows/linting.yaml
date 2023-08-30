@@ -8,13 +8,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      NODE_ENV: test
-      DEPLOYMENT: ci
 
     services:
       postgres:
-        image: postgis/postgis:15-3.3
+        image: postgres
 
         env:
           POSTGRES_PASSWORD: postgres
@@ -45,32 +42,14 @@ jobs:
       - name: pnpm install
         run: |
           pnpm install
-
-      - name: build ts
-        run: |
-          pnpm run build
-
-      - name: create db credentials
-        env:
-          PGHOST: localhost
-          PGUSER: postgres
-          PGPASSWORD: postgres
-          PGDATABASE: postgres
-          PGPORT: 5432
-        run: |
-          psql -c "CREATE ROLE app_postgraphile WITH LOGIN PASSWORD 'xyz'; \
-            CREATE ROLE app_user; \
-            CREATE ROLE app_admin; \
-            CREATE ROLE app_anonymous;"
-
-      - name: run tests
-        run: |
-          pnpm run test
-            
-
       - name: Run lint-staged
         run: |
           pnpm exec lint-staged --diff="origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF}"
+
+      - name: db tests
+        working-directory: db
+        run: |
+          pnpm test
 
   plan:
     env:

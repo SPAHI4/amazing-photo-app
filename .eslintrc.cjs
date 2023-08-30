@@ -28,9 +28,6 @@ module.exports = {
       files: ['**/__tests__/**'],
       rules: {
         'import/extensions': 'off',
-        '@typescript-eslint/no-unnecessary-condition': 'off',
-        '@typescript-eslint/strict-boolean-expressions': 'off',
-        '@typescript-eslint/no-explicit-any': 'off',
       },
     },
   ],
@@ -39,7 +36,6 @@ module.exports = {
     'no-console': 'off',
     'prettier/prettier': 'error',
     'import/prefer-default-export': 'off',
-    'import/extensions': 'off',
     'no-unused-vars': 'off',
     '@typescript-eslint/strict-boolean-expressions': 'error',
     'import/order': 'warn',
@@ -63,15 +59,16 @@ module.exports = {
   parserOptions: {
     root: true,
     project: [
-      `${__dirname}/tsconfig.json`,
-      `${__dirname}/config/tsconfig.json`,
-      `${__dirname}/client/tsconfig.json`,
-      `${__dirname}/client/tsconfig.node.json`,
-      `${__dirname}/server/tsconfig.json`,
-      `${__dirname}/worker/tsconfig.json`,
+      './tsconfig.json',
+      './config/tsconfig.json',
+      './client/tsconfig.json',
+      './client/tsconfig.node.json',
+      './server/tsconfig.json',
+      './worker/tsconfig.json',
+      './db/tsconfig.json',
 
-      `${__dirname}/db/tsconfig.spec.json`,
-      `${__dirname}/server/tsconfig.spec.json`,
+      './tsconfig.spec.json',
+      './db/__tests__/tsconfig.json',
     ],
   },
 };
