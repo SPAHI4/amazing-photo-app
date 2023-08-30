@@ -42,7 +42,7 @@ jobs:
       - name: pnpm install
         run: |
           pnpm install
-
+1
       - name: build ts
         run: |
           pnpm run build
