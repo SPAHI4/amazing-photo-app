@@ -82,3 +82,7 @@ More details in [server/README.md](./server/README.md) and [client/README.md](./
 ## Testing
 
 **TBD**
+
+## Inspirations
+
+- [graphile/starter](https://github.com/graphile/starter)

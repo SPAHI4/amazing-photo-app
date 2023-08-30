@@ -23,6 +23,13 @@ module.exports = {
         'prettier/prettier': 'off',
       },
     },
+    // allow .ts import for tests
+    {
+      files: ['**/__tests__/**'],
+      rules: {
+        'import/extensions': 'off',
+      },
+    },
   ],
   rules: {
     curly: 'error',
@@ -58,6 +65,10 @@ module.exports = {
       './client/tsconfig.node.json',
       './server/tsconfig.json',
       './worker/tsconfig.json',
+      './db/tsconfig.json',
+
+      './tsconfig.spec.json',
+      './db/__tests__/tsconfig.json',
     ],
   },
 };
