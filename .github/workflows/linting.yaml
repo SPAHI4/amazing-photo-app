@@ -66,7 +66,7 @@ jobs:
       - name: db tests
         working-directory: db
         run: |
-          pnpm test
+          pnpm test --testLocationInResults
             
 
       - name: Run lint-staged
