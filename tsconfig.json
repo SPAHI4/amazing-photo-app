@@ -32,16 +32,16 @@
     "customConditions": ["development", "production"]
   },
   "exclude": ["node_modules"],
-  "include": [".eslintrc.cjs", "lint-staged.config.js"],
+  "include": [".eslintrc.cjs", "lint-staged.config.js", "jest.config.js", "jest.config.base.js"],
   "references": [
-    {
-      "path": "./config"
-    },
     {
       "path": "./server"
     },
     {
       "path": "./worker"
+    },
+    {
+      "path": "./db"
     }
   ]
 }

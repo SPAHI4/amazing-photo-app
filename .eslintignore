@@ -13,3 +13,5 @@ server/schema.graphql
 db/tests
 
 terraform/setup
+
+jest.config.js
