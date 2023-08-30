@@ -25,3 +25,4 @@ All the tasks are located in [src/tasks](src/tasks) directory.
 ## TODO:
 - [ ] add tests
 - [ ] split convert-image task into subtasks
+- [ ] use `graphile-migrate` to run initial migrations for `graphile-worker` schema

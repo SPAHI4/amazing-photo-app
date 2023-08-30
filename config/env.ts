@@ -149,6 +149,10 @@ if (cleanedBase.NODE_ENV !== 'production') {
   });
 }
 
+if (process.env.NODE_ENV === 'test') {
+  process.env.SHADOW_DATABASE_URL = process.env.TEST_DATABASE_URL;
+}
+
 export const env = {
   ...cleanedBase,
   ...cleaned,
