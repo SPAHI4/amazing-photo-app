@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === 'production' && process.env.DEPLOYMENT == null) {
 }
 
 const cleanedBase = envalid.cleanEnv(process.env, {
-  NODE_ENV: envalid.str({ choices: ['development', 'production'], default: 'development' }),
+  NODE_ENV: envalid.str({ choices: ['development', 'production', 'test'], default: 'development' }),
   DEPLOYMENT: envalid.str({
     choices: ['production', 'development', 'localhost'],
     default: 'localhost',
@@ -142,6 +142,10 @@ if (cleanedBase.NODE_ENV !== 'production') {
     AWS_ACCESS_KEY_ID: envalid.str(),
     AWS_SECRET_ACCESS_KEY: envalid.str(),
   });
+}
+
+if (process.env.NODE_ENV === 'test') {
+  process.env.SHADOW_DATABASE_URL = process.env.TEST_DATABASE_URL;
 }
 
 export const env = {

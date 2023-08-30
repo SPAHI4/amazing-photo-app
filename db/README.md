@@ -26,3 +26,7 @@ there are 4 roles:
 - app_postgraphile - role for postgraphile api, database owner (not superuser)
 
 Authentication is implemented with JWT tokens, set by postgraphile as `jwt.claims.` variable.
+
+## TODO
+
+- [ ] add tests
