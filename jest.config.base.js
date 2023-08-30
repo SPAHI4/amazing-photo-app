@@ -8,6 +8,7 @@ export default (dir) => {
   let reporters = ['default'];
 
   if (process.env.DEPLOYMENT === 'ci') {
+    console.log('CI detected, using GitHub Actions reporter');
     reporters = [['github-actions', { silent: false }], 'summary'];
   }
 
