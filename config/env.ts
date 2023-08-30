@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'production' && process.env.DEPLOYMENT == null) {
 const cleanedBase = envalid.cleanEnv(process.env, {
   NODE_ENV: envalid.str({ choices: ['development', 'production', 'test'], default: 'development' }),
   DEPLOYMENT: envalid.str({
-    choices: ['production', 'development', 'localhost'],
+    choices: ['production', 'development', 'ci', 'localhost'],
     default: 'localhost',
   }),
 });
@@ -60,7 +60,7 @@ let google;
 
 // load certs, keys, and google configs based on environment for production
 // or from local files for development (these files are not checked into git)
-if (cleanedBase.NODE_ENV === 'production') {
+if (cleanedBase.NODE_ENV !== 'development') {
   jwts = envalid.cleanEnv(process.env, {
     JWT_PUBLIC_KEY: envalid.str(),
     JWT_SECRET_KEY: envalid.str(),
