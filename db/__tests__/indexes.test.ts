@@ -4,8 +4,6 @@ import { withRootDb } from './helpers.ts';
 
 it('has indexes on all foreign keys', () =>
   withRootDb(async (client) => {
-    await client.query('DROP INDEX app_public."photos_image_id_idx"');
-
     const query = `
           WITH indexed_tables AS (
               select
