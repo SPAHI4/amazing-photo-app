@@ -51,6 +51,7 @@ jobs:
         working-directory: db
         env:
           DEPLOYMENT: ci
+          NODE_ENV: test
         run: |
           pnpm test
             
