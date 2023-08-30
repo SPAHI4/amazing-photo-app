@@ -42,14 +42,20 @@ jobs:
       - name: pnpm install
         run: |
           pnpm install
-      - name: Run lint-staged
+
+      - name: build ts
         run: |
-          pnpm exec lint-staged --diff="origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF}"
+          pnpm run build
 
       - name: db tests
         working-directory: db
         run: |
           pnpm test
+            
+
+      - name: Run lint-staged
+        run: |
+          pnpm exec lint-staged --diff="origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF}"
 
   plan:
     env:
