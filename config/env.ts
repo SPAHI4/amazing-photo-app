@@ -37,14 +37,9 @@ dotenv.config({ path: deploymentEnv });
 const baseEnv = resolvePath('.env.base');
 dotenv.config({ path: baseEnv });
 
-if (process.env.NODE_ENV === 'test') {
-  process.env.SHADOW_DATABASE_URL = process.env.TEST_DATABASE_URL;
-}
-
 const cleaned = envalid.cleanEnv(process.env, {
   DATABASE_URL: envalid.str(),
   ROOT_DATABASE_URL: envalid.str(),
-  SHADOW_DATABASE_URL: envalid.str(),
   S3_BUCKET_NAME: envalid.str(),
   S3_BUCKET_REGION: envalid.str(),
   DEBUG: envalid.str(),
@@ -65,7 +60,37 @@ let google;
 
 // load certs, keys, and google configs based on environment for production
 // or from local files for development (these files are not checked into git)
-if (cleanedBase.DEPLOYMENT === 'localhost') {
+if (cleanedBase.NODE_ENV !== 'development') {
+  jwts = envalid.cleanEnv(process.env, {
+    JWT_PUBLIC_KEY: envalid.str(),
+    JWT_SECRET_KEY: envalid.str(),
+  });
+
+  jwts = {
+    JWT_PUBLIC_KEY: Buffer.from(jwts.JWT_PUBLIC_KEY, 'base64').toString(),
+    JWT_SECRET_KEY: Buffer.from(jwts.JWT_SECRET_KEY, 'base64').toString(),
+  };
+
+  ssls = envalid.cleanEnv(process.env, {
+    SSL_CERT: envalid.str(),
+    SSL_KEY: envalid.str(),
+  });
+
+  ssls = {
+    SSL_CERT: Buffer.from(ssls.SSL_CERT, 'base64').toString(),
+    SSL_KEY: Buffer.from(ssls.SSL_KEY, 'base64').toString(),
+  };
+
+  google = envalid.cleanEnv(process.env, {
+    INSTALLED_GOOGLE_CLIENT_ID: envalid.str(),
+    INSTALLED_GOOGLE_CLIENT_SECRET: envalid.str(),
+    INSTALLED_GOOGLE_REDIRECT_URI: envalid.str(),
+
+    WEB_GOOGLE_CLIENT_ID: envalid.str(),
+    WEB_GOOGLE_CLIENT_SECRET: envalid.str(),
+    WEB_GOOGLE_REDIRECT_URI: envalid.str(),
+  });
+} else {
   jwts = envalid.cleanEnv(process.env, {
     JWT_PUBLIC_KEY: envalid.str({
       default: fs.readFileSync(resolvePath('../cert-local/public.pem'), 'ascii'),
@@ -101,36 +126,6 @@ if (cleanedBase.DEPLOYMENT === 'localhost') {
     WEB_GOOGLE_CLIENT_SECRET: envalid.str({ default: webGoogleConfig.web.client_secret }),
     WEB_GOOGLE_REDIRECT_URI: envalid.str({ default: webGoogleConfig.web.redirect_uris[0] }),
   });
-} else {
-  jwts = envalid.cleanEnv(process.env, {
-    JWT_PUBLIC_KEY: envalid.str(),
-    JWT_SECRET_KEY: envalid.str(),
-  });
-
-  jwts = {
-    JWT_PUBLIC_KEY: Buffer.from(jwts.JWT_PUBLIC_KEY, 'base64').toString(),
-    JWT_SECRET_KEY: Buffer.from(jwts.JWT_SECRET_KEY, 'base64').toString(),
-  };
-
-  ssls = envalid.cleanEnv(process.env, {
-    SSL_CERT: envalid.str(),
-    SSL_KEY: envalid.str(),
-  });
-
-  ssls = {
-    SSL_CERT: Buffer.from(ssls.SSL_CERT, 'base64').toString(),
-    SSL_KEY: Buffer.from(ssls.SSL_KEY, 'base64').toString(),
-  };
-
-  google = envalid.cleanEnv(process.env, {
-    INSTALLED_GOOGLE_CLIENT_ID: envalid.str(),
-    INSTALLED_GOOGLE_CLIENT_SECRET: envalid.str(),
-    INSTALLED_GOOGLE_REDIRECT_URI: envalid.str(),
-
-    WEB_GOOGLE_CLIENT_ID: envalid.str(),
-    WEB_GOOGLE_CLIENT_SECRET: envalid.str(),
-    WEB_GOOGLE_REDIRECT_URI: envalid.str(),
-  });
 }
 
 let aws = {
@@ -142,7 +137,7 @@ let aws = {
 };
 
 // load aws configs based on environment for production
-if (cleanedBase.DEPLOYMENT !== 'localhost') {
+if (cleanedBase.NODE_ENV !== 'production') {
   aws = envalid.cleanEnv(process.env, {
     AWS_ACCESS_KEY_ID: envalid.str(),
     AWS_SECRET_ACCESS_KEY: envalid.str(),
