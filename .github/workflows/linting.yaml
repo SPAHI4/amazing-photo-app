@@ -49,6 +49,8 @@ jobs:
 
       - name: db tests
         working-directory: db
+        env:
+          DEPLOYMENT: ci
         run: |
           pnpm test
             
