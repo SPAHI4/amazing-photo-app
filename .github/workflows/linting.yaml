@@ -48,8 +48,14 @@ jobs:
           pnpm run build
 
       - name: create db credentials
+        env:
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: postgres
+          PGPORT: 5432
         run: |
-          psql -h localhost -U postgres -d postgres -p 5432 -c "CREATE ROLE app_postgraphile WITH LOGIN PASSWORD 'xyz';";
+          psql -c "CREATE ROLE app_postgraphile WITH LOGIN PASSWORD 'xyz';";
 
       - name: db tests
         working-directory: db
