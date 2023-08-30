@@ -9,8 +9,8 @@
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "composite": true,
     "declarationDir": "dist",
-    "noEmit": false
+    "outDir": "dist"
   },
   "exclude": ["node_modules"],
-  "include": []
+  "include": ["scripts/**/*.ts"]
 }
