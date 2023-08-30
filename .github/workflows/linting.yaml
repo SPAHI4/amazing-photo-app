@@ -8,6 +8,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      DEPLOYMENT: ci
 
     services:
       postgres:
@@ -62,9 +65,6 @@ jobs:
 
       - name: db tests
         working-directory: db
-        env:
-          DEPLOYMENT: ci
-          NODE_ENV: test
         run: |
           pnpm test
             
