@@ -62,6 +62,7 @@ jobs:
             CREATE ROLE app_user; \
             CREATE ROLE app_admin; \
             CREATE ROLE app_anonymous;"
+          createdb -O app_postgraphile photo-app_test
 
       - name: unit tests
         run: |
