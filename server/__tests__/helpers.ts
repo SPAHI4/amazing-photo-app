@@ -35,6 +35,8 @@ afterAll(async () => {
     where true
   `);
 
+  pgClient.release();
+
   await pgPool.end();
 });
 
