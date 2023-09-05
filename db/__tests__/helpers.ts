@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/strict-boolean-expressions,no-nested-ternary,@typescript-eslint/no-unnecessary-condition,@typescript-eslint/naming-convention */
 // source from https://github.com/graphile/starter
-
-import { Pool, PoolClient } from 'pg';
-import { mapValues } from 'lodash';
+import { env } from '@app/config/env.js';
+import pg from 'pg';
+import type { PoolClient } from 'pg';
+import mapValues from 'lodash/mapValues.js';
 
 type app_public = {
   users: {
@@ -15,16 +16,14 @@ type app_public = {
   };
 };
 
-const pools: Record<string, Pool> = {};
+const { SHADOW_DATABASE_URL } = env;
 
-if (process.env.TEST_DATABASE_URL == null) {
-  throw new Error('Cannot run tests without a TEST_DATABASE_URL');
-}
+const DATABASE_URL = SHADOW_DATABASE_URL;
 
-export const { TEST_DATABASE_URL } = process.env;
+const pools: Record<string, pg.Pool> = {};
 export const poolFromUrl = (url: string) => {
   if (pools[url] == null) {
-    pools[url] = new Pool({ connectionString: url });
+    pools[url] = new pg.Pool({ connectionString: url });
   }
   return pools[url];
 };
@@ -85,7 +84,7 @@ export const becomeUser = async (client: PoolClient, userId: number) => {
   );
 };
 
-export const withRootDb = <T>(fn: ClientCallback<T>) => withDbFromUrl(TEST_DATABASE_URL, fn);
+export const withRootDb = <T>(fn: ClientCallback<T>) => withDbFromUrl(DATABASE_URL, fn);
 
 export const withUserDb = <T>(fn: (client: PoolClient, user: app_public['users']) => Promise<T>) =>
   withRootDb(async (client) => {
