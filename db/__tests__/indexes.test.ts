@@ -1,10 +1,11 @@
-import { withRootDb } from './helpers.ts';
+import { withRootDb } from './helpers.js';
 
 // https://medium.com/@awesboss/how-to-find-missing-indexes-on-foreign-keys-2faffd7e6958
 
-it('has indexes on all foreign keys', () =>
-  withRootDb(async (client) => {
-    const query = `
+describe('db performance', () => {
+  it('has indexes on all foreign keys', () =>
+    withRootDb(async (client) => {
+      const query = `
           WITH indexed_tables AS (
               select
                   ns.nspname,
@@ -51,9 +52,10 @@ it('has indexes on all foreign keys', () =>
           ORDER BY reltuples DESC;
       `;
 
-    const results = await client.query(query);
+      const results = await client.query(query);
 
-    const { rows } = results;
+      const { rows } = results;
 
-    expect(rows.length).toBe(0);
-  }));
+      expect(rows.length).toBe(0);
+    }));
+});

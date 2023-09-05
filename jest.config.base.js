@@ -1,10 +1,10 @@
-import fs from 'node:fs';
-// eslint-disable-next-line import/no-extraneous-dependencies,import/extensions
-import preset from 'ts-jest/presets/index.js';
+import { createRequire } from 'module';
 
 /** @type {(dir: string) => import('ts-jest').JestConfigWithTsJest} */
 export default (dir) => {
-  const packageObj = JSON.parse(fs.readFileSync(`${dir}/package.json`, 'utf8'));
+  const require = createRequire(import.meta.url);
+  // eslint-disable-next-line import/no-dynamic-require
+  const packageObj = require(`${dir}/package.json`);
   let reporters = ['default'];
 
   if (process.env.DEPLOYMENT === 'ci') {
@@ -12,21 +12,24 @@ export default (dir) => {
   }
 
   return {
-    ...preset.defaultsESM,
     testEnvironment: 'node',
     reporters,
     testMatch: ['<rootDir>/**/__tests__/**/*.test.[t]s?(x)'],
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
     roots: [`<rootDir>`],
-
     rootDir: dir,
     displayName: packageObj.name,
-
+    modulePaths: ['.'],
+    moduleNameMapper: {
+      '^(\\.{1,2}/.*)\\.js$': '$1',
+      '^@app/config/env.js': '<rootDir>/../config/env.ts',
+    },
+    extensionsToTreatAsEsm: ['.ts'],
     transform: {
-      '^.+\\.[jt]sx?$': [
+      '^.+\\.tsx?$': [
         'ts-jest',
         {
-          tsconfig: '../tsconfig.spec.json',
+          tsconfig: `${dir}/tsconfig.spec.json`,
           useESM: true,
         },
       ],
