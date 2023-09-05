@@ -29,7 +29,7 @@ export default (dir) => {
       '^.+\\.tsx?$': [
         'ts-jest',
         {
-          tsconfig: `${dir}/tsconfig.spec.json`,
+          tsconfig: `${dir}tsconfig.spec.json`,
           useESM: true,
         },
       ],
