@@ -1,6 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// https://github.com/graphile/starter
+/* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/strict-boolean-expressions,no-nested-ternary,@typescript-eslint/no-unnecessary-condition,@typescript-eslint/naming-convention */
+// source from https://github.com/graphile/starter
+
 import { Pool, PoolClient } from 'pg';
+import { mapValues } from 'lodash';
+
+type app_public = {
+  users: {
+    id: number;
+    display_name: string;
+    role: 'app_user' | 'app_admin';
+    created_at: Date;
+    updated_at: Date;
+    is_archived: boolean;
+  };
+};
 
 const pools: Record<string, Pool> = {};
 
@@ -10,7 +23,6 @@ if (process.env.TEST_DATABASE_URL == null) {
 
 export const { TEST_DATABASE_URL } = process.env;
 export const poolFromUrl = (url: string) => {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (pools[url] == null) {
     pools[url] = new Pool({ connectionString: url });
   }
@@ -34,11 +46,53 @@ const withDbFromUrl = async <T>(url: string, fn: ClientCallback<T>) => {
   } finally {
     await client.query('ROLLBACK;');
     await client.query('RESET ALL;');
-    await client.release();
+    client.release();
   }
 };
 
+export const becomeRoot = (client: PoolClient) => client.query('reset role');
+
+export const createUsers = async (
+  client: PoolClient,
+  count: number,
+  role: 'app_user' | 'app_admin',
+) => {
+  const rows = await Promise.all(
+    Array.from({ length: count }, async (_, i) => {
+      const displayName = `Test User ${i + 1}`;
+
+      const {
+        rows: [row],
+      } = await client.query<app_public['users']>(
+        `
+        insert into app_public.users (display_name, role) values ($1, $2) returning *
+      `,
+        [displayName, role],
+      );
+
+      return row;
+    }),
+  );
+
+  return rows;
+};
+
+export const becomeUser = async (client: PoolClient, userId: number) => {
+  await becomeRoot(client);
+  await client.query(
+    `select set_config('role', $1::text, true), set_config('jwt.claims.user_id', $2, true)`,
+    ['app_user', userId],
+  );
+};
+
 export const withRootDb = <T>(fn: ClientCallback<T>) => withDbFromUrl(TEST_DATABASE_URL, fn);
+
+export const withUserDb = <T>(fn: (client: PoolClient, user: app_public['users']) => Promise<T>) =>
+  withRootDb(async (client) => {
+    const [user] = await createUsers(client, 1, 'app_user');
+    await becomeUser(client, user.id);
+    await fn(client, user);
+  });
 
 afterAll(() => {
   const keys = Object.keys(pools);
@@ -55,3 +109,48 @@ afterAll(() => {
     }),
   );
 });
+
+const idReplacement = (v: string | number | null) => (!v ? v : '[ID]');
+export const pruneIds = (row: { [key: string]: unknown }) =>
+  mapValues(row, (v, k) =>
+    (k === 'id' || k.endsWith('_id')) && (typeof v === 'string' || typeof v === 'number')
+      ? idReplacement(v)
+      : v,
+  );
+
+const uuidRegexp = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export const pruneUUIDs = (row: { [key: string]: unknown }) =>
+  mapValues(row, (v, k) => {
+    if (typeof v !== 'string') {
+      return v;
+    }
+    const val = v;
+    return ['uuid', 'queue_name'].includes(k) && v.match(uuidRegexp)
+      ? '[UUID]'
+      : k === 'gravatar' && val.match(/^[0-9a-f]{32}$/i)
+      ? '[gUUID]'
+      : v;
+  });
+
+export const pruneDates = (row: { [key: string]: unknown }) =>
+  mapValues(row, (v, k) => {
+    if (!v) {
+      return v;
+    }
+    if (v instanceof Date) {
+      return '[DATE]';
+    }
+    if (typeof v === 'string' && k.match(/(_at|At)$/) && v.match(/^20[0-9]{2}-[0-9]{2}-[0-9]{2}/)) {
+      return '[DATE]';
+    }
+    return v;
+  });
+
+export const pruneHashes = (row: { [key: string]: unknown }) =>
+  mapValues(row, (v, k) =>
+    Boolean(k.endsWith('_hash')) && typeof v === 'string' && v[0] === '$' ? '[hash]' : v,
+  );
+
+export const snapshotSafe = (obj: { [key: string]: unknown }) =>
+  pruneHashes(pruneUUIDs(pruneIds(pruneDates(obj))));
