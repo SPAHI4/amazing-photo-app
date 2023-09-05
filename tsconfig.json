@@ -41,9 +41,6 @@
       "path": "./worker"
     },
     {
-      "path": "./db"
-    },
-    {
       "path": "./config"
     }
   ]
