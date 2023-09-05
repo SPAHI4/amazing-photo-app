@@ -43,11 +43,13 @@ const verifyAndUpdateTokenSession = async (
   token: string,
   { pgClient, clientIp }: GraphqlContext,
 ) => {
-  const payload = jwt.verify(token, env.JWT_PUBLIC_KEY) as RefreshTokenPayload;
-  const {
-    rows: [existingToken],
-  } = await pgClient.query(
-    `
+  try {
+    const payload = jwt.verify(token, env.JWT_PUBLIC_KEY) as RefreshTokenPayload;
+
+    const {
+      rows: [existingToken],
+    } = await pgClient.query(
+      `
       select
           *
       from
@@ -57,17 +59,15 @@ const verifyAndUpdateTokenSession = async (
           and token_hash = $2
           and token_revoked_at is null
       `,
-    [payload.userId, getTokenHash(token)],
-  );
+      [payload.userId, getTokenHash(token)],
+    );
 
-  if (existingToken == null) {
-    throw new GraphQLError('Token is revoked or invalid', null, null, null, null, null, {
-      code: TokenErrors.TOKEN_INVALID,
-    });
-  }
+    if (existingToken == null) {
+      throw new Error();
+    }
 
-  await pgClient.query(
-    `
+    await pgClient.query(
+      `
       update
           app_private.sessions
       set
@@ -75,10 +75,15 @@ const verifyAndUpdateTokenSession = async (
       where
           id = $2
       `,
-    [clientIp, existingToken.id],
-  );
+      [clientIp, existingToken.id],
+    );
 
-  return payload;
+    return payload;
+  } catch (err) {
+    throw new GraphQLError('Token is revoked or invalid', null, null, null, null, null, {
+      code: TokenErrors.TOKEN_INVALID,
+    });
+  }
 };
 
 const createTokenSession = async (userId: string, { pgClient, clientIp }: GraphqlContext) => {
@@ -173,7 +178,7 @@ export const loginWithGoogleMutation = makeExtendSchemaPlugin(() => ({
     type LoginWithGooglePayload {
       accessToken: JwtToken!
       refreshToken: String
-      user: User! @pgField
+      user: User!
     }
     input GetAccessTokenInput {
       refreshToken: String
@@ -253,13 +258,13 @@ export const loginWithGoogleMutation = makeExtendSchemaPlugin(() => ({
 
         await pgClient.query(
           `
-          update
-              app_private.sessions
-          set
-              token_revoked_at = now()
-          where
-              token_hash = $1
-          `,
+            update
+                app_private.sessions
+            set
+                token_revoked_at = now()
+            where
+                token_hash = $1
+            `,
           [getTokenHash(refreshToken)],
         );
 
@@ -314,13 +319,13 @@ export const loginWithGoogleMutation = makeExtendSchemaPlugin(() => ({
           rows: [user],
         } = await pgClient.query(
           `
-            select
-                *
-            from
-                app_private.upsert_user 
-                  (google_id := $1, google_email := $2, 
-                  google_refresh_token := $3, google_picture_url := $4, google_name := $5, google_given_name := $6, google_family_name := $7, google_locale := $8, google_verified_email := $9)
-            `,
+              select
+                  *
+              from
+                  app_private.upsert_user 
+                    (google_id := $1, google_email := $2, 
+                    google_refresh_token := $3, google_picture_url := $4, google_name := $5, google_given_name := $6, google_family_name := $7, google_locale := $8, google_verified_email := $9)
+              `,
           [
             data.id,
             data.email,

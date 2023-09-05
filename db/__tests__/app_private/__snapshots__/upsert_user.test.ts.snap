@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Upsert User updates an existing user correctly 1`] = `
+{
+  "archived_at": null,
+  "created_at": "[DATE]",
+  "display_name": "Updated name",
+  "id": "[ID]",
+  "is_archived": false,
+  "picture_url": "https://testPictureUrl",
+  "role": "app_user",
+  "updated_at": "[DATE]",
+}
+`;
+
+exports[`Upsert User upserts a new user correctly 1`] = `
+{
+  "archived_at": null,
+  "created_at": "[DATE]",
+  "display_name": "Test Google User",
+  "id": "[ID]",
+  "is_archived": false,
+  "picture_url": "https://testPictureUrl",
+  "role": "app_user",
+  "updated_at": "[DATE]",
+}
+`;

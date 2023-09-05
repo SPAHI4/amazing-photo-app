@@ -8,6 +8,12 @@ type UserRole = 'app_user' | 'app_admin';
 
 type PgRole = 'app_anonymous' | 'app_user' | 'app_admin';
 
+declare module 'http' {
+  interface CompatFastifyRequest {
+    pgClient?: PoolClient;
+  }
+}
+
 interface JwtClaims {
   user_id: number;
   role: UserRole;
@@ -36,7 +42,7 @@ export const getGraphqlContext = async (
     req.socket.remoteAddress ??
     '';
 
-  return {
+  const context: Partial<GraphqlContext> = {
     getRefreshTokenCookie: () => {
       const cookies = cookie.parse(req.headers.cookie ?? '');
       return cookies.refreshToken;
@@ -69,4 +75,13 @@ export const getGraphqlContext = async (
     },
     clientIp,
   };
+
+  // for tests
+  // eslint-disable-next-line no-underscore-dangle
+  if (req._fastifyRequest?.pgClient != null) {
+    // eslint-disable-next-line no-underscore-dangle
+    context.pgClient = req._fastifyRequest.pgClient;
+  }
+
+  return context;
 };

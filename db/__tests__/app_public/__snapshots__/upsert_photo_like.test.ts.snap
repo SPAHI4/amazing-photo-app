@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Upsert Photo Like upserts photo like correctly 1`] = `
+{
+  "count": 1,
+  "created_at": "[DATE]",
+  "id": "[ID]",
+  "photo_id": "[ID]",
+  "updated_at": "[DATE]",
+  "user_id": "[ID]",
+}
+`;
