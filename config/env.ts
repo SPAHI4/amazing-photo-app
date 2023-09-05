@@ -44,6 +44,7 @@ if (process.env.NODE_ENV === 'test') {
 const cleaned = envalid.cleanEnv(process.env, {
   DATABASE_URL: envalid.str(),
   ROOT_DATABASE_URL: envalid.str(),
+  SHADOW_DATABASE_URL: envalid.str(),
   S3_BUCKET_NAME: envalid.str(),
   S3_BUCKET_REGION: envalid.str(),
   DEBUG: envalid.str(),
@@ -141,7 +142,7 @@ let aws = {
 };
 
 // load aws configs based on environment for production
-if (cleanedBase.NODE_ENV !== 'production') {
+if (cleanedBase.DEPLOYMENT !== 'localhost') {
   aws = envalid.cleanEnv(process.env, {
     AWS_ACCESS_KEY_ID: envalid.str(),
     AWS_SECRET_ACCESS_KEY: envalid.str(),
