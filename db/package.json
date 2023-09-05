@@ -9,7 +9,7 @@
     "uncommit": "pnpm gm uncommit",
     "migrate": "pnpm gm migrate",
     "test:setup": "IN_TESTS=1 pnpm gm reset --shadow --erase && pnpm gm watch --once --shadow",
-    "test": "NODE_ENV=test NODE_OPTIONS=\"--import @app/config/dist/env.js\" jest --testLocationInResults"
+    "test": "NODE_ENV=test NODE_OPTIONS=\"--conditions=development --experimental-vm-modules --experimental-specifier-resolution=node\" jest --testLocationInResults"
   },
   "dependencies": {
     "@app/config": "workspace:*",
