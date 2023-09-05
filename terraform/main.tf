@@ -31,6 +31,7 @@ locals {
   web_domain        = var.web_domain[terraform.workspace]
   db_app_name       = var.db_app_name[terraform.workspace]
   resource_prefix   = var.resource_prefix[terraform.workspace]
+  ec2_instance_type = var.ec2_instance_type[terraform.workspace]
 
   google_credentials_web_parsed       = sensitive(jsondecode(var.google_credentials_web_json))
   google_credentials_installed_parsed = sensitive(jsondecode(var.google_credentials_installed_json))
@@ -233,7 +234,7 @@ resource "aws_iam_policy_attachment" "instance_s3_upload_attachment" {
 
 resource "aws_instance" "app" {
   ami                  = data.aws_ami.amazon_linux.id
-  instance_type        = "t3.small"
+  instance_type        = local.ec2_instance_type
   iam_instance_profile = aws_iam_instance_profile.instance.name
 
   key_name = aws_key_pair.deployer.key_name

@@ -13,6 +13,13 @@ variable "ecr_repository_name" {
   default = "spahi4-photo-app"
 }
 
+variable "ec2_instance_type" {
+  default = {
+    development = "t3.micro"
+    production  = "t3.small"
+  }
+}
+
 variable "upload_enabled" {
   default = true
 }
