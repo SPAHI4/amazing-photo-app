@@ -1,4 +1,4 @@
-import { PoolClient } from 'pg';
+import type { PoolClient } from 'pg';
 import { becomeUser, createUsers, snapshotSafe, withRootDb } from '../helpers.js';
 
 async function insertPhoto(client: PoolClient, userId: number) {

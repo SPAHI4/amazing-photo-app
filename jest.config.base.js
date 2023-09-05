@@ -18,7 +18,7 @@ export default (dir) => {
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
     roots: [`<rootDir>`],
     rootDir: dir,
-    displayName: packageObj.name,
+    displayName: packageObj.name.split('/')[1],
     modulePaths: ['.'],
     moduleNameMapper: {
       '^(\\.{1,2}/.*)\\.js$': '$1',
