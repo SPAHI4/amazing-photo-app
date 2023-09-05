@@ -81,6 +81,8 @@ More details in [server/README.md](./server/README.md) and [client/README.md](./
 
 ## Testing
 
+Tests with jest added for db, server:
+
 **TBD**
 
 ## Inspirations
