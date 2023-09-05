@@ -9,7 +9,8 @@
     "lint": "tsc --noEmit && pnpm eslint . --fix",
     "eslint": "eslint --ext .mjs,.cjs,.js,.jsx,.ts,.tsx,.mts",
     "prepare": "husky install",
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "test": "NODE_ENV=test pnpm --filter db run test:setup && pnpm --filter db run test && pnpm --filter server run test"
   },
   "type": "module",
   "author": "spahi43@gmail.com",

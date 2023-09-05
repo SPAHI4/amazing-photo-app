@@ -56,7 +56,7 @@
    */
   "afterReset": [
     "!afterReset.sql",
-    // { "_": "command", "command": "graphile-worker --schema-only" },
+    { "_": "command", "command": "DATABASE_URL=\"$GM_DBURL\" pnpm --filter worker run db-schema" },
   ],
  
   /*

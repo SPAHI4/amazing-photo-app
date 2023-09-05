@@ -1,22 +1,21 @@
-import { env } from '@app/config/env.js';
 import { beforeAll, jest } from '@jest/globals';
+import '@app/config/env.js';
 import { ExecutionResult } from 'graphql';
-import type { PoolClient } from 'pg';
-import pg from 'pg';
+import type { PoolClient, Pool } from 'pg';
 import type { Response as LightMyRequestResponse } from 'light-my-request';
+import * as process from 'process';
 
-if (env.SHADOW_DATABASE_URL == null) {
-  throw new Error('Cannot run tests without a SHADOW_DATABASE_URL');
+if (process.env.TEST_DATABASE_URL == null) {
+  throw new Error('Cannot run tests without a TEST_DATABASE_URL');
 }
 
-const { SHADOW_DATABASE_URL } = env;
-const DATABASE_URL = SHADOW_DATABASE_URL;
-
-let pgPool: pg.Pool;
+let pgPool: Pool;
 
 beforeAll(async () => {
-  pgPool = new pg.Pool({
-    connectionString: DATABASE_URL,
+  const { Pool } = await import('pg').then((m) => m.default);
+
+  pgPool = new Pool({
+    connectionString: process.env.TEST_DATABASE_URL,
   });
 });
 
@@ -34,8 +33,6 @@ afterAll(async () => {
     delete from app_public.images
     where true
   `);
-
-  pgClient.release();
 
   await pgPool.end();
 });
