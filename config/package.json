@@ -8,6 +8,9 @@
       "production": {
         "import": "./dist/*"
       },
+      "test": {
+        "import": "./dist/*"
+      },
       "development": {
         "import": "./*"
       },

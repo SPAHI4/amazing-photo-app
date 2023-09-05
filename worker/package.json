@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "gw": "NODE_OPTIONS=\"--import @app/config/dist/env.js\" graphile-worker",
     "start": "NODE_ENV=production node --conditions=production ./dist/src/worker.js",
     "dev": "nodemon --exec 'NODE_ENV=development node --no-warnings=ExperimentalWarning --loader ts-node/esm --import=./log-error.js' src/worker.ts",
-    "dev:google-auth": "node --no-warnings=ExperimentalWarning --loader ts-node/esm --import=./log-error.js scripts/google-auth.ts"
+    "dev:google-auth": "node --no-warnings=ExperimentalWarning --loader ts-node/esm --import=./log-error.js scripts/google-auth.ts",
+    "db-schema": "pnpm run gw --schema-only"
   },
   "files": [
     "dist"

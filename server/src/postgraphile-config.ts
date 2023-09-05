@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment,@typescript-eslint/no-unnecessary-condition */
 import { PostGraphileOptions, makePluginHook } from 'postgraphile';
 import PgSimplifyInflectorPluginImp from '@graphile-contrib/pg-simplify-inflector';
 import PersistedOperationsPlugin from '@graphile/persisted-operations';
@@ -11,10 +12,8 @@ import { loginWithGoogleMutation, TokenErrors } from './oauth.js';
 import { createImageUploadMutation } from './mutations.js';
 import { getGraphqlContext } from './graphql-context.js';
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 const PgOmitArchivedPlugin = PgOmitArchivedImp.default ?? PgOmitArchivedImp;
 const PgSimplifyInflectorPlugin =
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   PgSimplifyInflectorPluginImp.default ?? PgSimplifyInflectorPluginImp;
 
 const mutationsPlugins = [createImageUploadMutation, loginWithGoogleMutation];
@@ -64,32 +63,38 @@ const devBaseConfig: Partial<PostGraphileOptions> = {
   allowExplain: true,
   subscriptions: true,
   exportGqlSchemaPath: './schema.graphql',
+  pluginHook: env.NODE_ENV === 'test' ? undefined : pluginHook,
   allowUnpersistedOperation(req: IncomingMessage) {
     return req.headers.referer?.endsWith('/graphiql') === true;
   },
 };
 
-const prodBaseConfig: Partial<PostGraphileOptions> = {};
+const prodBaseConfig: Partial<PostGraphileOptions> = {
+  pluginHook,
+  disableQueryLog: true,
+};
 
-const baseConfig = env.NODE_ENV === 'development' ? devBaseConfig : prodBaseConfig;
+const baseConfig = env.NODE_ENV === 'production' ? prodBaseConfig : devBaseConfig;
 
 export const postgraphileConfiig: PostGraphileOptions = {
   ...baseConfig,
   watchPg: true,
   dynamicJson: true,
+  retryOnInitFail: env.NODE_ENV !== 'test',
   pgDefaultRole: 'app_anonymous',
   ownerConnectionString: env.ROOT_DATABASE_URL,
-
   jwtPublicKey: env.JWT_PUBLIC_KEY,
   jwtSecret: env.JWT_SECRET_KEY,
   jwtPgTypeIdentifier: 'app_public.jwt_token',
+  legacyRelations: 'omit',
   jwtSignOptions: {
     algorithm: 'RS256' as const,
   },
   jwtVerifyOptions: {
     algorithms: ['RS256' as const],
   },
-  subscriptions: true,
+  disableQueryLog: env.NODE_ENV === 'test',
+  subscriptions: false,
   setofFunctionsContainNulls: false,
   ignoreRBAC: false,
   additionalGraphQLContextFromRequest: (req, res) => getGraphqlContext(req, res),
@@ -102,11 +107,12 @@ export const postgraphileConfiig: PostGraphileOptions = {
       'app_public.locations',
     ],
   },
-  pluginHook,
   persistedOperationsDirectory: `./.persisted-documents/`,
   appendPlugins: [
+    // @ts-ignore ts error in jest env
     PgSimplifyInflectorPlugin,
     BinaryTypePlugin,
+    // @ts-ignore ts error in jest env
     PgOmitArchivedPlugin,
     ...mutationsPlugins,
     ...queriesPlugins,

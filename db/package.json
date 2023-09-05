@@ -8,8 +8,8 @@
     "commit": "pnpm gm commit",
     "uncommit": "pnpm gm uncommit",
     "migrate": "pnpm gm migrate",
-    "setup-test-db": "pnpm gm reset --shadow --erase && pnpm gm watch --once --shadow",
-    "test": "IN_TESTS=1 NODE_ENV=test pnpm setup-test-db && NODE_OPTIONS=\"--import @app/config/dist/env.js\" jest --testLocationInResults"
+    "test:setup": "IN_TESTS=1 pnpm gm reset --shadow --erase && pnpm gm watch --once --shadow",
+    "test": "NODE_ENV=test NODE_OPTIONS=\"--import @app/config/dist/env.js\" jest --testLocationInResults"
   },
   "dependencies": {
     "@app/config": "workspace:*",
@@ -17,9 +17,11 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.4",
+    "@types/lodash": "^4.14.197",
     "@types/pg": "^8.10.2",
     "jest": "^29.6.4",
     "jest-github-reporter": "^1.1.1",
+    "lodash": "^4.17.21",
     "pg": "^8.11.1",
     "ts-jest": "^29.1.1"
   }

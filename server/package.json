@@ -11,19 +11,25 @@
     ".persisted-documents"
   ],
   "scripts": {
-    "dev": "pnpm schema:documents && nodemon --exec 'NODE_ENV=development node --no-warnings=ExperimentalWarning --loader ts-node/esm --import=./log-error.js' src/app.ts",
-    "start": "NODE_ENV=production node --conditions=production ./dist/src/app.js",
+    "dev": "pnpm schema:documents && nodemon --exec 'NODE_ENV=development node --no-warnings=ExperimentalWarning --loader ts-node/esm --import=./log-error.js' src/server.ts",
+    "start": "NODE_ENV=production node --conditions=production ./dist/src/server.js",
+    "test": "NODE_ENV=test DEBUG=\"\" NODE_OPTIONS=\"--conditions=test --experimental-vm-modules --experimental-specifier-resolution=node\" jest --detectOpenHandles",
     "schema:export": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/export-schema.ts",
     "schema:documents": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/persisted-documents.ts"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^4.0.1",
+    "@jest/globals": "^29.6.4",
     "@types/cookie": "^0.5.1",
     "@types/graphql-upload": "^16.0.0",
+    "@types/jest": "^29.5.4",
     "@types/jsonwebtoken": "^9.0.2",
+    "@types/lodash": "^4.14.197",
     "@types/node": "^20.4.2",
     "@types/pg": "^8.10.2",
     "dotenv-cli": "^7.2.1",
+    "light-my-request": "^5.10.0",
+    "lodash": "^4.17.21",
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
     "type-fest": "^3.13.1"
