@@ -142,7 +142,7 @@ let aws = {
 };
 
 // load aws configs based on environment for production
-if (cleanedBase.DEPLOYMENT !== 'localhost') {
+if (cleanedBase.NODE_ENV !== 'production') {
   aws = envalid.cleanEnv(process.env, {
     AWS_ACCESS_KEY_ID: envalid.str(),
     AWS_SECRET_ACCESS_KEY: envalid.str(),
