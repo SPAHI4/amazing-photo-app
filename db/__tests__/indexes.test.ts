@@ -1,7 +1,11 @@
-describe('database', () => {
-  describe('performance', () => {
-    it('has indexes on all foreign keys', async () => {
-      const query = sql`
+import { withRootDb } from './helpers.js';
+
+// https://medium.com/@awesboss/how-to-find-missing-indexes-on-foreign-keys-2faffd7e6958
+
+describe('db performance', () => {
+  it('has indexes on all foreign keys', () =>
+    withRootDb(async (client) => {
+      const query = `
           WITH indexed_tables AS (
               select
                   ns.nspname,
@@ -17,7 +21,7 @@ describe('database', () => {
                        JOIN pg_attribute a ON a.attrelid = t.oid
               where a.attnum = ANY(ix.indkey)
                 and t.relkind = 'r'
-                and nspname not in ('pg_catalog')
+                and nspname in ('app_public', 'app_private', 'app_hidden')
               group by
                   ns.nspname,
                   t.relname,
@@ -48,11 +52,10 @@ describe('database', () => {
           ORDER BY reltuples DESC;
       `;
 
-      const results = await db.query(query);
+      const results = await client.query(query);
 
       const { rows } = results;
 
       expect(rows.length).toBe(0);
-    });
-  });
+    }));
 });

@@ -1,10 +1,24 @@
 import { postgraphile, PostGraphileResponseFastify3, PostGraphileResponse } from 'postgraphile';
-import type { FastifyInstance, FastifyRequest, FastifyReply, FastifyPluginAsync } from 'fastify';
+import type {
+  FastifyRequest,
+  FastifyReply,
+  FastifyPluginAsync,
+  FastifyPluginOptions,
+} from 'fastify';
 import { env } from '@app/config/env.js';
+import { Pool } from 'pg';
 import { postgraphileConfiig } from './postgraphile-config.js';
 
-export const postgraphileServer: FastifyPluginAsync = async (app: FastifyInstance) => {
-  const postgraphileMiddleware = postgraphile(env.DATABASE_URL, 'app_public', postgraphileConfiig);
+interface PostgraphileServerPluginOptions extends FastifyPluginOptions {
+  pgPool?: Pool | null;
+}
+
+export const postgraphileServerPlugin: FastifyPluginAsync<PostgraphileServerPluginOptions> = async (
+  app,
+  options,
+) => {
+  const poolOrConfig = options.pgPool ?? env.DATABASE_URL;
+  const postgraphileMiddleware = postgraphile(poolOrConfig, 'app_public', postgraphileConfiig);
 
   const convertHandler =
     (handler: ((res: PostGraphileResponse) => Promise<void>) | null) =>

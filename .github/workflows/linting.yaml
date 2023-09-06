@@ -1,13 +1,34 @@
-name: Lint & TS
+name: Lint & Tests
 
 on:
   pull_request:
-    branches: [ '*' ]
+    branches: ['*']
   workflow_dispatch:
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      DEPLOYMENT: ci
+
+    services:
+      postgres:
+        image: postgis/postgis:15-3.3
+
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -24,6 +45,29 @@ jobs:
       - name: pnpm install
         run: |
           pnpm install
+
+      - name: build ts
+        run: |
+          pnpm run build
+
+      - name: create db credentials
+        env:
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: postgres
+          PGPORT: 5432
+        run: |
+          psql -c "CREATE ROLE app_postgraphile WITH LOGIN PASSWORD 'xyz'; \
+            CREATE ROLE app_user; \
+            CREATE ROLE app_admin; \
+            CREATE ROLE app_anonymous;"
+
+      - name: run tests
+        run: |
+          pnpm run test
+            
+
       - name: Run lint-staged
         run: |
           pnpm exec lint-staged --diff="origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF}"
@@ -103,31 +147,31 @@ jobs:
             const botComment = comments.find(comment => {
               return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style')
             })
-            
+
             // 2. Prepare format of the comment
             const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
             <details><summary>Validation Output</summary>
-            
+
             \`\`\`\n
             ${{ steps.validate.outputs.stdout }}
             \`\`\`
-            
+
             </details>
-            
+
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-            
+
             <details><summary>Show Plan</summary>
-            
+
             \`\`\`\n
             ${process.env.PLAN}
             \`\`\`
-            
+
             </details>
-            
+
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
-            
+
             // 3. If we have a comment, update it, otherwise create a new one
             if (botComment) {
               github.rest.issues.updateComment({

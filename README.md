@@ -81,4 +81,14 @@ More details in [server/README.md](./server/README.md) and [client/README.md](./
 
 ## Testing
 
-**TBD**
+Tests with jest added for db, server
+
+TODO:
+- [ ] e2e tests with cypress
+- [ ] client tests with react-testing-library
+- [ ] worker tests with jest
+- [ ] increase test coverage
+
+## Inspirations
+
+- [graphile/starter](https://github.com/graphile/starter)

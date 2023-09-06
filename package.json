@@ -9,7 +9,8 @@
     "lint": "tsc --noEmit && pnpm eslint . --fix",
     "eslint": "eslint --ext .mjs,.cjs,.js,.jsx,.ts,.tsx,.mts",
     "prepare": "husky install",
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "test": "export NODE_ENV=test && pnpm --filter db run test:setup && pnpm --filter db run test && pnpm --filter server run test"
   },
   "type": "module",
   "author": "spahi43@gmail.com",
@@ -18,6 +19,7 @@
   },
   "devDependencies": {
     "@graphql-eslint/eslint-plugin": "^3.20.1",
+    "@types/jest": "^29.5.4",
     "@types/stylelint": "^14.0.0",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
     "@typescript-eslint/parser": "^6.5.0",
@@ -28,10 +30,13 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "5.0.0",
     "eslint-plugin-sql": "^2.4.4",
+    "jest": "^29.6.4",
+    "jest-github-reporter": "^1.1.1",
     "lint-staged": "^13.2.3",
     "prettier": "^3.0.2",
     "prettier-plugin-sql": "^0.15.1",
-    "typescript": "^5.2.1-rc"
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
   },
   "pnpm": {
     "patchedDependencies": {

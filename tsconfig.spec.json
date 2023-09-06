@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "typeRoots": ["./node_modules/@types"],
+    "module": "NodeNext",
+    "target": "es2022",
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+    "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "sourceMap": true,
+    "strictNullChecks": false,
+    "noEmit": true,
+    "lib": ["es2022", "esnext.disposable"],
+    "paths": {
+      "@app/config/*": ["config/*"]
+    },
+    "rootDir": null,
+    "baseUrl": ".",
+    "allowJs": true,
+    "customConditions": ["test", "development", "production"]
+  },
+  "exclude": ["node_modules"],
+  "references": [
+    {
+      "path": "./server/tsconfig.spec.json"
+    },
+    {
+      "path": "./db/tsconfig.spec.json"
+    }
+  ]
+}
