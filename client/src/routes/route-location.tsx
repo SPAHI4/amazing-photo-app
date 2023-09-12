@@ -203,9 +203,12 @@ function Location() {
             <Masonry
               columns={2}
               spacing={4}
-              css={css`
-                animation: 0.3s fade-in var(--motion-easing-standard);
-              `}
+              css={
+                shouldDeferPhotos &&
+                css`
+                  animation: 0.3s fade-in var(--motion-easing-standard);
+                `
+              }
             >
               {photosList}
             </Masonry>
