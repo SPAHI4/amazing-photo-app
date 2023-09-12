@@ -81,12 +81,8 @@ export const PhotoCard = memo((props: PhotoCardProps) => {
     from: props.photo,
   });
   const features = useBrowserFeatures();
-  const [loaded, setLoaded] = useState(false);
   const [hovered, setHovered] = useState(false);
   const preloadRef = useRef<HTMLLinkElement | null>(null);
-  const handleLoad = useCallback(() => {
-    setLoaded(true);
-  }, []);
   const handleMouseEnter = useCallback(() => {
     setHovered(true);
 
@@ -108,16 +104,28 @@ export const PhotoCard = memo((props: PhotoCardProps) => {
     }
   }, [features.avifSupported, photo.image]);
 
+  const srcUrl =
+    photo.image != null && complete
+      ? getSourceSrc(photo.image!, 960, features.avifSupported ? 'image/avif' : 'image/webp')
+      : null;
+  const [loaded, setLoaded] = useState(() => {
+    // synchronously check if the image is already in the browser cache
+    if (srcUrl == null) {
+      return false;
+    }
+
+    const image = new Image();
+    image.src = srcUrl;
+    return image.complete;
+  });
+  const handleLoad = useCallback(() => {
+    setLoaded(true);
+  }, []);
+
   if (!complete) {
     return null;
   }
-
   const TRANSITION_NAME = viewTransitionPhoto(photo.id);
-  const srcUrl = getSourceSrc(
-    photo.image!,
-    960,
-    features.avifSupported ? 'image/avif' : 'image/webp',
-  );
 
   return (
     <ImageListItem onMouseEnter={handleMouseEnter} onMouseLeave={() => setHovered(false)}>
@@ -170,7 +178,7 @@ export const PhotoCard = memo((props: PhotoCardProps) => {
               </div>
             )}
             <img
-              src={srcUrl ?? photo.thumbnail}
+              src={srcUrl ?? ''}
               alt=""
               loading={index < 4 ? 'eager' : 'lazy'}
               decoding="async"

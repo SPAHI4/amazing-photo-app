@@ -351,69 +351,6 @@ type User implements Node {
   isArchived: Boolean!
   archivedAt: Datetime
 
-  """Reads and enables pagination through a set of `Image`."""
-  images(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Image`."""
-    orderBy: [ImagesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: ImageCondition
-  ): ImagesConnection!
-
-  """Reads and enables pagination through a set of `Photo`."""
-  authoredPhotos(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Photo`."""
-    orderBy: [PhotosOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: PhotoCondition
-
-    """
-    Indicates whether archived items should be included in the results or not.
-    """
-    includeArchived: IncludeArchivedOption = INHERIT
-  ): PhotosConnection!
-
   """Reads and enables pagination through a set of `PhotosLike`."""
   photosLikes(
     """Only read the first `n` values of the set."""
@@ -476,51 +413,38 @@ type User implements Node {
     """
     includeArchived: IncludeArchivedOption = INHERIT
   ): CommentsConnection!
-}
 
-enum Role {
-  APP_USER
-  APP_ADMIN
-}
+  """Reads and enables pagination through a set of `Image`."""
+  images(
+    """Only read the first `n` values of the set."""
+    first: Int
 
-"""A connection to a list of `Image` values."""
-type ImagesConnection {
-  """A list of `Image` objects."""
-  nodes: [Image!]!
+    """Only read the last `n` values of the set."""
+    last: Int
 
-  """
-  A list of edges which contains the `Image` and cursor to aid in pagination.
-  """
-  edges: [ImagesEdge!]!
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
 
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
 
-  """The count of *all* `Image` you could get from the connection."""
-  totalCount: Int!
-}
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
 
-type Image implements Node {
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-  id: Int!
-  createdAt: Datetime!
-  updatedAt: Datetime!
-  userId: Int
-  s3Bucket: String!
-  s3Key: String!
-  isHdr: Boolean!
-  isUploaded: Boolean!
-  exifData: JSON
-  sources: [ImageSource]!
+    """The method to use when ordering `Image`."""
+    orderBy: [ImagesOrderBy!] = [PRIMARY_KEY_ASC]
 
-  """Reads a single `User` that is related to this `Image`."""
-  user: User
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ImageCondition
+  ): ImagesConnection!
 
   """Reads and enables pagination through a set of `Photo`."""
-  photos(
+  authoredPhotos(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -550,36 +474,49 @@ type Image implements Node {
     """
     Indicates whether archived items should be included in the results or not.
     """
-    includeArchived: IncludeArchivedOption = NO
+    includeArchived: IncludeArchivedOption = INHERIT
   ): PhotosConnection!
 }
 
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON
-
-type ImageSource {
-  s3Key: String
-  size: Int
-  type: String
+enum Role {
+  APP_USER
+  APP_ADMIN
 }
 
-"""A connection to a list of `Photo` values."""
-type PhotosConnection {
-  """A list of `Photo` objects."""
-  nodes: [Photo!]!
+"""A connection to a list of `PhotosLike` values."""
+type PhotosLikesConnection {
+  """A list of `PhotosLike` objects."""
+  nodes: [PhotosLike!]!
 
   """
-  A list of edges which contains the `Photo` and cursor to aid in pagination.
+  A list of edges which contains the `PhotosLike` and cursor to aid in pagination.
   """
-  edges: [PhotosEdge!]!
+  edges: [PhotosLikesEdge!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
-  """The count of *all* `Photo` you could get from the connection."""
+  """The count of *all* `PhotosLike` you could get from the connection."""
   totalCount: Int!
+}
+
+type PhotosLike implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  id: Int!
+  photoId: Int!
+  userId: Int!
+  createdAt: Datetime!
+  updatedAt: Datetime!
+  count: Int!
+
+  """Reads a single `Photo` that is related to this `PhotosLike`."""
+  photo: Photo
+
+  """Reads a single `User` that is related to this `PhotosLike`."""
+  user: User
 }
 
 type Photo implements Node {
@@ -744,8 +681,49 @@ type Point {
   y: Float!
 }
 
+"""A connection to a list of `Photo` values."""
+type PhotosConnection {
+  """A list of `Photo` objects."""
+  nodes: [Photo!]!
+
+  """
+  A list of edges which contains the `Photo` and cursor to aid in pagination.
+  """
+  edges: [PhotosEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Photo` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Photo` edge in the connection."""
+type PhotosEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Photo` at the end of the edge."""
+  node: Photo!
+}
+
 """A location in a connection that can be used for resuming pagination."""
 scalar Cursor
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: Cursor
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: Cursor
+}
 
 """Methods to use when ordering `Photo`."""
 enum PhotosOrderBy {
@@ -893,64 +871,69 @@ enum IncludeArchivedOption {
   INHERIT
 }
 
-"""A connection to a list of `PhotosLike` values."""
-type PhotosLikesConnection {
-  """A list of `PhotosLike` objects."""
-  nodes: [PhotosLike!]!
-
-  """
-  A list of edges which contains the `PhotosLike` and cursor to aid in pagination.
-  """
-  edges: [PhotosLikesEdge!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* `PhotosLike` you could get from the connection."""
-  totalCount: Int!
-}
-
-type PhotosLike implements Node {
+type Image implements Node {
   """
   A globally unique identifier. Can be used in various places throughout the system to identify this single value.
   """
   nodeId: ID!
   id: Int!
-  photoId: Int!
-  userId: Int!
   createdAt: Datetime!
   updatedAt: Datetime!
-  count: Int!
+  userId: Int
+  s3Bucket: String!
+  s3Key: String!
+  isHdr: Boolean!
+  isUploaded: Boolean!
+  exifData: JSON
+  sources: [ImageSource]!
 
-  """Reads a single `Photo` that is related to this `PhotosLike`."""
-  photo: Photo
-
-  """Reads a single `User` that is related to this `PhotosLike`."""
+  """Reads a single `User` that is related to this `Image`."""
   user: User
+
+  """Reads and enables pagination through a set of `Photo`."""
+  photos(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Photo`."""
+    orderBy: [PhotosOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PhotoCondition
+
+    """
+    Indicates whether archived items should be included in the results or not.
+    """
+    includeArchived: IncludeArchivedOption = NO
+  ): PhotosConnection!
 }
 
-"""A `PhotosLike` edge in the connection."""
-type PhotosLikesEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
 
-  """The `PhotosLike` at the end of the edge."""
-  node: PhotosLike!
-}
-
-"""Information about pagination in a connection."""
-type PageInfo {
-  """When paginating forwards, are there more items?"""
-  hasNextPage: Boolean!
-
-  """When paginating backwards, are there more items?"""
-  hasPreviousPage: Boolean!
-
-  """When paginating backwards, the cursor to continue."""
-  startCursor: Cursor
-
-  """When paginating forwards, the cursor to continue."""
-  endCursor: Cursor
+type ImageSource {
+  s3Key: String
+  size: Int
+  type: String
 }
 
 """Methods to use when ordering `PhotosLike`."""
@@ -1048,13 +1031,30 @@ input CommentCondition {
   archivedAt: Datetime
 }
 
-"""A `Photo` edge in the connection."""
-type PhotosEdge {
+"""A `PhotosLike` edge in the connection."""
+type PhotosLikesEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `Photo` at the end of the edge."""
-  node: Photo!
+  """The `PhotosLike` at the end of the edge."""
+  node: PhotosLike!
+}
+
+"""A connection to a list of `Image` values."""
+type ImagesConnection {
+  """A list of `Image` objects."""
+  nodes: [Image!]!
+
+  """
+  A list of edges which contains the `Image` and cursor to aid in pagination.
+  """
+  edges: [ImagesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Image` you could get from the connection."""
+  totalCount: Int!
 }
 
 """A `Image` edge in the connection."""
