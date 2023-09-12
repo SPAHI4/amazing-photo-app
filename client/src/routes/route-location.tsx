@@ -120,8 +120,6 @@ function Location() {
 
   const [visible, setVisible] = useState(!shouldDeferPhotos);
 
-  console.log({ shouldDeferPhotos, visible });
-
   useLayoutEffect(() => {
     if (shouldDeferPhotos) {
       setTimeoutSafe(() => {
