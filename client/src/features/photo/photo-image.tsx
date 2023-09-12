@@ -103,11 +103,13 @@ export function PhotoImage(props: PhotoImageProps) {
           ::view-transition-old(${VIEW_TRANSITION_NAME}) {
             animation: none;
             mix-blend-mode: normal;
+            isolation: isolate;
             animation-timing-function: var(--motion-easin-emphasized-decelerate);
           }
           ::view-transition-new(${VIEW_TRANSITION_NAME}) {
             animation: none;
             mix-blend-mode: normal;
+            isolation: isolate;
             animation-timing-function: var(--motion-easin-emphasized-accelerate);
           }
         `}

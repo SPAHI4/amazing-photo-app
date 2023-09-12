@@ -7,6 +7,7 @@ live on https://spahi4.me | development on https://dev.spahi4.me/?login=true (us
 
 ### Features
 - Focused on fancy UI and animations as it's a portfolio project
+- PC-first design
 - Photos upload (resize, compress, convert, focused primarily on **HDR** images)
 - Photos gallery by location
 - Photo details page with HQ image, exif data, likes and comments
@@ -88,6 +89,8 @@ TODO:
 - [ ] client tests with react-testing-library
 - [ ] worker tests with jest
 - [ ] increase test coverage
+- [ ] fix performance on low-end PCs
+- [ ] #24: react-router scroll bug
 
 ## Inspirations
 
