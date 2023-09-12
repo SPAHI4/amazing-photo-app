@@ -9,6 +9,7 @@ export const useBrowserFeatures = (): {
   webpSupported: boolean;
   hdrSupported: boolean;
   isChromuimBased: boolean;
+  viewTransitionSupported: boolean;
 } => {
   const [avifSupported, setAvifSupported] = useState<boolean>(avifSupportedVal === true);
   const [webpSupported, setWebpSupported] = useState<boolean>(webpSupportedVal === true);
@@ -85,10 +86,13 @@ export const useBrowserFeatures = (): {
     };
   }, []);
 
+  const viewTransitionSupported = 'startViewTransition' in document;
+
   return {
     avifSupported,
     webpSupported,
     hdrSupported,
     isChromuimBased,
+    viewTransitionSupported,
   };
 };

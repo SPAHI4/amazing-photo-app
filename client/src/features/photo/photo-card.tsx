@@ -135,10 +135,12 @@ export const PhotoCard = memo((props: PhotoCardProps) => {
             animation: none;
             mix-blend-mode: normal;
             animation-timing-function: var(--motion-easin-emphasized-decelerate);
+            isolation: isolate;
           }
           ::view-transition-new(${TRANSITION_NAME}) {
             animation: none;
             mix-blend-mode: normal;
+            isolation: isolate;
             animation-timing-function: var(--motion-easin-emphasized-accelerate);
           }
 
@@ -157,7 +159,7 @@ export const PhotoCard = memo((props: PhotoCardProps) => {
               overflow: hidden;
             `}
           >
-            {photo.blurhash != null && !loaded && (
+            {photo.blurhash != null && (
               <div
                 css={css`
                   overflow: hidden;
@@ -166,6 +168,7 @@ export const PhotoCard = memo((props: PhotoCardProps) => {
                   left: 0;
                   width: 100%;
                   height: 100%;
+                  display: ${loaded ? 'none' : 'block'};
                 `}
               >
                 <Blurhash

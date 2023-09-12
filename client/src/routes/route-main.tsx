@@ -112,6 +112,7 @@ function LocationLink({ location, onMouseEnter, onMouseLeave }: LocationLinkProp
         component={Link}
         to={`/location/${location.slug}`}
         color="inherit"
+        state={{ from: 'main' }}
         css={css`
           line-height: 1;
           padding: 8px 0;

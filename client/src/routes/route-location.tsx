@@ -1,7 +1,7 @@
 import { Box, Button, Container, Paper, Typography, useMediaQuery } from '@mui/material';
 import { css, Global } from '@emotion/react';
-import React, { useCallback, useTransition } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useCallback, useLayoutEffect, useState, useTransition } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSuspenseQuery } from '@apollo/client';
 import { Masonry } from '@mui/lab';
 import { useLocalStorage } from 'react-use/esm';
@@ -14,6 +14,7 @@ import { useBrowserFeatures } from '../hooks/use-browser-features.ts';
 import { ROUTE_LOCATION_QUERY } from '../loaders/route-location-loader.ts';
 import { LoadMoreContainer } from '../ui-components/load-more-conainer.tsx';
 import { viewTransitionLocationHeader } from '../utils/view-transitions.ts';
+import { useSafeTimeout } from '../hooks/use-safe-timeout.ts';
 
 function HDRBanner() {
   const theme = useTheme();
@@ -78,15 +79,15 @@ function HDRBanner() {
     )
   );
 }
-// const wait = (ms: number) =>
-//   new Promise((resolve) => {
-//     setTimeout(resolve, ms);
-//   });
 
 function Location() {
   const { slug = '' } = useParams();
   const theme = useTheme();
+  const navigate = useNavigate();
+  const [setTimeoutSafe] = useSafeTimeout();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const location = useLocation();
+  const { viewTransitionSupported } = useBrowserFeatures();
   const [isPending, startTransition] = useTransition();
   const PAGE_SIZE = 20;
   const { data, fetchMore } = useSuspenseQuery(ROUTE_LOCATION_QUERY, {
@@ -112,6 +113,24 @@ function Location() {
     });
   }, [data, fetchMore, slug, startTransition]);
 
+  // view transition api doesn't work well enough with large hdr images, so we defer them to move out from transition
+  const shouldDeferPhotos =
+    (location.state as Record<string, string> | undefined)?.from === 'main' &&
+    viewTransitionSupported;
+
+  const [visible, setVisible] = useState(!shouldDeferPhotos);
+
+  console.log({ shouldDeferPhotos, visible });
+
+  useLayoutEffect(() => {
+    if (shouldDeferPhotos) {
+      setTimeoutSafe(() => {
+        setVisible(true);
+        navigate(location.pathname, { replace: true, state: undefined });
+      }, 600);
+    }
+  }, [location.pathname, navigate, setTimeoutSafe, shouldDeferPhotos]);
+
   const photosList = photos.map((photo, index) => (
     <PhotoCard key={photo.id} photo={photo} index={index} />
   ));
@@ -133,7 +152,7 @@ function Location() {
             font-family: ${theme.typography.h1.fontFamily};
             font-weight: 900;
             text-transform: uppercase;
-            font-size: 120px;
+            font-size: 130px;
 
             ${theme.breakpoints.down('md')} {
               font-size: 50px;
@@ -180,13 +199,19 @@ function Location() {
           </StickPointerText>
         </Box>
       </div>
-      {isMobile ? (
-        photosList
-      ) : (
-        <Masonry columns={2} spacing={4}>
-          {photosList}
-        </Masonry>
-      )}
+      {isMobile
+        ? photosList
+        : visible && (
+            <Masonry
+              columns={2}
+              spacing={4}
+              css={css`
+                animation: 0.3s fade-in var(--motion-easing-standard);
+              `}
+            >
+              {photosList}
+            </Masonry>
+          )}
       {data.location?.photos.pageInfo.hasNextPage === true && (
         <LoadMoreContainer loading={isPending} onLoadMore={handleLoadMore} />
       )}

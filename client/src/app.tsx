@@ -27,6 +27,9 @@ const Styles = memo(() => (
         from {
           opacity: 0;
         }
+        to {
+          opacity: 1;
+        }
       }
 
       @keyframes fade-out {
