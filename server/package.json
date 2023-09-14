@@ -11,8 +11,9 @@
     ".persisted-documents"
   ],
   "scripts": {
-    "dev": "pnpm schema:documents && nodemon --exec 'NODE_ENV=development node --no-warnings=ExperimentalWarning --loader ts-node/esm --import=./log-error.js' src/server.ts",
+    "dev": "pnpm schema:documents && nodemon --exec 'NODE_ENV=development node  --inspect=9230 --no-warnings=ExperimentalWarning --loader ts-node/esm --import=./log-error.js' src/server.ts",
     "start": "NODE_ENV=production node --conditions=production ./dist/src/server.js",
+    "start:e2e": "pnpm schema:documents && NODE_ENV=test API_PORT=8089 node --conditions=production ./dist/src/server.js",
     "test": "NODE_ENV=test DEBUG=\"\" NODE_OPTIONS=\"--conditions=development --experimental-vm-modules --experimental-specifier-resolution=node\" jest --detectOpenHandles",
     "schema:export": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/export-schema.ts",
     "schema:documents": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/persisted-documents.ts"

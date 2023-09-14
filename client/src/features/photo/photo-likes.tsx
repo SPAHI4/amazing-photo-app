@@ -52,14 +52,14 @@ interface PhotoLikesProps {
 
 export function PhotoLikes(props: PhotoLikesProps) {
   const maxCount = 5;
-  const texts: readonly string[] & { length: 6 } = [
+  const texts = [
     'Like it?',
     'Really like it!',
     'Absolutely nice!',
     'Outstanding!',
     'Insanely good!',
     'All-time fave!',
-  ] as const;
+  ] satisfies unknown[] & { length: 6 };
 
   const [currentUser] = useCurrentUser();
   const [loginWithGoogle, { loading: googleLoading }] = useAppGoogleLogin();

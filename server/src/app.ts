@@ -12,12 +12,15 @@ interface BuildAppOptions {
   pgPool?: Pool | null;
 }
 
-export const buildApp = (options: BuildAppOptions) => {
+export const buildApp = async (options: BuildAppOptions) => {
   const app = fastify({
-    https: {
-      key: env.SSL_KEY,
-      cert: env.SSL_CERT,
-    },
+    https:
+      env.NODE_ENV !== 'test'
+        ? {
+            key: env.SSL_KEY,
+            cert: env.SSL_CERT,
+          }
+        : null,
     logger: env.NODE_ENV !== 'test',
   });
 
@@ -54,6 +57,12 @@ export const buildApp = (options: BuildAppOptions) => {
   app.register(postgraphileServerPlugin, {
     pgPool: options.pgPool,
   });
+
+  if (['localhost', 'ci'].includes(env.DEPLOYMENT)) {
+    const { cypressServerCommandPlugin } = await import('./cypress-server-command-plugin.js');
+
+    app.register(cypressServerCommandPlugin);
+  }
 
   return app;
 };

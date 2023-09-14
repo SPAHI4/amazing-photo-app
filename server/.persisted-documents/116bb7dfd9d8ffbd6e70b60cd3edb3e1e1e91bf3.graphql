@@ -1,1 +1,0 @@
-mutation PhotoLikesUpsertLikeMutation($input: UpsertPhotoLikeInput!) { upsertPhotoLike(input: $input) { __typename photosLike { __typename count id photo { __typename __typename id likesCount } } } }

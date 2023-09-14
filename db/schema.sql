@@ -38,10 +38,10 @@ CREATE SCHEMA app_public;
 
 
 --
--- Name: postgraphile_watch; Type: SCHEMA; Schema: -; Owner: -
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
 --
 
-CREATE SCHEMA postgraphile_watch;
+-- *not* creating schema, since initdb creates it
 
 
 --
@@ -70,20 +70,6 @@ CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION postgis IS 'PostGIS geometry and geography spatial types and functions';
-
-
---
--- Name: postgis_topology; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS postgis_topology WITH SCHEMA topology;
-
-
---
--- Name: EXTENSION postgis_topology; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION postgis_topology IS 'PostGIS topology spatial types and functions';
 
 
 --
@@ -452,6 +438,24 @@ $$;
 
 
 --
+-- Name: delete_old_session(); Type: FUNCTION; Schema: app_public; Owner: -
+--
+
+CREATE FUNCTION app_public.delete_old_session() RETURNS trigger
+    LANGUAGE plpgsql SECURITY DEFINER
+    AS $$
+begin
+    delete from app_private.sessions where id in (
+        select id from app_private.sessions
+        where user_id = new.user_id
+        order by created_at desc offset 10
+    );
+    return null;
+end;
+$$;
+
+
+--
 -- Name: drop_all_policies(text, text); Type: FUNCTION; Schema: app_public; Owner: -
 --
 
@@ -548,83 +552,6 @@ begin
   return result;
 end;
 $_$;
-
-
---
--- Name: notify_watchers_ddl(); Type: FUNCTION; Schema: postgraphile_watch; Owner: -
---
-
-CREATE FUNCTION postgraphile_watch.notify_watchers_ddl() RETURNS event_trigger
-    LANGUAGE plpgsql
-    AS $$
-begin
-  perform pg_notify(
-    'postgraphile_watch',
-    json_build_object(
-      'type',
-      'ddl',
-      'payload',
-      (select json_agg(json_build_object('schema', schema_name, 'command', command_tag)) from pg_event_trigger_ddl_commands() as x)
-    )::text
-  );
-end;
-$$;
-
-
---
--- Name: notify_watchers_drop(); Type: FUNCTION; Schema: postgraphile_watch; Owner: -
---
-
-CREATE FUNCTION postgraphile_watch.notify_watchers_drop() RETURNS event_trigger
-    LANGUAGE plpgsql
-    AS $$
-begin
-  perform pg_notify(
-    'postgraphile_watch',
-    json_build_object(
-      'type',
-      'drop',
-      'payload',
-      (select json_agg(distinct x.schema_name) from pg_event_trigger_dropped_objects() as x)
-    )::text
-  );
-end;
-$$;
-
-
---
--- Name: drop_all_policies(text, text); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.drop_all_policies(table_name_in text, schema_name_in text) RETURNS void
-    LANGUAGE plpgsql
-    AS $$
-DECLARE 
-    policy record;
-BEGIN
-    FOR policy IN (SELECT policyname 
-                   FROM pg_policies 
-                   WHERE schemaname = schema_name_in 
-                     AND tablename = table_name_in)
-    LOOP 
-        EXECUTE format('DROP POLICY IF EXISTS %I ON %I.%I', policy.policyname, schema_name_in, table_name_in);
-    END LOOP;
-END
-$$;
-
-
---
--- Name: sortarray(smallint[]); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.sortarray(_arr smallint[]) RETURNS smallint[]
-    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
-    AS $$
-SELECT ARRAY(
-  SELECT unnest(_arr)
-  ORDER BY 1
-);
-$$;
 
 
 --
@@ -1265,6 +1192,13 @@ CREATE TRIGGER _100_user_data_set_updated_at BEFORE UPDATE ON app_private.user_d
 
 
 --
+-- Name: sessions _200_delete_old_session_trigger; Type: TRIGGER; Schema: app_private; Owner: -
+--
+
+CREATE TRIGGER _200_delete_old_session_trigger AFTER INSERT ON app_private.sessions FOR EACH ROW EXECUTE FUNCTION app_public.delete_old_session();
+
+
+--
 -- Name: comments _100_comments_updated_at; Type: TRIGGER; Schema: app_public; Owner: -
 --
 
@@ -1624,7 +1558,6 @@ GRANT USAGE ON SCHEMA app_public TO app_anonymous;
 --
 
 REVOKE USAGE ON SCHEMA public FROM PUBLIC;
-GRANT ALL ON SCHEMA public TO app_postgraphile;
 GRANT USAGE ON SCHEMA public TO app_anonymous;
 
 
@@ -1730,6 +1663,14 @@ GRANT ALL ON FUNCTION app_public.current_user_id() TO app_anonymous;
 
 
 --
+-- Name: FUNCTION delete_old_session(); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public.delete_old_session() FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.delete_old_session() TO app_anonymous;
+
+
+--
 -- Name: FUNCTION drop_all_policies(table_name_in text, schema_name_in text); Type: ACL; Schema: app_public; Owner: -
 --
 
@@ -1781,106 +1722,6 @@ GRANT INSERT(count),UPDATE(count) ON TABLE app_public.photos_likes TO app_user;
 
 REVOKE ALL ON FUNCTION app_public.upsert_photo_like(photoid integer, count integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION app_public.upsert_photo_like(photoid integer, count integer) TO app_anonymous;
-
-
---
--- Name: FUNCTION notify_watchers_ddl(); Type: ACL; Schema: postgraphile_watch; Owner: -
---
-
-REVOKE ALL ON FUNCTION postgraphile_watch.notify_watchers_ddl() FROM PUBLIC;
-
-
---
--- Name: FUNCTION notify_watchers_drop(); Type: ACL; Schema: postgraphile_watch; Owner: -
---
-
-REVOKE ALL ON FUNCTION postgraphile_watch.notify_watchers_drop() FROM PUBLIC;
-
-
---
--- Name: FUNCTION drop_all_policies(table_name_in text, schema_name_in text); Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON FUNCTION public.drop_all_policies(table_name_in text, schema_name_in text) FROM PUBLIC;
-
-
---
--- Name: FUNCTION sortarray(_arr smallint[]); Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON FUNCTION public.sortarray(_arr smallint[]) FROM PUBLIC;
-GRANT ALL ON FUNCTION public.sortarray(_arr smallint[]) TO app_anonymous;
-
-
---
--- Name: FUNCTION uuid_generate_v1(); Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON FUNCTION public.uuid_generate_v1() FROM PUBLIC;
-
-
---
--- Name: FUNCTION uuid_generate_v1mc(); Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON FUNCTION public.uuid_generate_v1mc() FROM PUBLIC;
-
-
---
--- Name: FUNCTION uuid_generate_v3(namespace uuid, name text); Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON FUNCTION public.uuid_generate_v3(namespace uuid, name text) FROM PUBLIC;
-
-
---
--- Name: FUNCTION uuid_generate_v4(); Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON FUNCTION public.uuid_generate_v4() FROM PUBLIC;
-GRANT ALL ON FUNCTION public.uuid_generate_v4() TO app_postgraphile;
-
-
---
--- Name: FUNCTION uuid_generate_v5(namespace uuid, name text); Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON FUNCTION public.uuid_generate_v5(namespace uuid, name text) FROM PUBLIC;
-
-
---
--- Name: FUNCTION uuid_nil(); Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON FUNCTION public.uuid_nil() FROM PUBLIC;
-
-
---
--- Name: FUNCTION uuid_ns_dns(); Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON FUNCTION public.uuid_ns_dns() FROM PUBLIC;
-
-
---
--- Name: FUNCTION uuid_ns_oid(); Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON FUNCTION public.uuid_ns_oid() FROM PUBLIC;
-
-
---
--- Name: FUNCTION uuid_ns_url(); Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON FUNCTION public.uuid_ns_url() FROM PUBLIC;
-
-
---
--- Name: FUNCTION uuid_ns_x500(); Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON FUNCTION public.uuid_ns_x500() FROM PUBLIC;
 
 
 --
@@ -2017,21 +1858,7 @@ ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA app_public GRANT AL
 -- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: public; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT SELECT,USAGE ON SEQUENCES  TO app_anonymous;
-
-
---
--- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: public; Owner: -
---
-
 ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA public GRANT SELECT,USAGE ON SEQUENCES  TO app_anonymous;
-
-
---
--- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: public; Owner: -
---
-
-ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT ALL ON FUNCTIONS  TO app_anonymous;
 
 
 --
@@ -2045,31 +1872,7 @@ ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA public GRANT ALL ON
 -- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: -; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE postgres REVOKE ALL ON FUNCTIONS  FROM PUBLIC;
-
-
---
--- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: -; Owner: -
---
-
 ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile REVOKE ALL ON FUNCTIONS  FROM PUBLIC;
-
-
---
--- Name: postgraphile_watch_ddl; Type: EVENT TRIGGER; Schema: -; Owner: -
---
-
-CREATE EVENT TRIGGER postgraphile_watch_ddl ON ddl_command_end
-         WHEN TAG IN ('ALTER AGGREGATE', 'ALTER DOMAIN', 'ALTER EXTENSION', 'ALTER FOREIGN TABLE', 'ALTER FUNCTION', 'ALTER POLICY', 'ALTER SCHEMA', 'ALTER TABLE', 'ALTER TYPE', 'ALTER VIEW', 'COMMENT', 'CREATE AGGREGATE', 'CREATE DOMAIN', 'CREATE EXTENSION', 'CREATE FOREIGN TABLE', 'CREATE FUNCTION', 'CREATE INDEX', 'CREATE POLICY', 'CREATE RULE', 'CREATE SCHEMA', 'CREATE TABLE', 'CREATE TABLE AS', 'CREATE VIEW', 'DROP AGGREGATE', 'DROP DOMAIN', 'DROP EXTENSION', 'DROP FOREIGN TABLE', 'DROP FUNCTION', 'DROP INDEX', 'DROP OWNED', 'DROP POLICY', 'DROP RULE', 'DROP SCHEMA', 'DROP TABLE', 'DROP TYPE', 'DROP VIEW', 'GRANT', 'REVOKE', 'SELECT INTO')
-   EXECUTE FUNCTION postgraphile_watch.notify_watchers_ddl();
-
-
---
--- Name: postgraphile_watch_drop; Type: EVENT TRIGGER; Schema: -; Owner: -
---
-
-CREATE EVENT TRIGGER postgraphile_watch_drop ON sql_drop
-   EXECUTE FUNCTION postgraphile_watch.notify_watchers_drop();
 
 
 --

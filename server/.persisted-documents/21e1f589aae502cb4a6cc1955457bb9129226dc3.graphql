@@ -1,1 +1,0 @@
-mutation RouteAdminPhotosUpdatePhotoMutation($input: UpdatePhotoInput!) { updatePhoto(input: $input) { photo { aperture author { displayName id pictureUrl } comments { totalCount } createdAt focalLength id image { id s3Bucket s3Key sources { s3Key size type } } isArchived iso lat likesCount lng location { id name slug } shotAt shutterSpeed } } }

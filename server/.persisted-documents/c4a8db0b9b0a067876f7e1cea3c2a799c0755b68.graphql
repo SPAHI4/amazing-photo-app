@@ -1,1 +1,0 @@
-mutation LoginWithGoogle($code: String!) { loginWithGoogle(input: {code: $code, toCookie: true}) { __typename accessToken refreshToken } }

@@ -15,3 +15,5 @@ db/tests
 terraform/setup
 
 jest.config.js
+
+e2e/cypress.config.js

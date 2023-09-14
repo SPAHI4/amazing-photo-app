@@ -109,6 +109,7 @@ function LocationLink({ location, onMouseEnter, onMouseLeave }: LocationLinkProp
   return (
     <StickPointerButton>
       <MuiLink
+        data-test="location-link"
         component={Link}
         to={`/location/${location.slug}`}
         color="inherit"

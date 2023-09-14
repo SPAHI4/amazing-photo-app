@@ -1,1 +1,0 @@
-query PhotoLikesUserLikesQuery($photoId: Int!, $userId: Int!) { photosLikeByUserIdAndPhotoId(photoId: $photoId, userId: $userId) { count id } }
