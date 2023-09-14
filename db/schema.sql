@@ -73,6 +73,20 @@ COMMENT ON EXTENSION postgis IS 'PostGIS geometry and geography spatial types an
 
 
 --
+-- Name: postgis_topology; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS postgis_topology WITH SCHEMA topology;
+
+
+--
+-- Name: EXTENSION postgis_topology; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION postgis_topology IS 'PostGIS topology spatial types and functions';
+
+
+--
 -- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -448,7 +462,7 @@ begin
     delete from app_private.sessions where id in (
         select id from app_private.sessions
         where user_id = new.user_id
-        order by created_at desc offset 10
+        order by created_at desc offset 20
     );
     return null;
 end;
@@ -1873,6 +1887,23 @@ ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA public GRANT ALL ON
 --
 
 ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile REVOKE ALL ON FUNCTIONS  FROM PUBLIC;
+
+
+--
+-- Name: postgraphile_watch_ddl; Type: EVENT TRIGGER; Schema: -; Owner: -
+--
+
+CREATE EVENT TRIGGER postgraphile_watch_ddl ON ddl_command_end
+         WHEN TAG IN ('ALTER AGGREGATE', 'ALTER DOMAIN', 'ALTER EXTENSION', 'ALTER FOREIGN TABLE', 'ALTER FUNCTION', 'ALTER POLICY', 'ALTER SCHEMA', 'ALTER TABLE', 'ALTER TYPE', 'ALTER VIEW', 'COMMENT', 'CREATE AGGREGATE', 'CREATE DOMAIN', 'CREATE EXTENSION', 'CREATE FOREIGN TABLE', 'CREATE FUNCTION', 'CREATE INDEX', 'CREATE POLICY', 'CREATE RULE', 'CREATE SCHEMA', 'CREATE TABLE', 'CREATE TABLE AS', 'CREATE VIEW', 'DROP AGGREGATE', 'DROP DOMAIN', 'DROP EXTENSION', 'DROP FOREIGN TABLE', 'DROP FUNCTION', 'DROP INDEX', 'DROP OWNED', 'DROP POLICY', 'DROP RULE', 'DROP SCHEMA', 'DROP TABLE', 'DROP TYPE', 'DROP VIEW', 'GRANT', 'REVOKE', 'SELECT INTO')
+   EXECUTE FUNCTION postgraphile_watch.notify_watchers_ddl();
+
+
+--
+-- Name: postgraphile_watch_drop; Type: EVENT TRIGGER; Schema: -; Owner: -
+--
+
+CREATE EVENT TRIGGER postgraphile_watch_drop ON sql_drop
+   EXECUTE FUNCTION postgraphile_watch.notify_watchers_drop();
 
 
 --
