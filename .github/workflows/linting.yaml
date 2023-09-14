@@ -68,6 +68,8 @@ jobs:
           pnpm run test:unit
 
       - name: e2e tests
+        env:
+          DATABASE_URL: postgres://app_postgraphile:xyz@localhost:5432/photo-app_test
         run: |
           pnpm run test:e2e
             
