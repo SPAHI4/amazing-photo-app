@@ -63,9 +63,13 @@ jobs:
             CREATE ROLE app_admin; \
             CREATE ROLE app_anonymous;"
 
-      - name: run tests
+      - name: unit tests
         run: |
-          pnpm run test
+          pnpm run test:unit
+
+      - name: e2e tests
+        run: |
+          pnpm run test:e2e
             
 
       - name: Run lint-staged
