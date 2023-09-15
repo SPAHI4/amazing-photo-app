@@ -21,7 +21,7 @@ export const buildApp = async (options: BuildAppOptions) => {
             cert: env.SSL_CERT,
           }
         : null,
-    logger: env.NODE_ENV !== 'test',
+    logger: env.NODE_ENV !== 'never',
   });
 
   app.register(fastifyRateLimit, {

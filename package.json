@@ -11,7 +11,7 @@
     "prepare": "husky install",
     "build": "tsc --build",
     "test:unit": "export NODE_ENV=test && pnpm --filter db run test:setup && pnpm --filter db run test && pnpm --filter server run test",
-    "test:e2e": "export NODE_ENV=test && pnpm build && pnpm --filter db run test:setup && start-server-and-test 'pnpm -r run start:e2e' '3010|8089' 'pnpm --filter e2e run cy:run'"
+    "test:e2e": "export NODE_ENV=test && pnpm build && pnpm --filter db run test:setup && start-server-and-test 'pnpm -r run start:e2e' '3010' 'pnpm --filter e2e run cy:run'"
   },
   "type": "module",
   "author": "spahi43@gmail.com",

@@ -52,7 +52,7 @@ export function HeaderNavigation() {
           color="inherit"
           variant="text"
         >
-          app on github
+          source on github
         </Button>
       </StickPointerButton>
       {showLogin && (
