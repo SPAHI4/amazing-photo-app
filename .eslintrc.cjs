@@ -15,17 +15,9 @@ module.exports = {
         'import/no-default-export': 'error',
       },
     },
-    // turn off prettier for ts 5.2 files
-    {
-      files: [`**/convert-image.ts`],
-      plugins: ['@typescript-eslint', 'sql'],
-      rules: {
-        'prettier/prettier': 'off',
-      },
-    },
     // allow .ts import for tests
     {
-      files: ['**/__tests__/**'],
+      files: ['**/__tests__/**', '**/e2e/**'],
       rules: {
         'import/extensions': 'off',
         '@typescript-eslint/no-unnecessary-condition': 'off',
@@ -45,6 +37,7 @@ module.exports = {
     'import/order': 'warn',
     'no-underscore-dangle': ['warn', { allow: ['_id', '__typename', '__filename', '__dirname'] }],
     '@typescript-eslint/no-shadow': ['error'],
+    '@typescript-eslint/no-unused-vars': 'off', // handled by typescript compiler
     '@typescript-eslint/no-unnecessary-condition': 'error',
     'no-restricted-syntax': 'off', // since we target modern browsers, we can use for-of
     'sql/format': [
@@ -72,6 +65,8 @@ module.exports = {
 
       `${__dirname}/db/tsconfig.spec.json`,
       `${__dirname}/server/tsconfig.spec.json`,
+
+      `${__dirname}/e2e/cypress/tsconfig.json`,
     ],
   },
 };

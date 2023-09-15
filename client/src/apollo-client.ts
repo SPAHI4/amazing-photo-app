@@ -27,10 +27,12 @@ import { graphql } from './__generated__';
 import { scalarTypePolicies } from './__generated__/graphql-types.ts';
 
 if (import.meta.env.DEV) {
-  const { loadErrorMessages, loadDevMessages } = await import('@apollo/client/dev');
+  (async () => {
+    const { loadErrorMessages, loadDevMessages } = await import('@apollo/client/dev');
 
-  loadDevMessages();
-  loadErrorMessages();
+    loadDevMessages();
+    loadErrorMessages();
+  })();
 }
 
 let accessToken: string | null = null;

@@ -19,7 +19,13 @@ const PgSimplifyInflectorPlugin =
 const mutationsPlugins = [createImageUploadMutation, loginWithGoogleMutation];
 const queriesPlugins = [locationBySlugQuery];
 
-const pluginHook = makePluginHook([PersistedOperationsPlugin]);
+let pluginHook = makePluginHook([PersistedOperationsPlugin]);
+
+const IS_JEST = process.env.JEST_WORKER_ID !== undefined;
+if (IS_JEST) {
+  // we don't need persisted operations in tests
+  pluginHook = makePluginHook([]);
+}
 
 const errorsHandler = (errors: ReadonlyArray<GraphQLError>) => {
   const newErrors = [];
@@ -63,7 +69,7 @@ const devBaseConfig: Partial<PostGraphileOptions> = {
   allowExplain: true,
   subscriptions: true,
   exportGqlSchemaPath: './schema.graphql',
-  pluginHook: env.NODE_ENV === 'test' ? undefined : pluginHook,
+  pluginHook,
   allowUnpersistedOperation(req: IncomingMessage) {
     return req.headers.referer?.endsWith('/graphiql') === true;
   },

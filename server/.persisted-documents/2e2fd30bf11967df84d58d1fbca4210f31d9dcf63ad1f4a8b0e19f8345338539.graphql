@@ -1,1 +1,0 @@
-mutation createImageUpload($input: CreateImageUploadInput!) { createImageUpload(input: $input) { __typename image { __typename id } signedUrl } }

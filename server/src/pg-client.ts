@@ -24,7 +24,7 @@ process.on('exit', async () => {
 export class PgClient implements AsyncDisposable {
   #logger: FastifyBaseLogger;
 
-  #connection: pg.PoolClient | null = null;
+  connection: pg.PoolClient | null = null;
 
   #transacting = false;
 
@@ -34,14 +34,14 @@ export class PgClient implements AsyncDisposable {
     this.#logger = logger;
   }
 
-  async #startTransaction(): Promise<void> {
+  async startTransaction(): Promise<void> {
     if (this.#transacting) {
       throw new Error('Cannot start transaction while already in transaction');
     }
 
     try {
       await this.#connect();
-      await this.#connection!.query('BEGIN');
+      await this.connection!.query('BEGIN');
       this.#transacting = true;
     } catch (error) {
       this.#logger.error('Error starting transaction', error);
@@ -50,35 +50,23 @@ export class PgClient implements AsyncDisposable {
   }
 
   async #connect(): Promise<void> {
-    if (this.#connection == null) {
-      this.#connection = await pool.connect();
+    if (this.connection == null) {
+      this.connection = await pool.connect();
     }
   }
 
-  query<T extends QueryResultRow>(
-    queryText: string | QueryConfig,
-    values?: unknown[],
-  ): Promise<QueryResult<T>> {
-    try {
-      return pool.query<T>(queryText, values);
-    } catch (error) {
-      this.#logger.error('Error executing query', error);
-      throw error;
-    }
-  }
-
-  async tQuery<T extends QueryResultRow>(
+  async query<T extends QueryResultRow>(
     queryText: string | QueryConfig,
     values?: unknown[],
   ): Promise<QueryResult<T>> {
     if (!this.#transacting) {
-      await this.#startTransaction();
+      return pool.query<T>(queryText, values);
     }
 
     this.#logger.debug('Executing query', queryText, values);
 
     try {
-      return await this.#connection!.query<T>(queryText, values);
+      return await this.connection!.query<T>(queryText, values);
     } catch (error) {
       this.#logger.error('Error executing query', error);
       throw error;
@@ -90,7 +78,7 @@ export class PgClient implements AsyncDisposable {
       throw new Error('Cannot commit without transaction');
     }
 
-    await this.#connection!.query('COMMIT');
+    await this.connection!.query('COMMIT');
 
     this.#logger.debug('Committed transaction');
 
@@ -110,7 +98,7 @@ export class PgClient implements AsyncDisposable {
     this.#transacting = false;
     this.#committed = false;
 
-    await this.#connection!.query('ROLLBACK');
+    await this.connection!.query('ROLLBACK');
 
     this.#logger.debug('Rolled back transaction');
   }
@@ -122,12 +110,12 @@ export class PgClient implements AsyncDisposable {
       throw new Error('Transaction was not either committed or rolled back');
     }
 
-    if (this.#connection != null) {
-      this.#connection.release();
+    if (this.connection != null) {
+      this.connection.release();
     }
 
     this.#logger.debug('Released connection');
 
-    this.#connection = null;
+    this.connection = null;
   }
 }

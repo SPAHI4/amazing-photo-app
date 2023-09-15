@@ -18,7 +18,7 @@ const convertSizes = [2560, 960, 3840, 480, 1440] as const;
 const flatten = <T>(arr: T[][]): T[] => ([] as T[]).concat(...arr);
 
 const spawnAsync = async (command: string, args: string[]): Promise<void> => {
-  const process = spawn(command, args);
+  using process = spawn(command, args);
 
   await new Promise((resolve, reject) => {
     let stdout = '';
@@ -165,7 +165,8 @@ export const convertImageTask: Task = async (inPayload, { logger, query }) => {
 
     const {
       rows: [image],
-    } = await query<DbImage>(`
+    } = await query<DbImage>(
+      `
         select
             id,
             s3_key,
@@ -176,7 +177,7 @@ export const convertImageTask: Task = async (inPayload, { logger, query }) => {
         where
             id = $1
         `,
-    [imageId],
+      [imageId],
     );
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

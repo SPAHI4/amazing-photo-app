@@ -149,7 +149,7 @@ export const PhotoCard = memo((props: PhotoCardProps) => {
           }
         `}
       />
-      <Link to={`/location/${photo.location?.slug}/${photo.id}`}>
+      <Link to={`/location/${photo.location?.slug}/${photo.id}`} data-test="photo-link">
         <StickPointerImage>
           <div
             css={css`

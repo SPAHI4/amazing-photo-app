@@ -1,1 +1,0 @@
-mutation completeImageUpload($input: CompleteImageUploadInput!) { completeImageUpload(input: $input) { clientMutationId } }

@@ -66,7 +66,6 @@ export const appSitemap: FastifyPluginAsync = async (app: FastifyInstance) => {
     if (sitemap != null && !shouldUpdateSitemap) {
       reply.send(sitemap);
     } else {
-      // eslint-disable-next-line
       await using pgClient = new PgClient(app.log);
 
       const stream = new SitemapStream({

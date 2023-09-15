@@ -3,6 +3,9 @@ import path from 'path';
 
 const dirname = new URL('.', import.meta.url).pathname;
 
+await fs.rm('.persisted-documents', { recursive: true, force: true });
+await fs.mkdir('.persisted-documents');
+
 const clientFile = await fs.readFile(
   path.resolve(dirname, '../../client/src/__generated__/persisted-documents.json'),
   'utf8',

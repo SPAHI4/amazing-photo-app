@@ -1,1 +1,0 @@
-query CommentsQuery { comments { edges { node { body createdAt id isArchived photo { id image { id s3Bucket s3Key sources { s3Key size type } } location { id slug } } user { displayName id pictureUrl } } } totalCount } }

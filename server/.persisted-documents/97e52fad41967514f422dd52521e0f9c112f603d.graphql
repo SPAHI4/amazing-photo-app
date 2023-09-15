@@ -1,1 +1,0 @@
-mutation DeleteCommentMutation($input: DeleteCommentInput!) { deleteComment(input: $input) { __typename comment { __typename id } } }

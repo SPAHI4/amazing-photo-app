@@ -17,7 +17,7 @@ interface RefreshTokenPayload {
   userId: string;
 }
 
-interface GoogleUser {
+export interface GoogleUser {
   id: string;
   email: string;
   verified_email: boolean;
@@ -36,10 +36,10 @@ export const encryptForDatabase = (text: string) =>
 export const decryptFromDatabase = (text: string) =>
   crypto.publicDecrypt(env.JWT_PUBLIC_KEY, Buffer.from(text, 'base64')).toString();
 
-const getTokenHash = (token: string) =>
+export const getTokenHash = (token: string) =>
   crypto.createHash('shake256', { outputLength: 8 }).update(token).digest('hex');
 
-const verifyAndUpdateTokenSession = async (
+export const verifyAndUpdateTokenSession = async (
   token: string,
   { pgClient, clientIp }: GraphqlContext,
 ) => {
@@ -86,7 +86,10 @@ const verifyAndUpdateTokenSession = async (
   }
 };
 
-const createTokenSession = async (userId: string, { pgClient, clientIp }: GraphqlContext) => {
+export const createTokenSession = async (
+  userId: string,
+  { pgClient, clientIp }: Pick<GraphqlContext, 'pgClient' | 'clientIp'>,
+) => {
   const token = jwt.sign({ userId }, env.JWT_SECRET_KEY, {
     algorithm: 'RS256',
     expiresIn: `${REFRESH_TOKEN_EXPIRATION_DAYS}d`,
@@ -103,7 +106,11 @@ insert into app_private.sessions (user_id, token_expires_at, token_hash, last_se
   return token;
 };
 
-const getAccessToken = async (userId: string, { pgClient }: GraphqlContext) => {
+export const getAccessToken = async (
+  userId: string,
+  { pgClient }: Pick<GraphqlContext, 'pgClient'>,
+) => {
+  // TODO: remove this as side effect
   await pgClient.query(`set local jwt.claims.user_id to ${userId}`);
 
   const {

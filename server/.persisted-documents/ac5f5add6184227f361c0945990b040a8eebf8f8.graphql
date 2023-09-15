@@ -1,1 +1,0 @@
-mutation RouteAdminPhotosDeletePhotoMutation($input: DeletePhotoInput!) { deletePhoto(input: $input) { photo { id } } }

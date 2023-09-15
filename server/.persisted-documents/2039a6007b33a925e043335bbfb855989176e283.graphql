@@ -1,1 +1,0 @@
-query RouteAdminLocationsQuery { locations(includeArchived: YES) { __typename edges { __typename node { __typename description id isArchived name photos { __typename totalCount } slug } } pageInfo { __typename endCursor hasNextPage startCursor } totalCount } }

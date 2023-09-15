@@ -63,9 +63,15 @@ jobs:
             CREATE ROLE app_admin; \
             CREATE ROLE app_anonymous;"
 
-      - name: run tests
+      - name: unit tests
         run: |
-          pnpm run test
+          pnpm run test:unit
+
+      - name: e2e tests
+        env:
+          DATABASE_URL: postgres://app_postgraphile:xyz@localhost:5432/photo-app_test
+        run: |
+          pnpm run test:e2e
             
 
       - name: Run lint-staged

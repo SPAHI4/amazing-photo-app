@@ -1,1 +1,0 @@
-mutation CreatePhoto($input: CreatePhotoInput!) { createPhoto(input: $input) { photo { id location { slug } } } }
