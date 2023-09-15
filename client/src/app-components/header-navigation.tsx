@@ -52,12 +52,18 @@ export function HeaderNavigation() {
           color="inherit"
           variant="text"
         >
-          app on github
+          source on github
         </Button>
       </StickPointerButton>
       {showLogin && (
         <StickPointerButton key="login">
-          <LoadingButton loading={loginLoading} variant="text" color="inherit" onClick={login}>
+          <LoadingButton
+            loading={loginLoading}
+            variant="text"
+            color="inherit"
+            onClick={login}
+            data-test="header-login-button"
+          >
             login
           </LoadingButton>
         </StickPointerButton>
@@ -116,7 +122,9 @@ export function HeaderNavigation() {
               </StickPointerButton>
             )}
             <StickPointerButton>
-              <MenuItem onClick={logout}>logout</MenuItem>
+              <MenuItem onClick={logout} data-test="header-logout-button">
+                logout
+              </MenuItem>
             </StickPointerButton>
           </Menu>
         </>

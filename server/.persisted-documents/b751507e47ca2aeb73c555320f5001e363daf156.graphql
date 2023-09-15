@@ -1,1 +1,0 @@
-query UsersQuery { users { __typename edges { __typename node { __typename authoredPhotos { __typename totalCount } comments { __typename totalCount } createdAt displayName id isArchived photosLikes { __typename totalCount } pictureUrl } } totalCount } }

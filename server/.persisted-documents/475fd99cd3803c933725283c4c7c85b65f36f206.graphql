@@ -1,1 +1,0 @@
-mutation updateLocation($input: UpdateLocationInput!) { updateLocation(input: $input) { location { description id isArchived name photos { totalCount } slug } } }

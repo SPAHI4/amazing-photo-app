@@ -1,1 +1,0 @@
-mutation UpdateComment($input: UpdateCommentInput!) { updateComment(input: $input) { __typename comment { __typename __typename id isArchived } } }

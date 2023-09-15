@@ -1,1 +1,0 @@
-mutation deleteLocation($input: DeleteLocationInput!) { deleteLocation(input: $input) { __typename location { __typename description id isArchived name photos { __typename totalCount } slug } } }

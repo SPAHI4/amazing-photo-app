@@ -2,8 +2,6 @@ module.exports = {
   env: { node: true, es2022: true },
   extends: ['airbnb', '../.eslintrc.cjs'],
   rules: {
-    'no-var': 'off', // using keyword
-    'vars-on-top': 'off', // using keyword
     'no-restricted-syntax': 'off',
     'react/jsx-uses-react': 'off',
     'react/react-in-jsx-scope': 'off',

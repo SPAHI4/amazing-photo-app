@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["es6", "dom"],
+    "types": ["cypress", "node"],
+    "baseUrl": ".",
+    "noEmit": true,
+    "customConditions": ["development", "production", "test"],
+
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true
+  },
+  "include": ["**/*.ts", "../cypress.config.js"]
+}

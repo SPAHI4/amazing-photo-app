@@ -27,7 +27,7 @@ const cleanedBase = envalid.cleanEnv(process.env, {
 });
 
 const overrideEnv = resolvePath('.env.override');
-if (fs.existsSync(overrideEnv)) {
+if (fs.existsSync(overrideEnv) && cleanedBase.DEPLOYMENT === 'localhost') {
   dotenv.config({ path: overrideEnv });
 }
 
@@ -157,3 +157,8 @@ export const env = {
   ...google,
   ...aws,
 };
+
+// export to stdout for use in scripts
+if (process.env.EXPORT_ENV === '1') {
+  process.stdout.write(`${JSON.stringify(env, null, 2)}\n`);
+}

@@ -1,1 +1,0 @@
-query Locations { locations { nodes { description geo { x y } id name slug } } }

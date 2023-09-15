@@ -21,6 +21,7 @@ export default defineConfig({
     exclude: ['react-router-dom', '@remix-run/router'],
   },
   build: {
+    target: 'esnext',
     rollupOptions: {
       output: {
         format: 'es',
@@ -65,6 +66,12 @@ export default defineConfig({
             labelFormat: 'hehe',
           },
         ],
+        // [
+        //   'swc-plugin-react-remove-properties',
+        //   {
+        //     properties: ['/^data-test/'],
+        //   },
+        // ],
       ],
     }),
     // @ts-expect-error default export type bug

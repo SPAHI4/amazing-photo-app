@@ -63,7 +63,7 @@ export const runGraphQLQuery = async (
   jest.spyOn(pgPool, 'connect').mockImplementation(() => Promise.resolve(pgClient));
   jest.spyOn(pgClient, 'release').mockImplementation(() => Promise.resolve());
 
-  const app = buildApp({
+  const app = await buildApp({
     pgPool,
   });
   let response;
