@@ -1,8 +1,6 @@
 import { css } from '@emotion/react';
 import { grey } from '@mui/material/colors';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import { Box, Typography, SwipeableDrawer } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React, { useState } from 'react';
 
@@ -53,6 +51,8 @@ export function PullableDrawer({ children, title }: PullableDrawerProps) {
           left: 0;
           background-color: ${theme.palette.mode === 'light' ? '#fff' : grey[800]};
         `}
+        data-testid="drawer-title"
+        onClick={() => setOpen(true)}
       >
         <Box
           css={css`

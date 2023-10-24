@@ -9,12 +9,14 @@
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "jsxImportSource": "@emotion/react",
     "isolatedModules": true,
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "sourceMap": true
   },
   "exclude": ["node_modules"],
   "include": [
@@ -23,7 +25,8 @@
     "./src/**/*.tsx",
     "./src/**/*.json",
     "codegen.ts",
-    ".eslintrc.cjs"
+    ".eslintrc.cjs",
+    "jest-setup.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

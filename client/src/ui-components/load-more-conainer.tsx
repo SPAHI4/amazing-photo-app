@@ -36,7 +36,7 @@ export function LoadMoreContainer({ loading, onLoadMore }: LoadMoreContainerProp
     >
       {
         // always hide if loading is false, but show with delay
-        loading && loadingThrottled && <CircularProgress />
+        loading && loadingThrottled && <CircularProgress data-testid="loading" />
       }
     </Box>
   );

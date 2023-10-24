@@ -12,12 +12,13 @@ import { env } from '@app/config/env.js';
 import { s3 } from '../s3.js';
 import { TempFile } from '../fs.js';
 
-const convertTypes = ['image/avif', 'image/webp', 'image/jpeg'] as const;
-const convertSizes = [2560, 960, 3840, 480, 1440] as const;
+export const convertTypes = ['image/avif', 'image/webp', 'image/jpeg'] as const;
+export const convertSizes = [2560, 960, 3840, 480, 1440] as const;
 
 const flatten = <T>(arr: T[][]): T[] => ([] as T[]).concat(...arr);
 
-const spawnAsync = async (command: string, args: string[]): Promise<void> => {
+export const spawnAsync = async (command: string, args: string[]): Promise<void> => {
+  // using declaration https://github.com/tc39/proposal-explicit-resource-management
   using process = spawn(command, args);
 
   await new Promise((resolve, reject) => {
@@ -66,7 +67,7 @@ export interface ImageSource {
   type: string;
 }
 
-const convertImage = async (
+export const convertImage = async (
   source: ConvertSource,
   target: ConvertTarget,
   logger: Logger,
@@ -151,10 +152,27 @@ type DbImage = {
 };
 
 // @see https://github.com/MikeKovarik/exifr/issues/115
-const detectHdr = (contentType: string, exifData: ExifData) =>
+export const detectHdr = (contentType: string, exifData: ExifData) =>
   contentType === 'image/avif' &&
   typeof exifData.Software === 'string' &&
   exifData.Software.startsWith('Adobe Photoshop Camera Raw 15');
+
+export const getExifData = (filePath: string) =>
+  exifr.parse(filePath, {
+    tiff: true,
+    xmp: true,
+    icc: true,
+    iptc: true,
+    jfif: true,
+    exif: true,
+    gps: true,
+    interop: true,
+    translateKeys: true,
+    translateValues: true,
+    reviveValues: true,
+    sanitize: true,
+    mergeOutput: true,
+  });
 
 export const convertImageTask: Task = async (inPayload, { logger, query }) => {
   try {
@@ -206,21 +224,7 @@ export const convertImageTask: Task = async (inPayload, { logger, query }) => {
     await pipeline(obj.Body, writeStream);
     await sourceTmpFile.handle.close();
 
-    const exifData = await exifr.parse(sourceTmpFile.path, {
-      tiff: true,
-      xmp: true,
-      icc: true,
-      iptc: true,
-      jfif: true,
-      exif: true,
-      gps: true,
-      interop: true,
-      translateKeys: true,
-      translateValues: true,
-      reviveValues: true,
-      sanitize: true,
-      mergeOutput: true,
-    });
+    const exifData = await getExifData(sourceTmpFile.path);
 
     const isHdr = detectHdr(obj.ContentType, exifData);
     const source = {

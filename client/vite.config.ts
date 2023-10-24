@@ -23,6 +23,8 @@ export default defineConfig({
   build: {
     target: 'esnext',
     rollupOptions: {
+      // remove .test files from bundle
+      external: [/\.test\.(ts|tsx|js|jsx|mjs)$/],
       output: {
         format: 'es',
         manualChunks: {
@@ -66,12 +68,6 @@ export default defineConfig({
             labelFormat: 'hehe',
           },
         ],
-        // [
-        //   'swc-plugin-react-remove-properties',
-        //   {
-        //     properties: ['/^data-test/'],
-        //   },
-        // ],
       ],
     }),
     // @ts-expect-error default export type bug

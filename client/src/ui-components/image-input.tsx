@@ -19,7 +19,6 @@ export function ImageInput({ onChange }: { onChange: (file: File) => void }) {
 
   const handleDragEnter = () => {
     setIsDragging(true);
-    console.log(buttonActionRef.current);
     buttonActionRef.current?.focusVisible();
   };
   const handleDragLeave = () => {
@@ -28,6 +27,7 @@ export function ImageInput({ onChange }: { onChange: (file: File) => void }) {
 
   return (
     <ButtonBase
+      role="button"
       action={buttonActionRef}
       focusRipple={isDragging}
       component="div"

@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Nl2Br should render 1`] = `
+<div>
+  foo
+</div>
+`;
+
+exports[`Nl2Br should render with breakLimit 1`] = `
+<div>
+  <br />
+        foo
+  <br />
+        
+  <br />
+        bar
+  <br />
+      
+</div>
+`;
+
+exports[`Nl2Br should render with multiple new lines 1`] = `
+<div>
+  foo bar
+  <br />
+          
+  <br />
+          foo bar
+  <br />
+          
+  <br />
+          foo bar
+  <br />
+          
+  <br />
+</div>
+`;
