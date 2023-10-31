@@ -48,11 +48,9 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
 
-      - name: Cypress install
-        uses: cypress-io/github-action@v6
-        with:
-          # Disable running of tests within install job
-          runTests: false
+      - name: Run lint-staged
+        run: |
+          pnpm exec lint-staged --diff="origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF}"
 
       - name: build ts
         run: |
@@ -80,15 +78,18 @@ jobs:
           pnpm run test:integration
 
       - name: e2e tests
-        env:
-          DATABASE_URL: postgres://app_postgraphile:xyz@localhost:5432/photo-app_test
         run: |
           pnpm run test:e2e
-            
 
-      - name: Run lint-staged
-        run: |
-          pnpm exec lint-staged --diff="origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF}"
+      - name: Cypress
+        uses: cypress-io/github-action@v6
+        env:
+          NODE_ENV: 'test'
+          DATABASE_URL: postgres://app_postgraphile:xyz@localhost:5432/photo-app_test
+        with:
+          start: pnpm -r run start:e2e
+          wait-on: 'http://localhost:3010'
+          command: pnpm --filter e2e run cy:run
 
   plan:
     env:
