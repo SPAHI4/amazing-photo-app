@@ -78,11 +78,8 @@ jobs:
           pnpm run test:integration
 
       - name: Cypress install
-        uses: cypress-io/github-action@v6
-        with:
-          install: true
-          build: false
-          runTests: false
+        run: |
+          cypress install
 
       - name: e2e tests
         env:
