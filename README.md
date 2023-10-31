@@ -84,13 +84,12 @@ More details in [server/README.md](./server/README.md) and [client/README.md](./
 
 Tests with jest added for db, server
 
-TODO:
-- [ ] e2e tests with cypress
-- [ ] client tests with react-testing-library
+In progress:
+- [ ] e2e tests with cypress (test runner is ready, but tests are not)
+- [ ] client tests with react-testing-library (test runner is ready, some tests are written)
 - [ ] worker tests with jest
-- [ ] increase test coverage
 - [ ] fix performance on low-end PCs
-- [ ] #24: react-router scroll bug
+- [ ] [#24](https://github.com/SPAHI4/amazing-photo-app/issues/24): react-router scroll bug
 
 ## Inspirations
 
