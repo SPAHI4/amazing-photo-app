@@ -123,6 +123,7 @@ jobs:
           VITE_DEPLOYMENT: ${{ env.TF_WORKSPACE }}
           VITE_UPLOAD_ENABLED: ${{ env.TF_WORKSPACE == 'production' && 'false' || 'true' }}
           GOOGLE_CREDENTIALS_WEB_JSON: ${{ secrets.GOOGLE_CREDENTIALS_WEB_JSON }}
+          NODE_ENV: production
         run: |
           VITE_GOOGLE_CLIENT_ID=$(echo $GOOGLE_CREDENTIALS_WEB_JSON | jq -r '.client_id')
           pnpm --filter client run build

@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && NODE_ENV=test vite build",
+    "build": "tsc && NODE_ENV=production vite build",
     "build:analyze": "pnpm build && open stats.html",
     "lint": "tsc --noEmit",
     "preview": "vite preview",

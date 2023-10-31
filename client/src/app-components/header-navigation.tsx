@@ -9,9 +9,11 @@ import { ThemeChangeButton } from './theme-change-button.tsx';
 import { useCurrentUser, useLogout } from '../hooks/use-user.ts';
 import { StickPointerButton } from '../ui-components/cursor.tsx';
 import { useAppGoogleLogin } from '../hooks/use-app-google-login.tsx';
+import { useGaEvent } from '../hooks/use-ga-event.ts';
 
 export function HeaderNavigation() {
   const theme = useTheme();
+  const gaEvent = useGaEvent();
   const searchParams = new URLSearchParams(window.location.search);
   const [login, { loading: loginLoading }] = useAppGoogleLogin();
   const [currentUser] = useCurrentUser();
@@ -51,6 +53,12 @@ export function HeaderNavigation() {
           target="_blank"
           color="inherit"
           variant="text"
+          onClick={() => {
+            gaEvent('click', {
+              event_category: 'external_link',
+              event_label: 'github',
+            });
+          }}
         >
           source on github
         </Button>
