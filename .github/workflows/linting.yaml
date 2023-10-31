@@ -77,7 +77,13 @@ jobs:
         run: |
           pnpm run test:integration
 
-      # TODO: use cypress-io/github-action@v6
+      - name: Cypress install
+        uses: cypress-io/github-action@v6
+        with:
+          install: true
+          build: false
+          runTests: false
+
       - name: e2e tests
         env:
           DATABASE_URL: postgres://app_postgraphile:xyz@localhost:5432/photo-app_test
