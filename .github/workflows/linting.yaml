@@ -79,7 +79,7 @@ jobs:
 
       - name: Cypress install
         run: |
-          cypress install
+          pnpm --filter e2e exec cypress install
 
       - name: e2e tests
         env:
