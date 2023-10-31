@@ -41,18 +41,18 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20.5'
+          node-version: '20.9.0'
           cache: 'pnpm'
 
-      - name: Cache Cypress binary
-        uses: actions/cache@v2
+      - name: Cypress install
+        uses: cypress-io/github-action@v6
         with:
-          path: ~/.cache/Cypress
-          key: cypress-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          # Disable running of tests within install job
+          runTests: false
 
       - name: pnpm install
         run: |
-          pnpm install
+          pnpm install --frozen-lockfile
 
       - name: build ts
         run: |
