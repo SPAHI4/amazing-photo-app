@@ -77,19 +77,12 @@ jobs:
         run: |
           pnpm run test:integration
 
+      # TODO: use cypress-io/github-action@v6
       - name: e2e tests
+        env:
+          DATABASE_URL: postgres://app_postgraphile:xyz@localhost:5432/photo-app_test
         run: |
           pnpm run test:e2e
-
-      - name: Cypress
-        uses: cypress-io/github-action@v6
-        env:
-          NODE_ENV: 'test'
-          DATABASE_URL: postgres://app_postgraphile:xyz@localhost:5432/photo-app_test
-        with:
-          start: pnpm -r run start:e2e
-          wait-on: 'http://localhost:3010'
-          command: pnpm --filter e2e run cy:run
 
   plan:
     env:
