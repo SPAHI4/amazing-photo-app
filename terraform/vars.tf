@@ -16,7 +16,7 @@ variable "ecr_repository_name" {
 variable "ec2_instance_type" {
   default = {
     development = "t3.micro"
-    production  = "t3.small"
+    production  = "t3.micro"
   }
 }
 

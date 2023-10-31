@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "engines": {
-    "node": ">=20.5.0"
+    "node": "20.9.0"
   },
   "files": [
     "dist",
