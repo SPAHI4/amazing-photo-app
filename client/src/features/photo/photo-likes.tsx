@@ -6,10 +6,11 @@ import { useFragment, useMutation, useSuspenseQuery } from '@apollo/client';
 import useTheme from '@mui/material/styles/useTheme';
 import { LoadingButton } from '@mui/lab';
 import { graphql } from '../../__generated__';
-import { StickPointerButton, useCursor } from '../../ui-components/cursor.tsx';
+import { StickPointerButton } from '../../ui-components/cursor.tsx';
 import { useCurrentUser } from '../../hooks/use-user.ts';
 import { useAppGoogleLogin } from '../../hooks/use-app-google-login.tsx';
 import { IconFavoriteFilled } from '../../icons.tsx';
+import { useCursor } from '../../hooks/use-cursor.ts';
 
 const PHOTO_LIKES_PHOTO = graphql(`
   fragment PhotoLikes_photo on Photo {

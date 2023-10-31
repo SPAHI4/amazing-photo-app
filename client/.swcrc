@@ -1,0 +1,42 @@
+{
+  "module": {
+    "type": "es6",
+    "strict": true,
+    "strictMode": true,
+    "noInterop": true
+  },
+  "sourceMaps": true,
+  "jsc": {
+    "experimental": {
+      "plugins": [
+        [
+          "@import-meta-env/swc",
+          { "example": ".env", "env": ".env.test", "transformMode": "compile-time" }
+        ],
+        [
+          "@swc/plugin-emotion",
+          {
+            "sourceMap": true,
+            "autoLabel": "always"
+          }
+        ]
+      ]
+    },
+    "parser": {
+      "dynamicImport": false,
+      "syntax": "typescript",
+      "decorators": false,
+      "tsx": true,
+      "importMeta": true,
+      "sourceMaps": true
+    },
+    "transform": {
+      "react": {
+        "importSource": "@emotion/react",
+        "runtime": "automatic"
+      }
+    },
+    "target": "es2022"
+  },
+  "isModule": true
+}

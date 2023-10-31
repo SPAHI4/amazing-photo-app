@@ -1,17 +1,10 @@
-import React, {
-  memo,
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-} from 'react';
+import React, { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { css, Global } from '@emotion/react';
 import { useNavigation } from 'react-router-dom';
 import { CircularProgress, useMediaQuery } from '@mui/material';
 import { useThrottledValue } from '../hooks/use-throttle.ts';
-import { CursorContext, CursorContextValue } from './cursor-context.tsx';
+import { CursorContext } from './cursor-context.tsx';
+import { useCursor } from '../hooks/use-cursor.ts';
 
 /*
  * Context components
@@ -24,16 +17,6 @@ import { CursorContext, CursorContextValue } from './cursor-context.tsx';
  *
  * Stick*** components contain logic for cursor animation, some logic is duplicated to simplify the code
  */
-
-export const useCursor = (): CursorContextValue => {
-  const context = useContext(CursorContext);
-
-  if (context == null) {
-    throw new Error('useCursor must be used within a CursorProvider');
-  }
-
-  return context;
-};
 
 export const CursorProvider = memo(({ children }: { children: React.ReactNode }) => {
   const navigation = useNavigation();
@@ -158,6 +141,7 @@ export const CursorProvider = memo(({ children }: { children: React.ReactNode })
             `}
           />
           <div
+            data-testid="cursor"
             ref={cursorRef}
             css={css`
               top: var(--cursor-y);
@@ -182,6 +166,7 @@ export const CursorProvider = memo(({ children }: { children: React.ReactNode })
           >
             {loading && (
               <CircularProgress
+                data-testid="cursor-loading"
                 size="calc(var(--cursor-default-size) * 2)"
                 thickness={10}
                 css={css`

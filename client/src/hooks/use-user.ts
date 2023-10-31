@@ -1,10 +1,10 @@
-import { useApolloClient, useMutation, useSuspenseQuery } from '@apollo/client';
-import React, { useCallback } from 'react';
+import { useApolloClient, useMutation, useSuspenseQuery } from '@apollo/client/react';
+import { useCallback, useState } from 'react';
 import { graphql } from '../__generated__/gql.ts';
 import { resetToken } from '../apollo-client.ts';
 import { CurrentUserQueryQuery } from '../__generated__/graphql.ts';
 
-const CURRENT_USER_QUERY = graphql(`
+export const CURRENT_USER_QUERY = graphql(`
   query CurrentUserQuery {
     currentUser {
       __typename
@@ -16,7 +16,7 @@ const CURRENT_USER_QUERY = graphql(`
   }
 `);
 
-const logoutMutation = graphql(`
+export const logoutMutation = graphql(`
   mutation LogoutMutation {
     logout(input: { fromCookie: true })
   }
@@ -58,13 +58,13 @@ export const useLogout = (): [
 ] => {
   const client = useApolloClient();
   const [logout] = useMutation(logoutMutation);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const logoutFunc = React.useCallback(async () => {
+  const logoutFunc = useCallback(async () => {
     setLoading(true);
     try {
       await logout();
-      resetToken();
+      await resetToken();
       await client.clearStore();
       await client.resetStore();
     } finally {

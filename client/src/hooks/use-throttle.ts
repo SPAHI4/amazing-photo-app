@@ -29,7 +29,9 @@ export const useThrottle = <T extends (...args: any) => void>(
 
   useEffect(
     () => () => {
-      if (timer.current != null) clearTimeout(timer.current);
+      if (timer.current != null) {
+        clearTimeout(timer.current);
+      }
     },
     [],
   );

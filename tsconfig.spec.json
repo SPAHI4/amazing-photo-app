@@ -29,6 +29,9 @@
     },
     {
       "path": "./db/tsconfig.spec.json"
+    },
+    {
+      "path": "./client/tsconfig.spec.json"
     }
   ]
 }

@@ -3,6 +3,9 @@ import { defineConfig } from 'cypress';
 process.env.DEPLOYMENT = 'ci';
 const { env } = await import('@app/config/env.js');
 
+/**
+ * @type {Cypress.PluginConfig}
+ */
 export default defineConfig({
   e2e: {
     testIsolation: false,

@@ -37,14 +37,20 @@ jobs:
         name: pnpm setup
         with:
           version: 8
+
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20.5'
+          node-version: '20.9.0'
           cache: 'pnpm'
+
       - name: pnpm install
         run: |
-          pnpm install
+          pnpm install --frozen-lockfile
+
+      - name: Run lint-staged
+        run: |
+          pnpm exec lint-staged --diff="origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF}"
 
       - name: build ts
         run: |
@@ -67,16 +73,19 @@ jobs:
         run: |
           pnpm run test:unit
 
+      - name: integration tests
+        run: |
+          pnpm run test:integration
+
+      - name: Cypress install
+        run: |
+          pnpm --filter e2e exec cypress install
+
       - name: e2e tests
         env:
           DATABASE_URL: postgres://app_postgraphile:xyz@localhost:5432/photo-app_test
         run: |
           pnpm run test:e2e
-            
-
-      - name: Run lint-staged
-        run: |
-          pnpm exec lint-staged --diff="origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF}"
 
   plan:
     env:

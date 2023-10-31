@@ -1,7 +1,7 @@
 import {
   ApolloClient,
-  ApolloError,
   ApolloLink,
+  ApolloError,
   defaultDataIdFromObject,
   FetchResult,
   fromPromise,
@@ -12,7 +12,7 @@ import {
   Operation,
   ServerError,
   ServerParseError,
-} from '@apollo/client';
+} from '@apollo/client/core';
 import { createPersistedQueryLink } from '@apollo/client/link/persisted-queries';
 import { setContext } from '@apollo/client/link/context';
 import { Observable, relayStylePagination } from '@apollo/client/utilities';
@@ -26,7 +26,8 @@ import { GraphQLError } from 'graphql/error';
 import { graphql } from './__generated__';
 import { scalarTypePolicies } from './__generated__/graphql-types.ts';
 
-if (import.meta.env.DEV) {
+// eslint-disable-next-line
+if (import.meta.env?.DEV) {
   (async () => {
     const { loadErrorMessages, loadDevMessages } = await import('@apollo/client/dev');
 
@@ -47,12 +48,12 @@ export const resetToken = async () => {
   fetchedOnInit = false;
 };
 
-const httpLink: ApolloLink = new HttpLink({
+export const httpLink: ApolloLink = new HttpLink({
   uri: import.meta.env.VITE_GRAPHQL_ENDPOINT,
   credentials: 'include',
 });
 
-const authLink = setContext(async (_operation, { headers }) => {
+export const authLink = setContext(async (_operation, { headers }) => {
   if (accessToken == null) {
     return { headers };
   }
@@ -65,7 +66,7 @@ const authLink = setContext(async (_operation, { headers }) => {
   };
 });
 
-const GET_ACCESS_TOKEN_MUTATION = graphql(`
+export const GET_ACCESS_TOKEN_MUTATION = graphql(`
   mutation GetAccessToken {
     getAccessToken(input: { fromCookie: true }) {
       accessToken
@@ -73,7 +74,7 @@ const GET_ACCESS_TOKEN_MUTATION = graphql(`
   }
 `);
 
-const fetchAccessToken = async () => {
+export const fetchAccessToken = async () => {
   try {
     const res = await fetch(import.meta.env.VITE_GRAPHQL_ENDPOINT, {
       method: 'POST',
@@ -105,7 +106,7 @@ const fetchAccessToken = async () => {
   }
 };
 
-const shouldUseToken = (operation: Operation) => {
+export const shouldUseToken = (operation: Operation) => {
   if (operation.operationName === 'loginWithGoogle') {
     return false;
   }
@@ -117,7 +118,7 @@ const shouldUseToken = (operation: Operation) => {
   return accessToken != null;
 };
 
-const isTokenExpired = () => {
+export const isTokenExpired = () => {
   if (accessToken == null) return true;
 
   try {
@@ -128,7 +129,7 @@ const isTokenExpired = () => {
   }
 };
 
-class TokenLink extends ApolloLink {
+export class TokenLink extends ApolloLink {
   private queue: OperationQueuing = new OperationQueuing();
 
   private fetching = false;
@@ -185,7 +186,7 @@ export const graphqlErrorsObservable = new Observable<
   graphqlErrorsObserver = subscriber;
 });
 
-const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
+export const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
   if (graphQLErrors != null) {
     for (const error of graphQLErrors) {
       if ('extensions' in error) {
@@ -230,7 +231,7 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
   return forward(operation);
 });
 
-const typePolicies: TypePolicies = {
+export const typePolicies: TypePolicies = {
   Location: {
     fields: {
       photos: relayStylePagination(['type', '@connection', ['key', 'filter']]),
@@ -259,7 +260,7 @@ const typePolicies: TypePolicies = {
   },
 };
 
-const cache = new InMemoryCache({
+export const cache = new InMemoryCache({
   dataIdFromObject: (object: { __typename?: string; slug?: string; id?: string | number }) => {
     // cache location by slug as we use it in the url
     if (object.__typename === 'Location' && object.slug != null) {

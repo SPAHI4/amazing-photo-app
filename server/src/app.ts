@@ -24,6 +24,7 @@ export const buildApp = async (options: BuildAppOptions) => {
     logger: env.NODE_ENV !== 'never',
   });
 
+  // replace with redis on a real deployment
   app.register(fastifyRateLimit, {
     max: 3000,
     timeWindow: '1 minute',
