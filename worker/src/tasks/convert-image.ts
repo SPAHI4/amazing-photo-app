@@ -153,9 +153,8 @@ type DbImage = {
 
 // @see https://github.com/MikeKovarik/exifr/issues/115
 export const detectHdr = (contentType: string, exifData: ExifData) =>
-  contentType === 'image/avif' &&
-  typeof exifData.Software === 'string';
-  // exifData.Software.startsWith('Adobe Photoshop Camera Raw 15');
+  contentType === 'image/avif' && typeof exifData.Software === 'string';
+// exifData.Software.startsWith('Adobe Photoshop Camera Raw 15');
 
 export const getExifData = (filePath: string) =>
   exifr.parse(filePath, {
