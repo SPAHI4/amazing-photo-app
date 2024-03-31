@@ -299,7 +299,7 @@ resource "aws_db_instance" "default" {
   identifier                          = "${terraform.workspace}-photo-app"
   allocated_storage                   = 20
   engine                              = "postgres"
-  engine_version                      = "15.3"
+  engine_version                      = "15.5"
   instance_class                      = "db.t3.micro"
   username                            = "postgres"
   db_name                             = "postgres"
