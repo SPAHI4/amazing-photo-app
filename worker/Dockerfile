@@ -1,4 +1,4 @@
-FROM node:20.5.0-alpine as node
+FROM node:20.13-alpine as node
 
 
 # Install dependencies
