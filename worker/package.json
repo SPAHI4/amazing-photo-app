@@ -31,7 +31,7 @@
     "@react-email/link": "^0.0.5",
     "@react-email/render": "0.0.7",
     "@react-email/section": "^0.0.9",
-    "@react-email/tailwind": "^0.0.8",
+    "@react-email/tailwind": "^0.0.9",
     "@react-email/text": "^0.0.5",
     "@supercharge/promise-pool": "^3.0.0",
     "exifr": "^7.1.3",
