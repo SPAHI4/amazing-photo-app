@@ -2,6 +2,8 @@
 
 Main api server for the project.
 
+ **DISCLAIMER**: *This code doesn't represent my actual BE skills and doesn't follow Clean Architecture yet, but it was fine for the MVP*
+
 ## Stack
 - nodejs >= 20.5.
 - [fastify](https://www.fastify.io/) - web server for nodejs focused on performance with great typescript support.
