@@ -10,7 +10,7 @@ import { locationBySlugQuery } from './queries.js';
 import { BinaryTypePlugin } from './graphql-types.js';
 import { loginWithGoogleMutation, TokenErrors } from './oauth.js';
 import { createImageUploadMutation } from './mutations.js';
-import { getGraphqlContext } from './graphql-context.js';
+import { GraphqlContextFactory } from './context/GraphqlContextFactory.js';
 
 const PgOmitArchivedPlugin = PgOmitArchivedImp.default ?? PgOmitArchivedImp;
 const PgSimplifyInflectorPlugin =
@@ -103,7 +103,7 @@ export const postgraphileConfiig: PostGraphileOptions = {
   subscriptions: false,
   setofFunctionsContainNulls: false,
   ignoreRBAC: false,
-  additionalGraphQLContextFromRequest: (req, res) => getGraphqlContext(req, res),
+  additionalGraphQLContextFromRequest: (req, res) => GraphqlContextFactory.create(req, res),
   handleErrors: errorsHandler,
   graphileBuildOptions: {
     pgArchivedTables: [

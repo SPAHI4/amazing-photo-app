@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { GraphQLError } from 'graphql';
 import crypto from 'crypto';
 import { env } from '@app/config/env.js';
-import { GraphqlContext } from './graphql-context.js';
+import { GraphqlContext } from './types/GraphQLContext.js';
 
 export enum TokenErrors {
   TOKEN_EXPIRED = 'TOKEN_EXPIRED',

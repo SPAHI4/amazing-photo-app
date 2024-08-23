@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post';
 import { env } from '@app/config/env.js';
 import { s3 } from './s3.js';
-import { GraphqlContext } from './graphql-context.js';
+import { GraphqlContext } from './types/GraphQLContext.js';
 
 const CONTENT_TYPES = { 'image/jpeg': 'jpeg', 'image/avif': 'avif' } as const;
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 25; // 25 MB
