@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 15.3 (Debian 15.3-1.pgdg110+1)
--- Dumped by pg_dump version 15.3 (Homebrew)
+-- Dumped by pg_dump version 16.3 (Homebrew)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -630,14 +630,14 @@ CREATE TABLE app_private.user_data (
     user_id integer NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
-    google_email character varying(255) NOT NULL,
+    google_email character varying(255),
     google_id character varying(255) NOT NULL,
     google_refresh_token text NOT NULL,
     google_picture_url character varying(255) NOT NULL,
-    google_name character varying(255) NOT NULL,
+    google_name character varying(255),
     google_given_name character varying(255) NOT NULL,
     google_family_name character varying(255) NOT NULL,
-    google_locale character varying(10) NOT NULL,
+    google_locale character varying(10),
     google_verified_email boolean DEFAULT false NOT NULL,
     notified_at timestamp with time zone,
     is_unsubscribed boolean DEFAULT false NOT NULL
@@ -1844,49 +1844,49 @@ GRANT SELECT,USAGE ON SEQUENCE app_public.users_id_seq TO app_anonymous;
 -- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: app_hidden; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA app_hidden GRANT SELECT,USAGE ON SEQUENCES  TO app_anonymous;
+ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA app_hidden GRANT SELECT,USAGE ON SEQUENCES TO app_anonymous;
 
 
 --
 -- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: app_hidden; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA app_hidden GRANT ALL ON FUNCTIONS  TO app_anonymous;
+ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA app_hidden GRANT ALL ON FUNCTIONS TO app_anonymous;
 
 
 --
 -- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: app_public; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA app_public GRANT SELECT,USAGE ON SEQUENCES  TO app_anonymous;
+ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA app_public GRANT SELECT,USAGE ON SEQUENCES TO app_anonymous;
 
 
 --
 -- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: app_public; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA app_public GRANT ALL ON FUNCTIONS  TO app_anonymous;
+ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA app_public GRANT ALL ON FUNCTIONS TO app_anonymous;
 
 
 --
 -- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: public; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA public GRANT SELECT,USAGE ON SEQUENCES  TO app_anonymous;
+ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA public GRANT SELECT,USAGE ON SEQUENCES TO app_anonymous;
 
 
 --
 -- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: public; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA public GRANT ALL ON FUNCTIONS  TO app_anonymous;
+ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile IN SCHEMA public GRANT ALL ON FUNCTIONS TO app_anonymous;
 
 
 --
 -- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: -; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile REVOKE ALL ON FUNCTIONS  FROM PUBLIC;
+ALTER DEFAULT PRIVILEGES FOR ROLE app_postgraphile REVOKE ALL ON FUNCTIONS FROM PUBLIC;
 
 
 --
