@@ -1,4 +1,4 @@
-FROM node:20.13.0-alpine as node
+FROM node:20.18-alpine as node
 
 RUN apk update && apk add curl
 
