@@ -46,7 +46,7 @@
     "@graphile-contrib/pg-simplify-inflector": "^6.1.0",
     "@graphile/persisted-operations": "^0.1.1",
     "cookie": "^0.5.0",
-    "fastify": "^4.20.0",
+    "fastify": "^5.7.3",
     "google-auth-library": "^8.9.0",
     "graphile-build": "^4.13.0",
     "graphile-utils": "^4.13.0",
